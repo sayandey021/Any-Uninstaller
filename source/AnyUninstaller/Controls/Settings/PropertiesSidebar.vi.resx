@@ -1,0 +1,204 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="checkBoxOrphans.Text" xml:space="preserve">
+    <value>Hiển thị các ứng dụng không có thông tin đăng ký</value>
+  </data>
+  <data name="checkBoxOrphans.ToolTip" xml:space="preserve">
+    <value>Hiển thị các ứng dụng không đăng ký bất kỳ trình gỡ cài đặt nào với hệ thống. Chúng thường không xuất hiện trong hầu hết các trình quản lý gỡ cài đặt nhưng vẫn chiếm dung lượng ổ cứng. Các mục này được đánh dấu bằng màu đỏ.
+
+Cảnh báo: Hãy kiểm tra kỹ trước khi xóa các ứng dụng này, chúng có thể vẫn cần thiết!</value>
+  </data>
+  <data name="checkBoxInvalidTest.Text" xml:space="preserve">
+    <value>Đánh dấu các ứng dụng thiếu trình gỡ cài đặt</value>
+  </data>
+  <data name="checkBoxInvalidTest.ToolTip" xml:space="preserve">
+    <value>Sử dụng màu xám để đánh dấu trình gỡ cài đặt bị hỏng hoặc bị thiếu.</value>
+  </data>
+  <data name="checkBoxCertTest.Text" xml:space="preserve">
+    <value>Đánh dấu trình gỡ cài đặt có chứng chỉ</value>
+  </data>
+  <data name="checkBoxCertTest.ToolTip" xml:space="preserve">
+    <value>Sử dụng màu sắc để đánh dấu các trình gỡ cài đặt có chứng chỉ.
+Nếu chứng chỉ được xác minh thành công sẽ là màu xanh lá, ngược lại sẽ là màu xanh dương.
+
+Cảnh báo: Quá trình xác minh có thể mất nhiều thời gian.</value>
+  </data>
+  <data name="checkBoxListHideMicrosoft.Text" xml:space="preserve">
+    <value>Ẩn ứng dụng do Microsoft phát hành</value>
+  </data>
+  <data name="checkBoxListHideMicrosoft.ToolTip" xml:space="preserve">
+    <value>Lọc bỏ mọi thứ do Microsoft phát hành. Chỉ thế thôi.</value>
+  </data>
+  <data name="checkBoxListSysComp.Text" xml:space="preserve">
+    <value>Hiển thị các thành phần hệ thống</value>
+  </data>
+  <data name="checkBoxListSysComp.ToolTip" xml:space="preserve">
+    <value>Một số trình gỡ cài đặt có thể được đánh dấu là "thành phần hệ thống" để ẩn chúng khỏi danh sách "Add/Remove Programs" mặc định của Windows.
+Các trình điều khiển (Driver) thường được đánh dấu bằng thẻ này.</value>
+  </data>
+  <data name="checkBoxListProtected.Text" xml:space="preserve">
+    <value>Hiển thị các mục được bảo vệ</value>
+  </data>
+  <data name="checkBoxListProtected.ToolTip" xml:space="preserve">
+    <value>Các mục được bảo vệ sẽ có thẻ "NoRemove", nghĩa là nhà phát hành không muốn bạn gỡ bỏ chúng.</value>
+  </data>
+  <data name="checkBoxTweaks.Text" xml:space="preserve">
+    <value>Hiển thị các bản tinh chỉnh (Tweaks)</value>
+  </data>
+  <data name="checkBoxShowUpdates.Text" xml:space="preserve">
+    <value>Hiển thị các ứng dụng cập nhật</value>
+  </data>
+  <data name="checkBoxShowUpdates.ToolTip" xml:space="preserve">
+    <value>Các bản cập nhật của những ứng dụng khác. Thông thường chúng sẽ bị gỡ bỏ cùng với ứng dụng gốc, vì vậy bạn có thể bỏ qua chúng.</value>
+  </data>
+  <data name="checkBoxWinFeature.Text" xml:space="preserve">
+    <value>Hiển thị tính năng Windows (Windows Features)</value>
+  </data>
+  <data name="checkBoxShowStoreApps.Text" xml:space="preserve">
+    <value>Hiển thị ứng dụng từ Windows Store</value>
+  </data>
+  <data name="groupBox2.Text" xml:space="preserve">
+    <value>Bộ lọc</value>
+  </data>
+  <data name="checkBoxViewCheckboxes.Text" xml:space="preserve">
+    <value>Chọn bằng ô tích (checkbox)</value>
+  </data>
+  <data name="checkBoxViewCheckboxes.ToolTip" xml:space="preserve">
+    <value>Thay đổi kiểu chọn của danh sách sang dạng ô tích chọn. Cách này an toàn hơn vì chỉ một cú nhấp chuột sẽ không làm mất chọn tất cả các mục trước đó.
+
+Bạn có thể tích chọn nhiều mục bằng cách bôi đen chúng rồi nhấn phím Cách.</value>
+  </data>
+  <data name="checkBoxViewGroups.Text" xml:space="preserve">
+    <value>Hiển thị các mục theo nhóm</value>
+  </data>
+  <data name="checkBoxViewGroups.ToolTip" xml:space="preserve">
+    <value>Nhóm các mục lại dựa theo cột được chọn.
+Việc nhóm phần lớn các cột đều sử dụng bộ lọc thông minh.</value>
+  </data>
+  <data name="checkBoxHighlightSpecial.Text" xml:space="preserve">
+    <value>Đánh dấu các trình gỡ cài đặt đặc biệt</value>
+  </data>
+  <data name="checkBoxHighlightSpecial.ToolTip" xml:space="preserve">
+    <value>Sử dụng màu sắc để phân biệt các ứng dụng đặc biệt, ví dụ như Store Apps và Windows Features.</value>
+  </data>
+  <data name="groupBox1.Text" xml:space="preserve">
+    <value>Chế độ hiển thị danh sách</value>
+  </data>
+</root>

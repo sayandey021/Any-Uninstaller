@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+
+		<AssemblyTitle>Utility for automating uninstallers by simulating button presses</AssemblyTitle>
+
+		<ApplicationIcon>icon.ico</ApplicationIcon>
+		<StartupObject>UninstallerAutomatizer.Program</StartupObject>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\KlocTools\KlocTools.csproj" />
+		<ProjectReference Include="..\UninstallTools\UninstallTools.csproj" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<PackageReference Include="FlaUI.Adapter.White" Version="0.2.1" />
+		<PackageReference Include="FlaUI.UIA3" Version="5.0.0" />
+		<PackageReference Include="System.Drawing.Common" Version="[8.*,9)" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <Compile Update="Properties\Localization.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Localization.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Properties\Localization.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Localization.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
+</Project>

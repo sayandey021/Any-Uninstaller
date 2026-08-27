@@ -1,0 +1,52 @@
+## Build and Binary Directories
+[Bb]in/
+[Oo]bj/
+dist/
+packaging/staging/
+publish/
+
+## Visual Studio & IDE Artifacts
+.vs/
+.vscode/
+.idea/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.sln.docstates
+*.ide/
+
+## Compiled Files & Assemblies
+*.dll
+*.exe
+*.pdb
+*.msix
+*.appx
+*.appxbundle
+*.msixbundle
+*.cer
+*.pfx
+
+# Except committed assets/tools if any
+!source/**/*.ico
+!source/**/*.png
+!packaging/**/*.png
+
+## Logs & Temp Files
+*.log
+*.tmp
+*.temp
+anyu_avalonia_crash.log
+AnyU_Avalonia_crash.log
+
+## Packages & Dependency Cache
+*.nupkg
+*.snupkg
+project.lock.json
+project.assets.json
+
+## OS Generated Files
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store

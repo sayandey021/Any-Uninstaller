@@ -1,0 +1,316 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="labelProgress.Text" xml:space="preserve">
+    <value>1 / 6</value>
+  </data>
+  <data name="buttonExit.Text" xml:space="preserve">
+    <value>Thoát</value>
+  </data>
+  <data name="buttonPrev.Text" xml:space="preserve">
+    <value>Quay lại</value>
+  </data>
+  <data name="buttonNext.Text" xml:space="preserve">
+    <value>Kế tiếp</value>
+  </data>
+  <data name="buttonMore.Text" xml:space="preserve">
+    <value>Cài đặt thêm</value>
+  </data>
+  <data name="buttonHelp.Text" xml:space="preserve">
+    <value>Xem trợ giúp</value>
+  </data>
+  <data name="buttonFinish.Text" xml:space="preserve">
+    <value>Hoàn tất</value>
+  </data>
+  <data name="p5finishContact.Text" xml:space="preserve">
+    <value>Giờ đây bạn đã có thể bắt đầu sử dụng AnyUninstaller. Nếu bạn có bất kỳ câu hỏi nào hoặc muốn đề xuất tính năng mới, hãy truy cập liên kết bên dưới.</value>
+  </data>
+  <data name="p5LinkContact.Text" xml:space="preserve">
+    <value>Mở biểu mẫu liên hệ</value>
+  </data>
+  <data name="p5finishHomepage.Text" xml:space="preserve">
+    <value>Bạn có thể đọc nhật ký thay đổi chi tiết và xem thêm các phần mềm khác của tôi tại trang chủ.</value>
+  </data>
+  <data name="p5LinkHomepage.Text" xml:space="preserve">
+    <value>Mở trang chủ</value>
+  </data>
+  <data name="p5finishTitle.Text" xml:space="preserve">
+    <value>Quá trình thiết lập đã hoàn tất</value>
+  </data>
+  <data name="p4netTitle.Text" xml:space="preserve">
+    <value>Truy cập mạng</value>
+  </data>
+  <data name="p4netDesc.Text" xml:space="preserve">
+    <value>AnyUninstaller có thể cố gắng kết nối Internet vì các lý do sau:</value>
+  </data>
+  <data name="p4netDesc1.Text" xml:space="preserve">
+    <value>● Để kiểm tra các bản cập nhật.</value>
+  </data>
+  <data name="p4netDesc2.Text" xml:space="preserve">
+    <value>● Để gửi các báo cáo lỗi.</value>
+  </data>
+  <data name="p4netDesc3.Text" xml:space="preserve">
+    <value>● Để gửi số liệu thống kê sử dụng ẩn danh.</value>
+  </data>
+  <data name="p4netDesc4.Text" xml:space="preserve">
+    <value>● Để tải về và tải lên các đánh giá ứng dụng.</value>
+  </data>
+  <data name="p4netErrors.Text" xml:space="preserve">
+    <value>Mỗi khi có lỗi xảy ra, bạn sẽ được hỏi có muốn gửi báo cáo lỗi hay không. Bạn có thể kiểm tra dữ liệu nào đang được gửi bằng cách xem các tệp XML tương ứng trong thư mục của AnyUninstaller. Dữ liệu được gửi sẽ không bị chia sẻ với bất kỳ bên thứ ba nào.</value>
+  </data>
+  <data name="checkBoxUpdateSearch.Text" xml:space="preserve">
+    <value>Tự động kiểm tra các bản cập nhật khi khởi động ứng dụng</value>
+  </data>
+  <data name="p4netUpdateAdd.Text" xml:space="preserve">
+    <value>Bạn có thể kiểm tra cập nhật thủ công từ thanh menu.</value>
+  </data>
+  <data name="checkBoxSendStats.Text" xml:space="preserve">
+    <value>Tự động gửi số liệu thống kê sử dụng ẩn danh</value>
+  </data>
+  <data name="p4netUsageAdd.Text" xml:space="preserve">
+    <value>Việc gửi các số liệu thống kê này sẽ giúp cải thiện AnyUninstaller tốt hơn.</value>
+  </data>
+  <data name="checkBoxRatings.Text" xml:space="preserve">
+    <value>Bật tính năng hiển thị đánh giá ứng dụng từ người dùng</value>
+  </data>
+  <data name="pCorTitle.Text" xml:space="preserve">
+    <value>Trình gỡ cài đặt bị lỗi</value>
+  </data>
+  <data name="pCorDesc.Text" xml:space="preserve">
+    <value>Theo thời gian, bạn có thể thấy một số ứng dụng từ chối gỡ cài đặt hoặc biến mất hoàn toàn khỏi hầu hết các trình quản lý gỡ cài đặt thông thường.</value>
+  </data>
+  <data name="pCorViewInvalidTitle.Text" xml:space="preserve">
+    <value>Trình gỡ cài đặt bị hỏng hoặc bị mất</value>
+  </data>
+  <data name="pCorViewInvalid.Text" xml:space="preserve">
+    <value>Trong một số trường hợp, các trình gỡ cài đặt có thể bị hỏng, khiến chúng không thể gỡ cài đặt theo cách thông thường. AnyU có thể gỡ bỏ các mục này một cách dễ dàng bằng tùy chọn "Gỡ cài đặt thủ công".</value>
+  </data>
+  <data name="checkBoxInvalidTest.Text" xml:space="preserve">
+    <value>Đánh dấu các trình gỡ cài đặt không hợp lệ</value>
+  </data>
+  <data name="pCorViewinvalidComment.Text" xml:space="preserve">
+    <value>Trình gỡ cài đặt không hợp lệ được đánh dấu bằng màu xám.</value>
+  </data>
+  <data name="pCorOrphansTitle.Text" xml:space="preserve">
+    <value>Ứng dụng không có thông tin đăng ký</value>
+  </data>
+  <data name="pCorOrphansMessage.Text" xml:space="preserve">
+    <value>Đôi khi toàn bộ ứng dụng vẫn có thể bị bỏ lại trên ổ đĩa ngay cả sau khi đã gỡ cài đặt. Điều này cũng có thể xảy ra nếu chỉ có bộ gỡ cài đặt bị xóa mất.</value>
+  </data>
+  <data name="checkBoxOrphans.Text" xml:space="preserve">
+    <value>Hiển thị các ứng dụng không có thông tin đăng ký</value>
+  </data>
+  <data name="pCorOrphansComment.Text" xml:space="preserve">
+    <value>Các ứng dụng không có thông tin đăng ký sẽ được đánh dấu bằng màu đỏ.
+Nếu không tìm thấy trình gỡ cài đặt gốc, bạn sẽ phải sử dụng tùy chọn "Gỡ cài đặt thủ công".</value>
+  </data>
+  <data name="p3advTitle.Text" xml:space="preserve">
+    <value>Dành cho người dùng nâng cao</value>
+  </data>
+  <data name="p3advDesc.Text" xml:space="preserve">
+    <value>Mặc dù AnyUninstaller có thể được sử dụng như một trình gỡ cài đặt cơ bản, nhưng hầu hết các chức năng của nó đều hướng đến người dùng chuyên sâu. Hãy cẩn thận khi sử dụng!</value>
+  </data>
+  <data name="p3advSyscompTitle.Text" xml:space="preserve">
+    <value>Thành phần hệ thống</value>
+  </data>
+  <data name="p3advSyscomp.Text" xml:space="preserve">
+    <value>Các ứng dụng được đánh dấu là "thành phần hệ thống" sẽ bị ẩn khỏi hầu hết các trình quản lý gỡ cài đặt cơ bản. Nhưng KHÔNG đồng nghĩa với việc ứng dụng đó là một phần của hệ điều hành Windows.</value>
+  </data>
+  <data name="checkBoxListSysComp.Text" xml:space="preserve">
+    <value>Hiển thị các trình gỡ cài đặt được đánh dấu là "thành phần hệ thống"</value>
+  </data>
+  <data name="p3advProtectTitle.Text" xml:space="preserve">
+    <value>Trình gỡ cài đặt được bảo vệ</value>
+  </data>
+  <data name="p3advProtect.Text" xml:space="preserve">
+    <value>Các mục được bảo vệ sẽ có thẻ "NoRemove", nghĩa là nhà phát hành không muốn bạn gỡ bỏ chúng. Thường được sử dụng bởi các gói phần mềm lớn để ngăn bạn gỡ cài đặt riêng lẻ từng thành phần của chúng.</value>
+  </data>
+  <data name="checkBoxListProtected.Text" xml:space="preserve">
+    <value>Hiển thị các trình gỡ cài đặt được đánh dấu là "được bảo vệ"</value>
+  </data>
+  <data name="checkBoxDiisableProtection.Text" xml:space="preserve">
+    <value>Tắt tính năng bảo vệ của các trình gỡ cài đặt được đánh dấu là "được bảo vệ"</value>
+  </data>
+  <data name="p3advProtectAdd.Text" xml:space="preserve">
+    <value>Tùy chọn này sẽ cho phép bạn gỡ cài đặt các mục được bảo vệ.</value>
+  </data>
+  <data name="p2viewTitle.Text" xml:space="preserve">
+    <value>Chế độ hiển thị danh sách</value>
+  </data>
+  <data name="p2viewDetail.Text" xml:space="preserve">
+    <value>Tất cả các trình gỡ cài đặt được tìm thấy trên hệ thống của bạn sẽ nằm trong danh sách chính. Dưới đây là một số cách để duyệt qua dữ liệu này:</value>
+  </data>
+  <data name="p2viewDetail1.Text" xml:space="preserve">
+    <value>● Sử dụng bộ lọc và tìm kiếm theo từ khóa (áp dụng trên tất cả các cột)</value>
+  </data>
+  <data name="p2viewDetail2.Text" xml:space="preserve">
+    <value>● Sắp xếp các bộ gỡ cài đặt theo bất kỳ cột nào. Tự do sắp xếp lại vị trí các cột</value>
+  </data>
+  <data name="p2viewDetail3.Text" xml:space="preserve">
+    <value>● Nhóm các bộ gỡ cài đặt tương tự lại với nhau</value>
+  </data>
+  <data name="checkBoxGroups.Text" xml:space="preserve">
+    <value>Hiển thị các trình gỡ cài đặt theo nhóm</value>
+  </data>
+  <data name="checkBoxCheckboxes.Text" xml:space="preserve">
+    <value>Chọn bằng ô tích (Checkbox)</value>
+  </data>
+  <data name="p2viewCertsTitle.Text" xml:space="preserve">
+    <value>Trình gỡ cài đặt có chứng chỉ</value>
+  </data>
+  <data name="p2viewCerts.Text" xml:space="preserve">
+    <value>Các trình gỡ cài đặt có thể được ký bằng chứng chỉ số do các cơ quan có thẩm quyền cấp. Nếu chứng chỉ vượt qua xác thực, gói phần mềm đó đảm bảo chưa bị can thiệp và có uy tín cao.</value>
+  </data>
+  <data name="checkBoxCertTest.Text" xml:space="preserve">
+    <value>Đánh dấu các trình gỡ cài đặt có chứng chỉ</value>
+  </data>
+  <data name="p2viewAdd.Text" xml:space="preserve">
+    <value>Các trình gỡ cài đặt được xác minh thành công sẽ đánh dấu bằng màu xanh lá, ngược lại sẽ là màu xanh dương.
+Cảnh báo: Quá trình xác minh có thể mất nhiều thời gian.</value>
+  </data>
+  <data name="p1welcomeHeading.Text" xml:space="preserve">
+    <value>Chào mừng bạn đến với AnyUninstaller!</value>
+  </data>
+  <data name="p1welcomeSubheading.Text" xml:space="preserve">
+    <value>Trình hướng dẫn này sẽ giúp bạn xem qua tổng quan cũng như là cấu hình ứng dụng.</value>
+  </data>
+  <data name="p1languageHeading.Text" xml:space="preserve">
+    <value>Ngôn ngữ đã chọn</value>
+  </data>
+  <data name="p1languageDesc.Text" xml:space="preserve">
+    <value>Bạn có thể bắt buộc AnyUninstaller sử dụng một ngôn ngữ cụ thể nếu ngôn ngữ mặc định chưa chính xác. Ứng dụng sẽ cần khởi động lại để áp dụng ngôn ngữ mới.</value>
+  </data>
+  <data name="buttonLanguageApply.Text" xml:space="preserve">
+    <value>Chấp nhận</value>
+  </data>
+  <data name="p1languageExtradetails.Text" xml:space="preserve">
+    <value>Nếu bạn sẵn lòng giúp dịch thuật AnyUninstaller sang ngôn ngữ mẹ đẻ của mình, hãy nhấp vào liên kết bên dưới để liên hệ với tôi. Mọi sự giúp đỡ đều rất đáng trân trọng!</value>
+  </data>
+  <data name="p1linkLabelContact.Text" xml:space="preserve">
+    <value>Mở biểu mẫu liên hệ</value>
+  </data>
+  <data name="label2.Text" xml:space="preserve">
+    <value>ulk crap
+uninstaller</value>
+    <comment>The missing B is in an image next to the text</comment>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Chào mừng đến với AnyUninstaller!</value>
+  </data>
+</root>

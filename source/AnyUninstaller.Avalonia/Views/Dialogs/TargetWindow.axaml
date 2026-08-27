@@ -1,0 +1,149 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="AnyUninstaller.Avalonia.Views.Dialogs.TargetWindow"
+        Title="Target an Application — Any Uninstaller"
+        Icon="/Assets/logo.ico"
+        Width="660" Height="360"
+        Background="{DynamicResource AppBgBrush}"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner">
+
+    <Window.Styles>
+        <Style Selector="Border.reticle-box">
+            <Setter Property="Background" Value="#131d2b"/>
+            <Setter Property="BorderBrush" Value="#1f538a"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Cursor" Value="Cross"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Border.reticle-box:pointerover">
+            <Setter Property="Background" Value="#18273b"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryAccentBrush}"/>
+        </Style>
+    </Window.Styles>
+
+    <Border Margin="14" Classes="card" Padding="16">
+        <Grid RowDefinitions="Auto,*,Auto">
+            
+            <!-- 1. Header Section -->
+            <Grid Grid.Row="0" ColumnDefinitions="Auto,*" Margin="0,0,0,14">
+                <Border Width="36" Height="36"
+                        Background="#162b45"
+                        BorderBrush="#1f6feb"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        VerticalAlignment="Center">
+                    <TextBlock Text="🎯" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
+                    <TextBlock Text="Target an Application" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <TextBlock Text="Identify and uninstall software using its desktop window or installation files."
+                               FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- 2. Landscape Body: Left = Drag Window Targeter, Right = Browse Filesystem -->
+            <Grid Grid.Row="1" ColumnDefinitions="*,12,*">
+                
+                <!-- LEFT COLUMN: Window Targeter (Drag Portion) -->
+                <Border Grid.Column="0" Classes="card-inner" Padding="12">
+                    <Grid RowDefinitions="Auto,*,Auto">
+                        <!-- Section Header -->
+                        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+                            <TextBlock Text="TARGET ACTIVE WINDOW" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource PrimaryAccentBrush}" LetterSpacing="0.5" VerticalAlignment="Center"/>
+                            <Border Grid.Column="1" Background="#162b1a" BorderBrush="#238636" BorderThickness="1" CornerRadius="10" Padding="6,2" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                                    <Ellipse Width="5" Height="5" Fill="#3fb950" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="TargetStateText" Text="Ready" FontSize="9.5" FontWeight="SemiBold" Foreground="#3fb950" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <!-- Center: Crosshair Reticle & Live Readout -->
+                        <Grid Grid.Row="1" ColumnDefinitions="Auto,*" VerticalAlignment="Center">
+                            <!-- Reticle Drag Anchor -->
+                            <Border x:Name="CrosshairTargetArea"
+                                    Classes="reticle-box"
+                                    Width="68" Height="68"
+                                    VerticalAlignment="Center"
+                                    PointerPressed="OnCrosshairPointerPressed"
+                                    PointerMoved="OnCrosshairPointerMoved"
+                                    PointerReleased="OnCrosshairPointerReleased">
+                                <TextBlock Text="⌖" FontSize="36" FontWeight="Bold" Foreground="{DynamicResource PrimaryAccentBrush}"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-2,0,0"/>
+                            </Border>
+
+                            <!-- Live Target Details -->
+                            <Border Grid.Column="1" Background="#0d1117" BorderBrush="#21262d" BorderThickness="1" CornerRadius="8" Padding="10,8" Margin="10,0,0,0" VerticalAlignment="Center">
+                                <StackPanel Spacing="3">
+                                    <TextBlock Text="Target Window:" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    <TextBlock x:Name="TargetWindowTitleText" Text="Click &amp; drag ⌖ over window" FontSize="11.5" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock x:Name="TargetProcessText" Text="Release mouse to select" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <!-- Instruction Hint -->
+                        <TextBlock Grid.Row="2"
+                                   Text="Drag crosshair onto any application window (ESC to cancel)"
+                                   FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,8,0,0"/>
+                    </Grid>
+                </Border>
+
+                <!-- RIGHT COLUMN: Browse Filesystem -->
+                <Border Grid.Column="2" Classes="card-inner" Padding="12">
+                    <Grid RowDefinitions="Auto,*,Auto">
+                        <!-- Section Header -->
+                        <TextBlock Grid.Row="0" Text="BROWSE FILESYSTEM" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" LetterSpacing="0.5" Margin="0,0,0,8"/>
+
+                        <!-- Action Buttons -->
+                        <StackPanel Grid.Row="1" Spacing="8" VerticalAlignment="Center">
+                            <!-- Install Folder Button -->
+                            <Button Classes="toolbar" Height="42" Margin="0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="10,6" Click="OnSelectDirectoryClick">
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <Border Width="28" Height="28" Background="#162438" BorderBrush="#1f4b7a" BorderThickness="1" CornerRadius="6" VerticalAlignment="Center">
+                                        <TextBlock Text="📁" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock Text="Install Directory..." FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                        <TextBlock Text="Scan root directory for apps" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Button>
+
+                            <!-- Executable / Shortcut Button -->
+                            <Button Classes="toolbar" Height="42" Margin="0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="10,6" Click="OnSelectFileClick">
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <Border Width="28" Height="28" Background="#1f1d2e" BorderBrush="#43376e" BorderThickness="1" CornerRadius="6" VerticalAlignment="Center">
+                                        <TextBlock Text="⚡" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock Text="Application File or Shortcut..." FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                        <TextBlock Text="Select .exe, .bat, or .lnk link" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Button>
+                        </StackPanel>
+
+                        <!-- Tip -->
+                        <TextBlock Grid.Row="2"
+                                   Text="💡 Tip: Directories containing multiple apps will scan all of them."
+                                   FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,8,0,0"/>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- 3. Bottom Footer Action Bar -->
+            <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="2,12,2,0" VerticalAlignment="Center">
+                <TextBlock x:Name="StatusTextBlock" Grid.Column="0" Text="" FontSize="11" Foreground="{DynamicResource PrimaryAccentBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,10,0"/>
+                <Button Grid.Column="1" Content="Cancel" Classes="toolbar" Width="85" Height="32" Click="OnCancelClick"/>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

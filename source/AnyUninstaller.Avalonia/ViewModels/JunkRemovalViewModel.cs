@@ -1,0 +1,204 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using UninstallTools.Junk;
+using UninstallTools.Junk.Containers;
+
+namespace AnyUninstaller.Avalonia.ViewModels
+{
+    public partial class JunkEntryViewModel : ObservableObject
+    {
+        public IJunkResult Result { get; }
+
+        [ObservableProperty]
+        private bool _isChecked = true;
+
+        [ObservableProperty]
+        private bool _isDeleted;
+
+        [ObservableProperty]
+        private bool _hasError;
+
+        [ObservableProperty]
+        private string? _errorMessage;
+
+        [ObservableProperty]
+        private string _status = "Pending";
+
+        public JunkEntryViewModel(IJunkResult result)
+        {
+            Result = result;
+        }
+
+        public string DisplayName => Result.GetDisplayName() ?? string.Empty;
+        public string ApplicationName => Result.Application?.DisplayName ?? "Unknown";
+        public string Confidence => Result.Confidence.GetConfidence().ToString();
+        public string JunkType => Result.GetType().Name.Replace("Junk", "");
+    }
+
+    public partial class JunkRemovalViewModel : ViewModelBase
+    {
+        [ObservableProperty]
+        private ObservableCollection<JunkEntryViewModel> _junkItems = new();
+
+        [ObservableProperty]
+        private string _statusMessage = "Select junk items to remove";
+
+        [ObservableProperty]
+        private bool _isBusy;
+
+        [ObservableProperty]
+        private int _selectedCount;
+
+        [ObservableProperty]
+        private int _totalCount;
+
+        public string SelectionSummaryText => $"Selected: {SelectedCount} / {TotalCount} item(s)";
+        public string DeleteButtonText => SelectedCount > 0 ? $"🗑️ Delete Selected Junk ({SelectedCount})" : "🗑️ Delete Selected Junk";
+        public bool CanDelete => SelectedCount > 0 && !IsBusy;
+        public bool AreAllSelected => TotalCount > 0 && SelectedCount == TotalCount;
+        public string ToggleSelectAllText => AreAllSelected ? "Select None" : "Select All";
+        public string ToggleSelectAllIcon => AreAllSelected ? "✕" : "✓";
+        public string ToggleSelectAllTooltip => AreAllSelected ? "Deselect all items" : "Select all items";
+
+        public JunkRemovalViewModel(IEnumerable<IJunkResult> items)
+        {
+            foreach (var item in items)
+            {
+                var vm = new JunkEntryViewModel(item);
+                vm.PropertyChanged += (s, e) =>
+                {
+                    if (e.PropertyName == nameof(JunkEntryViewModel.IsChecked))
+                    {
+                        UpdateSelectionStats();
+                    }
+                };
+                JunkItems.Add(vm);
+            }
+            UpdateSelectionStats();
+        }
+
+        public void UpdateSelectionStats()
+        {
+            TotalCount = JunkItems.Count;
+            SelectedCount = JunkItems.Count(x => x.IsChecked && !x.IsDeleted);
+            OnPropertyChanged(nameof(SelectionSummaryText));
+            OnPropertyChanged(nameof(DeleteButtonText));
+            OnPropertyChanged(nameof(CanDelete));
+            OnPropertyChanged(nameof(AreAllSelected));
+            OnPropertyChanged(nameof(ToggleSelectAllText));
+            OnPropertyChanged(nameof(ToggleSelectAllIcon));
+            OnPropertyChanged(nameof(ToggleSelectAllTooltip));
+        }
+
+        [RelayCommand]
+        public void ToggleSelectAll()
+        {
+            bool targetState = !AreAllSelected;
+            foreach (var item in JunkItems)
+            {
+                if (!item.IsDeleted)
+                    item.IsChecked = targetState;
+            }
+            UpdateSelectionStats();
+        }
+
+        [RelayCommand]
+        public void SelectAll()
+        {
+            foreach (var item in JunkItems)
+                item.IsChecked = true;
+            UpdateSelectionStats();
+        }
+
+        [RelayCommand]
+        public void DeselectAll()
+        {
+            foreach (var item in JunkItems)
+                item.IsChecked = false;
+            UpdateSelectionStats();
+        }
+
+        [RelayCommand]
+        public async Task DeleteSelectedJunkAsync()
+        {
+            var selected = JunkItems.Where(x => x.IsChecked && !x.IsDeleted).ToList();
+            if (selected.Count == 0)
+            {
+                StatusMessage = "No items selected for deletion.";
+                return;
+            }
+
+            IsBusy = true;
+            StatusMessage = $"Deleting {selected.Count} item(s)...";
+
+            var successfullyDeleted = new List<JunkEntryViewModel>();
+            var errors = new List<string>();
+
+            await Task.Run(() =>
+            {
+                foreach (var item in selected)
+                {
+                    try
+                    {
+                        item.Result.Delete();
+                        item.IsDeleted = true;
+                        item.HasError = false;
+                        item.ErrorMessage = null;
+                        item.Status = "Deleted";
+                        successfullyDeleted.Add(item);
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        item.HasError = true;
+                        string msg = "Access Denied (Admin rights required)";
+                        item.ErrorMessage = msg;
+                        item.Status = msg;
+                        errors.Add($"Access Denied on '{item.DisplayName}' (Run app as Administrator)");
+                    }
+                    catch (Exception ex)
+                    {
+                        item.HasError = true;
+                        string msg = ex.Message;
+                        item.ErrorMessage = msg;
+                        item.Status = $"Error: {msg}";
+                        errors.Add($"{item.DisplayName}: {msg}");
+                    }
+                }
+            });
+
+            // Remove successfully deleted items from list on UI thread
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                foreach (var item in successfullyDeleted)
+                {
+                    JunkItems.Remove(item);
+                }
+                UpdateSelectionStats();
+            });
+
+            if (errors.Count > 0)
+            {
+                if (successfullyDeleted.Count > 0)
+                {
+                    StatusMessage = $"Deleted {successfullyDeleted.Count} item(s). Failed {errors.Count}: {errors[0]}";
+                }
+                else
+                {
+                    StatusMessage = $"Failed to delete {errors.Count} item(s): {errors[0]}";
+                }
+            }
+            else
+            {
+                StatusMessage = $"Successfully deleted {successfullyDeleted.Count} item(s).";
+            }
+
+            IsBusy = false;
+        }
+    }
+}

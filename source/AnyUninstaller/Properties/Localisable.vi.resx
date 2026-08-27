@@ -1,0 +1,789 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="LoadingDialogTitleCreatingRestorePoint" xml:space="preserve">
+    <value>Đang tạo điểm khôi phục (Restore point)...</value>
+  </data>
+  <data name="LoadingDialogTitleLookingForJunk" xml:space="preserve">
+    <value>Đang tìm kiếm tàn dư...</value>
+  </data>
+  <data name="LoadingDialogTitlePopulatingList" xml:space="preserve">
+    <value>Đang khởi tạo danh sách trình gỡ cài đặt...</value>
+  </data>
+  <data name="LoadingDialogTitleRemovingJunk" xml:space="preserve">
+    <value>Đang xóa bỏ các tàn dư...</value>
+  </data>
+  <data name="LoadingDialogTitleSearchingForUpdates" xml:space="preserve">
+    <value>Đang tìm kiếm các bản cập nhật...</value>
+  </data>
+  <data name="SearchNothingFoundMessage" xml:space="preserve">
+    <value>Không có mục nào trùng khớp với tiêu chí tìm kiếm của bạn.</value>
+  </data>
+  <data name="StrExportHeader" xml:space="preserve">
+    <value>AnyUninstaller export
+Publisher | Version | Date | Size | Registry | Uninstaller type | Uninstall string | Quiet uninstall string | Comments</value>
+  </data>
+  <data name="StrIsPortable" xml:space="preserve">
+    <value>Bản không cần cài đặt (Portable)</value>
+    <comment>keep space in front</comment>
+  </data>
+  <data name="SysRestoreGenericError" xml:space="preserve">
+    <value>Gọi hàm API thất bại</value>
+  </data>
+  <data name="MessageBoxes_BackupFailedQuestion_Message" xml:space="preserve">
+    <value>Quá trình sao lưu Registry đã thất bại, bạn có muốn tiếp tục không?</value>
+  </data>
+  <data name="MessageBoxes_BackupFailedQuestion_Details" xml:space="preserve">
+    <value>Chi tiết lỗi: </value>
+  </data>
+  <data name="MessageBoxes_Title_Leftover_removal" xml:space="preserve">
+    <value>Xoá bỏ tàn dư:</value>
+  </data>
+  <data name="MessageBoxes_Error_details" xml:space="preserve">
+    <value>
+
+Chi tiết lỗi:
+</value>
+    <comment>Add space or newline afterwards and two newlines before</comment>
+  </data>
+  <data name="MessageBoxes_BackupRegistryQuestion_Message" xml:space="preserve">
+    <value>Bạn có muốn tạo một bản sao lưu Registry trước khi tiếp tục không?</value>
+  </data>
+  <data name="MessageBoxes_BackupRegistryQuestion_Details" xml:space="preserve">
+    <value>Bạn có thể khôi phục lại mọi thay đổi sau này bằng cách nhấp đúp chuột vào tệp tin sao lưu đó.
+
+Các tệp tin và thư mục tàn dư sẽ được chuyển vào Thùng rác (Recycle bin), bạn có thể khôi phục lại chúng từ đó nếu cần.</value>
+  </data>
+  <data name="MessageBoxes_CanSelectOnlyOneItemInfo_Title" xml:space="preserve">
+    <value>Thao tác thất bại</value>
+  </data>
+  <data name="MessageBoxes_CanSelectOnlyOneItemInfo_Message" xml:space="preserve">
+    <value>Bạn chỉ được phép chọn duy nhất một mục cho thao tác này</value>
+  </data>
+  <data name="MessageBoxes_CanSelectOnlyOneItemInfo_Details" xml:space="preserve">
+    <value>Vui lòng chọn chính xác một bộ gỡ cài đặt trong danh sách. Nếu đang sử dụng các ô tích (checkbox), hãy đảm bảo rằng bạn đã tích chọn nó.</value>
+  </data>
+  <data name="MessageBoxes_Title_Search_for_updates" xml:space="preserve">
+    <value>Tìm kiếm bản cập nhật</value>
+  </data>
+  <data name="MessageBoxes_NoNetworkConnected_Open_online_content" xml:space="preserve">
+    <value>Mở nội dung trực tuyến</value>
+  </data>
+  <data name="MessageBoxes_NoNetworkConnected_Message" xml:space="preserve">
+    <value>Không thể kết nối Internet hoặc không có mạng.</value>
+  </data>
+  <data name="MessageBoxes_NoNetworkConnected_Details" xml:space="preserve">
+    <value>Hãy chắc chắn rằng cáp mạng của bạn đã được cắm chặt. Nếu bạn sử dụng Wi-Fi, hãy đảm bảo rằng bạn đang có cường độ tín hiệu tốt.</value>
+  </data>
+  <data name="MessageBoxes_Title_Submit_feedback" xml:space="preserve">
+    <value>Gửi phản hồi</value>
+  </data>
+  <data name="MessageBoxes_AskToSubmitFeedback_Message" xml:space="preserve">
+    <value>Bạn có muốn gửi phản hồi đóng góp ý kiến cho AnyU không?</value>
+  </data>
+  <data name="MessageBoxes_AskToSubmitFeedback_Details" xml:space="preserve">
+    <value>Sẽ mất chưa đầy một phút nhưng giúp ích rất lớn cho quá trình phát triển ứng dụng! Mọi phản hồi đều được trân trọng, cho dù đó là báo cáo lỗi, yêu cầu tính năng hay chỉ là một lời cảm ơn đơn giản!
+
+Bạn có thể gửi phản hồi sau từ thanh menu phía trên (Trợ giúp -&gt; Gửi phản hồi).</value>
+  </data>
+  <data name="MessageBoxes_UpdateUptodate_Message" xml:space="preserve">
+    <value>Phiên bản hiện tại đã là mới nhất</value>
+  </data>
+  <data name="MessageBoxes_UpdateUptodate_Details" xml:space="preserve">
+    <value>Không tìm thấy bản cập nhật nào vào lúc này, bạn đang dùng phiên bản mới nhất.
+
+Bạn có muốn đề xuất thêm tính năng hoặc báo cáo lỗi không? Hãy gửi phản hồi cho tôi bằng menu "Trợ giúp -&gt; Gửi phản hồi".</value>
+  </data>
+  <data name="MessageBoxes_UpdateFailed_Message" xml:space="preserve">
+    <value>Đã xảy ra lỗi trong quá trình kiểm tra cập nhật</value>
+  </data>
+  <data name="MessageBoxes_UpdateFailed_Details" xml:space="preserve">
+    <value>Vui lòng đảm bảo rằng AnyUninstaller không bị chặn bởi tường lửa (firewall) và kết nối Internet đang hoạt động ổn định.</value>
+  </data>
+  <data name="MessageBoxes_UpdateAskToDownload_Message" xml:space="preserve">
+    <value>Đã có phiên bản mới {0}, bạn có muốn nâng cấp ngay bây giờ không?</value>
+    <comment>0 is version number</comment>
+  </data>
+  <data name="MessageBoxes_UpdateAskToDownload_Details" xml:space="preserve">
+    <value>AnyUninstaller sẽ tự động tải xuống bản cập nhật và áp dụng sau khi khởi động lại. Lưu ý rằng các thiết lập cài đặt của bạn có thể bị mất trong quá trình này.
+
+Nhật ký thay đổi (Changelog):\n- {0}
+
+Cảnh báo: Trong quá trình cập nhật, thư mục "Update" và tệp "Update.zip" bên trong thư mục gốc của AnyU sẽ bị xóa bỏ.</value>
+    <comment>0 is a list of changes separated by "- "</comment>
+  </data>
+  <data name="MessageBoxes_UninstallMsiGuidMissing_Title" xml:space="preserve">
+    <value>Gỡ cài đặt bằng MSI</value>
+  </data>
+  <data name="MessageBoxes_UninstallMsiGuidMissing_Message" xml:space="preserve">
+    <value>Mục được chọn không thể gỡ cài đặt bằng trình gỡ MSIExec</value>
+  </data>
+  <data name="MessageBoxes_UninstallMsiGuidMissing_Details" xml:space="preserve">
+    <value>Trình gỡ cài đặt được chọn không chứa mã Guid hợp lệ để sử dụng với MsiExec.</value>
+  </data>
+  <data name="MessageBoxes_TaskStopConfirmation_Title" xml:space="preserve">
+    <value>Dừng tác vụ gỡ cài đặt hiện tại</value>
+  </data>
+  <data name="MessageBoxes_TaskStopConfirmation_Message" xml:space="preserve">
+    <value>Bạn có chắc chắn muốn dừng tác vụ gỡ cài đặt đang chạy không?</value>
+  </data>
+  <data name="MessageBoxes_TaskStopConfirmation_Details" xml:space="preserve">
+    <value>Việc dừng tác vụ đột ngột giữa chừng sẽ không đảo ngược các thay đổi đã thực hiện trước đó. Trình gỡ cài đặt hiện đang chạy sẽ không bị tắt ngay, tác vụ gỡ cài đặt của AnyU sẽ đợi cho tiến trình đó chạy xong rồi mới dừng hẳn.</value>
+  </data>
+  <data name="MessageBoxes_Title_Create_restore_point" xml:space="preserve">
+    <value>Tạo điểm khôi phục (Restore point)</value>
+  </data>
+  <data name="MessageBoxes_SysRestoreContinueAfterError_Message" xml:space="preserve">
+    <value>Tạo điểm khôi phục (restore point) thất bại</value>
+  </data>
+  <data name="Str64Bit" xml:space="preserve">
+    <value> x64</value>
+    <comment>keep space in front</comment>
+  </data>
+  <data name="StrDebug" xml:space="preserve">
+    <value> GỠ LỖI (DEBUG)</value>
+    <comment>keep space in front</comment>
+  </data>
+  <data name="MessageBoxes_CanWalkAwayInfo_Title" xml:space="preserve">
+    <value>Tiến trình gỡ cài đặt</value>
+  </data>
+  <data name="MessageBoxes_CanWalkAwayInfo_Message" xml:space="preserve">
+    <value>Bạn có thể rời khỏi máy tính ngay bây giờ</value>
+  </data>
+  <data name="MessageBoxes_CanWalkAwayInfo_Details" xml:space="preserve">
+    <value>Các trình gỡ cài đặt còn lại trong danh sách hàng đợi đã có thể tự hoàn thành mà không cần bất kỳ sự can thiệp nào của người dùng. Tuy nhiên, bạn vẫn nên kiểm tra lại đề phòng trường hợp một trong các bộ gỡ cài đặt bị sập (crash).</value>
+  </data>
+  <data name="MessageBoxes_Title_Junk_Leftover_removal" xml:space="preserve">
+    <value>Xoá bỏ rác/tàn dư</value>
+  </data>
+  <data name="MessageBoxes_ConfirmLowConfidenceQuestion_Message" xml:space="preserve">
+    <value>Bạn có thực sự muốn chỉnh sửa/xóa các mục có độ tin cậy thấp chứ?</value>
+  </data>
+  <data name="MessageBoxes_ConfirmLowConfidenceQuestion_Details" xml:space="preserve">
+    <value>Việc xóa các mục được đánh dấu độ tin cậy thấp có thể rất nguy hiểm! Khuyến nghị bạn nên kiểm tra kỹ từng mục một xem có thực sự an toàn để xóa hay không.</value>
+  </data>
+  <data name="MessageBoxes_DeleteRegKeysConfirmation_Title" xml:space="preserve">
+    <value>Xóa bỏ các khóa khỏi Registry</value>
+  </data>
+  <data name="MessageBoxes_DeleteRegKeysConfirmation_Message" xml:space="preserve">
+    <value>Bạn có chắc chắn muốn xóa các mục đã chọn không?</value>
+  </data>
+  <data name="MessageBoxes_DeleteRegKeysConfirmation_Details" xml:space="preserve">
+    <value>Các mục sau đây sẽ bị xóa hoàn toàn khỏi Registry và biến mất khỏi danh sách của AnyU, nhưng bản thân phần mềm sẽ KHÔNG bị gỡ cài đặt khỏi máy tính.
+
+{0}</value>
+  </data>
+  <data name="MessageBoxes_ExportFailed_Title" xml:space="preserve">
+    <value>Xuất dữ liệu thất bại</value>
+  </data>
+  <data name="MessageBoxes_ExportFailed_Message" xml:space="preserve">
+    <value>Đã gặp lỗi trong quá trình lưu dữ liệu xuất ra tệp</value>
+  </data>
+  <data name="MessageBoxes_ExportFailed_Details" xml:space="preserve">
+    <value>Nếu lỗi vẫn còn, hãy thử lưu vào một thư mục khác, ví dụ như "Desktop".</value>
+  </data>
+  <data name="MessageBoxes_GetSystemRestoreDescription" xml:space="preserve">
+    <value>AnyUninstaller đang tiến hành gỡ cài đặt {0} ứng dụng</value>
+    <comment>0 is the uninstaller count</comment>
+  </data>
+  <data name="MessageBoxes_Title_Rename_uninstaller" xml:space="preserve">
+    <value>Đổi tên trình gỡ cài đặt</value>
+  </data>
+  <data name="MessageBoxes_InvalidNewEntryName_Message" xml:space="preserve">
+    <value>Tên vừa nhập trống hoặc chứa các ký tự không hợp lệ.</value>
+  </data>
+  <data name="MessageBoxes_InvalidNewEntryName_Details" xml:space="preserve">
+    <value>Hãy đảm bảo rằng nó không chứa bất kỳ ký tự nào sau đây:
+{0}</value>
+    <comment>0 is list of characters separated by spaces</comment>
+  </data>
+  <data name="MessageBoxes_LookForJunkQuestion_Message" xml:space="preserve">
+    <value>Bạn có muốn tìm kiếm tàn dư/rác còn sót lại của (các) ứng dụng vừa gỡ cài đặt không?</value>
+  </data>
+  <data name="MessageBoxes_LookForJunkQuestion_Details" xml:space="preserve">
+    <value>Xin lưu ý rằng tính năng này chỉ dành cho những người dùng nâng cao đã hiểu rõ cách hoạt động của nó. Việc dọn dẹp các tệp tàn dư này không bắt buộc và chúng hoàn toàn không ảnh hưởng đáng kể đến hiệu suất hệ thống của bạn.</value>
+  </data>
+  <data name="MessageBoxes_NoJunkFoundInfo_Message" xml:space="preserve">
+    <value>Không tìm thấy bất kỳ tàn dư nào</value>
+  </data>
+  <data name="MessageBoxes_NoJunkFoundInfo_Details" xml:space="preserve">
+    <value>Không tìm thấy tàn dư phần mềm nào trên hệ thống. Tuy nhiên, vẫn có thể còn sót lại một số mảnh vụn nhỏ, bạn có thể chạy một công cụ dọn tệp tạm thời chuyên dụng như BleachBit.</value>
+  </data>
+  <data name="MessageBoxes_NothingToCopy_Message" xml:space="preserve">
+    <value>Không có dữ liệu nào để sao chép vào bộ nhớ tạm. Có thể do ứng dụng được chọn không chứa thông tin này hoặc bạn chưa chọn bất kỳ mục nào.</value>
+  </data>
+  <data name="MessageBoxes_Title_Copy_to_clipboard" xml:space="preserve">
+    <value>Sao chép vào bảng nhớ tạm</value>
+  </data>
+  <data name="MessageBoxes_Title_Open_directories" xml:space="preserve">
+    <value>Mở các thư mục</value>
+  </data>
+  <data name="MessageBoxes_OpenDirectoriesMessageBox_OpenMultiple" xml:space="preserve">
+    <value>Thao tác này sẽ mở {0} thư mục cùng một lúc, bạn có chắc là muốn tiếp tục không?</value>
+    <comment>0 is number of directories to open
+</comment>
+  </data>
+  <data name="MessageBoxes_Title_Search_online" xml:space="preserve">
+    <value>Tìm kiếm trực tuyến</value>
+  </data>
+  <data name="MessageBoxes_SearchOnlineMessageBox_NothingToSearchFor_Message" xml:space="preserve">
+    <value>Không có nội dung nào để tìm kiếm</value>
+  </data>
+  <data name="MessageBoxes_SelfUninstallQuestion_Title" xml:space="preserve">
+    <value>Gỡ cài đặt AnyUninstaller</value>
+  </data>
+  <data name="MessageBoxes_SelfUninstallQuestion_Message" xml:space="preserve">
+    <value>Bạn có chắc là muốn gỡ cài đặt AnyUninstaller không?</value>
+  </data>
+  <data name="MessageBoxes_SelfUninstallQuestion_Details" xml:space="preserve">
+    <value>Rất tiếc khi thấy bạn không còn sử dụng phần mềm nữa! Nếu bạn có vài phút rảnh rỗi, vui lòng để lại vài lời góp ý về lý do tại sao bạn gỡ cài đặt AnyU trên trang web của tôi (http://klocmansoftware.weebly.com/). Tôi sẽ cố gắng hết sức để khắc phục các sự cố này.</value>
+  </data>
+  <data name="MessageBoxes_SysRestoreBeginQuestion_Message" xml:space="preserve">
+    <value>Bạn có muốn tạo một điểm khôi phục (Restore point) trước khi tiếp tục không?</value>
+  </data>
+  <data name="MessageBoxes_SysRestoreBeginQuestion_Details" xml:space="preserve">
+    <value>Nếu bạn không chắc chắn liệu các ứng dụng mình sắp gỡ cài đặt có quan trọng hoặc cần thiết cho sự ổn định của hệ thống hay không, bạn nên tạo một điểm khôi phục.
+Nếu có bất kỳ sự cố nào xảy ra sau quá trình này, bạn có thể sử dụng tính năng System Restore của Windows để hoàn tác lại các thay đổi.</value>
+  </data>
+  <data name="MessageBoxes_SearchOnlineError_Message" xml:space="preserve">
+    <value>Đã xảy ra lỗi trong quá trình mở trang tìm kiếm trực tuyến</value>
+  </data>
+  <data name="MessageBoxes_Title_Save_Uninstall_List" xml:space="preserve">
+    <value>Lưu danh sách bộ lọc gỡ cài đặt</value>
+  </data>
+  <data name="MessageBoxes_SaveUninstallListError_Message" xml:space="preserve">
+    <value>Lưu danh sách vào tệp thất bại</value>
+  </data>
+  <data name="MessageBoxes_ResetSettingsConfirmation_Message" xml:space="preserve">
+    <value>Bạn có chắc là muốn thiết đặt lại toàn bộ cài đặt của ứng dụng về mặc định không?</value>
+  </data>
+  <data name="MessageBoxes_QuietUninstallersNotAvailableQuestion_Message" xml:space="preserve">
+    <value>Một số ứng dụng không hỗ trợ chế độ gỡ cài đặt yên lặng (Quiet)</value>
+  </data>
+  <data name="MessageBoxes_ProtectedItemsWarningQuestion_Message" xml:space="preserve">
+    <value>Một số mục đã được bảo vệ và không thể sửa đổi</value>
+  </data>
+  <data name="MessageBoxes_ProtectedItemError_Message" xml:space="preserve">
+    <value>Mục đã chọn được bảo vệ và không thể sửa đổi</value>
+  </data>
+  <data name="MessageBoxes_OpenUrlError_Message" xml:space="preserve">
+    <value>Đã xảy ra lỗi trong quá trình mở liên kết URL</value>
+  </data>
+  <data name="MessageBoxes_OpenUninstallListQuestion_Message" xml:space="preserve">
+    <value>Bạn có muốn giữ lại danh sách các mục hiện đang chọn không?</value>
+  </data>
+  <data name="MessageBoxes_OpenDirectoryError_Message" xml:space="preserve">
+    <value>Đã xảy ra lỗi trong quá trình mở thư mục</value>
+  </data>
+  <data name="MessageBoxes_OpenUninstallListError_Message" xml:space="preserve">
+    <value>Thất bại khi tải các tệp tin được chọn</value>
+  </data>
+  <data name="MessageBoxes_NoUninstallersSelectedInfo_Message" xml:space="preserve">
+    <value>Chưa có trình gỡ cài đặt nào được chọn nên không có gì để gỡ bỏ cả</value>
+  </data>
+  <data name="MessageBoxes_NoUninstallersSelectedInfo_Title" xml:space="preserve">
+    <value>Chạy trình gỡ cài đặt</value>
+  </data>
+  <data name="MessageBoxes_NoUninstallersSelectedInfo_Details" xml:space="preserve">
+    <value>Để gỡ cài đặt các ứng dụng, trước tiên bạn phải chọn chúng từ danh sách hiển thị. Nếu bạn sử dụng các ô tích (checkbox), hãy chắc chắn rằng chúng đã được tích chọn.</value>
+  </data>
+  <data name="MessageBoxes_OpenUninstallListQuestion_Details" xml:space="preserve">
+    <value>Nếu bạn chọn giữ lựa chọn hiện tại, nó sẽ được hợp nhất vào (các) danh sách đã mở sẵn.</value>
+  </data>
+  <data name="MessageBoxes_OpenUrlsMessageBox_OpenMultiple_Message" xml:space="preserve">
+    <value>Thao tác này sẽ mở {0} liên kết URL cùng một lúc, bạn có chắc là muốn tiếp tục không?</value>
+  </data>
+  <data name="MessageBoxes_Title_Open_urls" xml:space="preserve">
+    <value>Mở các liên kết URL</value>
+  </data>
+  <data name="MessageBoxes_OpenUrlsMessageBox_No_URLs_to_open_Title" xml:space="preserve">
+    <value>Không có liên kết URL nào để mở</value>
+  </data>
+  <data name="MessageBoxes_Title_Modify_protected_items" xml:space="preserve">
+    <value>Sửa đổi mục được bảo vệ</value>
+  </data>
+  <data name="MessageBoxes_ProtectedItemsWarningQuestion_Details" xml:space="preserve">
+    <value>Các mục bị ảnh hưởng:
+{0}
+
+Để sửa đổi các mục này, bạn cần phải tắt tính năng bảo vệ trình gỡ cài đặt từ thanh cài đặt ở thanh bên. Bạn có thể xóa những mục này khỏi tác vụ và tiếp tục với các mục khác nếu muốn.</value>
+    <comment>0 names of protected uninstallers</comment>
+  </data>
+  <data name="MessageBoxes_ProtectedItemError_Details" xml:space="preserve">
+    <value>Mục được bảo vệ: {0}
+
+Để sửa đổi mục này, bạn cần phải tắt tính năng bảo vệ trình gỡ cài đặt trong bảng cài đặt.</value>
+    <comment>0 name of protected uninstaller</comment>
+  </data>
+  <data name="MessageBoxes_QuietUninstallersNotAvailableQuestion_Details" xml:space="preserve">
+    <value>Các mục sau đây thiếu trình gỡ cài đặt yên lặng:
+{0}
+
+Bạn có muốn sử dụng trình gỡ cài đặt gốc cho những mục này, hay bạn muốn loại bỏ chúng khỏi tác vụ?</value>
+    <comment>0 is names of non-quiet uninstallers</comment>
+  </data>
+  <data name="MessageBoxes_Title_Quiet_uninstall" xml:space="preserve">
+    <value>Gỡ cài đặt yên lặng (Quiet)</value>
+  </data>
+  <data name="MessageBoxes_Title_Restore_default_settings" xml:space="preserve">
+    <value>Khôi phục các thiết đặt gốc</value>
+  </data>
+  <data name="MessageBoxes_ResetSettingsConfirmation_Details" xml:space="preserve">
+    <value>Tất cả các cài đặt của bạn sẽ bị mất vĩnh viễn. AnyUninstaller cần phải khởi động lại để hoàn tất thao tác này.</value>
+  </data>
+  <data name="MessageBoxes_Title_Open_Uninstall_List" xml:space="preserve">
+    <value>Mở danh sách bộ lọc gỡ cài đặt</value>
+  </data>
+  <data name="MessageBoxes_SysRestoreContinueAfterError_Details" xml:space="preserve">
+    <value>KHÔNG CÓ ĐIỂM KHÔI PHỤC NÀO ĐƯỢC TẠO, bạn sẽ không thể đảo ngược các thay đổi nếu xảy ra sự cố! Bạn có muốn tiếp tục quá trình gỡ cài đặt này không?</value>
+  </data>
+  <data name="MainWindow_Rename_Description" xml:space="preserve">
+    <value>Đang đổi tên "{0}"</value>
+  </data>
+  <data name="MainWindow_Rename_Title" xml:space="preserve">
+    <value>Đổi tên mục được chọn</value>
+  </data>
+  <data name="UninstallProgressWindow_TaskDone" xml:space="preserve">
+    <value>Tác vụ đã hoàn thành</value>
+    <comment>Shown on the status bar</comment>
+  </data>
+  <data name="UninstallProgressWindow_Uninstalling" xml:space="preserve">
+    <value>Đang gỡ cài đặt</value>
+    <comment>Shown on the status bar</comment>
+  </data>
+  <data name="MessageBoxes_RememberChoiceCheckbox" xml:space="preserve">
+    <value>Ghi nhớ lựa chọn</value>
+  </data>
+  <data name="PropertiesWindow_Table_Error" xml:space="preserve">
+    <value>Lỗi</value>
+  </data>
+  <data name="PropertiesWindow_Table_ErrorDoesntExist" xml:space="preserve">
+    <value>Tệp tin không tồn tại.</value>
+  </data>
+  <data name="PropertiesWindow_Table_ErrorMsi" xml:space="preserve">
+    <value>Không có gì để hiển thị. Ứng dụng này được gỡ cài đặt bằng MsiExec.</value>
+  </data>
+  <data name="PropertiesWindow_Table_Name" xml:space="preserve">
+    <value>Tên</value>
+  </data>
+  <data name="PropertiesWindow_Table_Value" xml:space="preserve">
+    <value>Giá trị</value>
+  </data>
+  <data name="Empty" xml:space="preserve">
+    <value>Trống</value>
+  </data>
+  <data name="GuidFound" xml:space="preserve">
+    <value>Tìm thấy GUID</value>
+  </data>
+  <data name="GuidMissing" xml:space="preserve">
+    <value>Thiếu GUID</value>
+  </data>
+  <data name="JunkRemove_SelectionBoxText" xml:space="preserve">
+    <value>Lựa chọn...</value>
+  </data>
+  <data name="Error_FileNotFound" xml:space="preserve">
+    <value>Không tìm thấy tệp tin.</value>
+  </data>
+  <data name="LoadingDialogTitlePostUninstallCommands" xml:space="preserve">
+    <value>Đang chạy các lệnh sau gỡ cài đặt (Post-uninstall)...</value>
+  </data>
+  <data name="LoadingDialogTitlePreUninstallCommands" xml:space="preserve">
+    <value>Đang chạy các lệnh trước gỡ cài đặt (Pre-uninstall)...</value>
+  </data>
+  <data name="MainWindow_Statusbar_StatusReady" xml:space="preserve">
+    <value>Sẵn sàng</value>
+    <comment>Shows up when nothing else is displayed on the status bar.</comment>
+  </data>
+  <data name="MainWindow_Statusbar_StatusSelection" xml:space="preserve">
+    <value>Đã chọn {0} trình gỡ cài đặt</value>
+    <comment>{0} is a number of selected uninstallers</comment>
+  </data>
+  <data name="MainWindow_Statusbar_Total" xml:space="preserve">
+    <value>Tổng cộng có {0} trình gỡ cài đặt, {1}</value>
+    <comment>{0} is a number of all uninstallers, {1} is a long file size (123 Megabytes)</comment>
+  </data>
+  <data name="MessageBoxes_ExternalCommandFailed_Message" xml:space="preserve">
+    <value>Lệnh sau đây đã gặp lỗi và không thể thực hiện:
+{0}</value>
+    <comment>{0} is a command line (c:\example.exe /help)</comment>
+  </data>
+  <data name="MessageBoxes_ExternalCommandFailed_Title" xml:space="preserve">
+    <value>Thực thi lệnh bên ngoài thất bại</value>
+  </data>
+  <data name="DefaultLanguage" xml:space="preserve">
+    <value>Mặc định</value>
+    <comment>Used in language select box when you want to use the system language</comment>
+  </data>
+  <data name="MessageBoxes_RestartNeededForSettingChangeQuestion_Details" xml:space="preserve">
+    <value>Một số cài đặt sẽ không có hiệu lực cho đến khi ứng dụng được khởi động lại hoàn toàn.</value>
+  </data>
+  <data name="MessageBoxes_RestartNeededForSettingChangeQuestion_Message" xml:space="preserve">
+    <value>Bạn có muốn khởi động lại AnyU ngay để áp dụng các cài đặt mới không?</value>
+  </data>
+  <data name="MessageBoxes_RestartNeededForSettingChangeQuestion_Title" xml:space="preserve">
+    <value>Thay đổi cài đặt ứng dụng</value>
+  </data>
+  <data name="PropertiesWindow_Table_ErrorNoCertificate" xml:space="preserve">
+    <value>Không có chứng chỉ số</value>
+  </data>
+  <data name="MainWindow_Statusbar_ProcessingUninstallers" xml:space="preserve">
+    <value>Đang xử lý các ứng dụng được phát hiện, còn lại {0}...</value>
+    <comment>{1} = how many application uninstallers still need to be processed</comment>
+  </data>
+  <data name="MessageBoxes_TaskSkip_Details" xml:space="preserve">
+    <value>Nếu chọn "Chấm dứt" thì cửa sổ gỡ cài đặt đang chạy sẽ bị đóng ngay lập tức và có thể dẫn đến việc gỡ cài đặt chưa được hoàn tất. Thông thường, bạn có thể chạy lại trình gỡ cài đặt đó sau này để hoàn thành lại.
+
+Hoặc bạn có thể chọn bỏ qua việc chờ đợi tiến trình này. Việc bỏ qua sẽ cho phép trình gỡ cài đặt tiếp tục chạy ngầm trong khi tác vụ của AnyU chuyển ngay sang mục tiếp theo. Hãy lưu ý rằng một số trình gỡ cài đặt tiếp theo có thể không chạy được cho đến khi tiến trình bị bỏ qua hoàn tất hoàn toàn.</value>
+  </data>
+  <data name="MessageBoxes_TaskSkip_Message" xml:space="preserve">
+    <value>Bạn có muốn bỏ qua việc chờ đợi trình gỡ cài đặt hiện đang chạy không?</value>
+  </data>
+  <data name="MessageBoxes_TaskSkip_Title" xml:space="preserve">
+    <value>Bỏ qua tác vụ hiện đang chạy</value>
+  </data>
+  <data name="MessageBoxes_UninstallAlreadyRunning_Message" xml:space="preserve">
+    <value>Một tác vụ gỡ cài đặt khác hiện đang được thực thi. Vui lòng chờ cho tác vụ đó hoàn tất và thử lại sau.</value>
+  </data>
+  <data name="JunkRemove_Details_Message" xml:space="preserve">
+    <value>Đánh giá: {0}
+
+Tích cực:
+{1}
+
+Tiêu cực:
+{2}</value>
+    <comment>{0} - Rating as a string
+{1} - List of strings of positive parts of the rating
+{2} - List of strings of negative parts of the rating
+The lists are separated by a single newline.</comment>
+  </data>
+  <data name="JunkRemove_Details_Title" xml:space="preserve">
+    <value>Chi tiết đánh giá</value>
+  </data>
+  <data name="PropertiesWindow_Table_ErrorMissingRegistry" xml:space="preserve">
+    <value>Ứng dụng này không có khóa thông tin Registry hợp lệ</value>
+  </data>
+  <data name="PropertiesWindow_Table_ErrorMissingUninstaller" xml:space="preserve">
+    <value>Ứng dụng này không có trình gỡ cài đặt hợp lệ</value>
+  </data>
+  <data name="LoadingDialogTitleLoadingWindowsFeatures" xml:space="preserve">
+    <value>Đang tải Windows Features...</value>
+  </data>
+  <data name="MainWindow_Statusbar_RefreshingStartup" xml:space="preserve">
+    <value>Đang làm mới thông tin khởi động...</value>
+    <comment>Shown when refreshing autostart information of the uninstallers</comment>
+  </data>
+  <data name="MessageBoxes_OpenDirectories_NoDirsToOpen" xml:space="preserve">
+    <value>Không có thư mục nào để mở</value>
+  </data>
+  <data name="NotAvailable" xml:space="preserve">
+    <value>Không khả dụng</value>
+    <comment>Used on application list when value is not available</comment>
+  </data>
+  <data name="MessageBoxes_RatingErrorTitle" xml:space="preserve">
+    <value>Đánh giá không có sẵn</value>
+  </data>
+  <data name="MessageBoxes_RatingsDisabled_Message" xml:space="preserve">
+    <value>Trước tiên, bạn cần bật tính năng đánh giá từ cài đặt.</value>
+  </data>
+  <data name="MessageBoxes_RatingUnavailable_Message" xml:space="preserve">
+    <value>Bạn không thể đánh giá các ứng dụng không được cài đặt đúng cách.</value>
+  </data>
+  <data name="RateTitle_Counted" xml:space="preserve">
+    <value>{0} ứng dụng</value>
+    <comment>{0} is number of apps to rate, "Rate " will be automatically put in front of this string</comment>
+  </data>
+  <data name="RatingEntry_ToString" xml:space="preserve">
+    <value>Đánh giá trung bình: {0}; Đánh giá của tôi: {1}</value>
+  </data>
+  <data name="MessageBoxes_ForceRunUninstallFailedError_Message" xml:space="preserve">
+    <value>Các bộ gỡ cài đặt sau đây không thể thực thi, rất có thể là do xung đột tiến trình chồng chéo. Vui lòng chờ các bộ gỡ cài đặt khác chạy xong rồi thử lại.
+{0}
+
+Bạn có thể thử tắt tính năng phát hiện xung đột trong phần cài đặt, nhưng hành động này không được khuyến nghị.</value>
+  </data>
+  <data name="MessageBoxes_ForceRunUninstallFailedError_Title" xml:space="preserve">
+    <value>Buộc gỡ cài đặt</value>
+  </data>
+  <data name="MessageBoxes_ForceRunUninstallFailedError_Header" xml:space="preserve">
+    <value>Không thể khởi chạy một số trình gỡ cài đặt</value>
+  </data>
+  <data name="MessageBoxes_Net4Missing_Title" xml:space="preserve">
+    <value>Không tìm thấy .NET Framework v4.0</value>
+  </data>
+  <data name="MessageBoxes_Net4Missing_Message" xml:space="preserve">
+    <value>Một số tính năng nâng cao sẽ bị vô hiệu hóa do không tìm thấy .NET Framework v4.0</value>
+  </data>
+  <data name="MessageBoxes_Net4Missing_Details" xml:space="preserve">
+    <value>.NET framework v4.0 là tùy chọn nhưng khuyến nghị nên được cài đặt. Các tính năng phụ thuộc vào framework sẽ bị vô hiệu hoá cho đến khi bạn cài đặt chúng.</value>
+  </data>
+  <data name="MessageBoxes_AskToRetryFailedQuietAsLoud_Title" xml:space="preserve">
+    <value>Một số trình gỡ cài đặt gặp lỗi</value>
+  </data>
+  <data name="MessageBoxes_AskToRetryFailedQuietAsLoud_Header" xml:space="preserve">
+    <value>Trình gỡ cài đặt yên lặng (Quiet) không thành công, bạn có muốn thử chạy trình gỡ cài đặt thông thường (Loud) không?</value>
+  </data>
+  <data name="MessageBoxes_AskToRetryFailedQuietAsLoud_Details" xml:space="preserve">
+    <value>Các trình gỡ cài đặt sau sẽ được khởi động lại ở chế độ hiển thị giao diện thông thường:</value>
+  </data>
+  <data name="UninstallFromDirectory_ScanningTitle" xml:space="preserve">
+    <value>Đang quét thư mục được chỉ định...</value>
+  </data>
+  <data name="UninstallFromDirectory_FolderBrowse" xml:space="preserve">
+    <value>Chọn thư mục chứa các ứng dụng mà bạn muốn gỡ bỏ.</value>
+  </data>
+  <data name="MessageBoxes_UninstallFromDirectory_Title" xml:space="preserve">
+    <value>Gỡ cài đặt từ thư mục</value>
+  </data>
+  <data name="MessageBoxes_UninstallFromDirectoryNothingFound_Message" xml:space="preserve">
+    <value>Không tìm thấy bất kỳ ứng dụng nào trong thư mục đã chọn</value>
+  </data>
+  <data name="MessageBoxes_UninstallFromDirectoryNothingFound_Details" xml:space="preserve">
+    <value>Hãy chắc chắn rằng bạn đã chọn đúng thư mục và các tệp tin thực thi (.exe) của ứng dụng vẫn còn.</value>
+  </data>
+  <data name="MessageBoxes_UninstallFromDirectoryUninstallerFound_Message" xml:space="preserve">
+    <value>Tìm thấy trình gỡ cài đặt của ứng dụng "{0}"</value>
+  </data>
+  <data name="MessageBoxes_UninstallFromDirectoryUninstallerFound_Details" xml:space="preserve">
+    <value>Bạn có muốn chạy trình gỡ cài đặt này không?</value>
+  </data>
+  <data name="Error_SaveSettingsFailed" xml:space="preserve">
+    <value>Không thể lưu các cài đặt thiết lập</value>
+  </data>
+  <data name="Progress_Finishing" xml:space="preserve">
+    <value>Đang hoàn tất các công đoạn cuối...</value>
+  </data>
+  <data name="Progress_Finishing_Icons" xml:space="preserve">
+    <value>Đang tải biểu tượng icon</value>
+  </data>
+  <data name="TargetWindow_NoFilesSelected_Title" xml:space="preserve">
+    <value>Tìm kiếm ứng dụng</value>
+  </data>
+  <data name="TargetWindow_NoFilesSelected_Message" xml:space="preserve">
+    <value>Không có tệp tin hoặc thư mục hợp lệ nào được chọn. Hãy đảm bảo bạn có quyền truy cập và chúng không phải là các tệp tin hệ thống được bảo vệ.</value>
+  </data>
+  <data name="Uninstaller_GetApplicationsFromDirectories_NothingFound_Title" xml:space="preserve">
+    <value>Tìm kiếm ứng dụng</value>
+  </data>
+  <data name="Uninstaller_GetApplicationsFromDirectories_NothingFound_Message" xml:space="preserve">
+    <value>Không tìm thấy bất kỳ ứng dụng nào nằm bên trong thư mục {0}</value>
+  </data>
+  <data name="MessageBoxes_ModifyCommandMissing_Title" xml:space="preserve">
+    <value>Sửa đổi ứng dụng</value>
+  </data>
+  <data name="MessageBoxes_ModifyCommandMissing_Message" xml:space="preserve">
+    <value>Không thể sửa đổi ứng dụng đã chọn</value>
+  </data>
+  <data name="MessageBoxes_ModifyCommandMissing_Details" xml:space="preserve">
+    <value>Không có câu lệnh sửa đổi nào được chỉ định cho ứng dụng đã chọn. Bạn có thể cần phải gỡ cài đặt và cài đặt lại từ đầu để thay đổi các thiết đặt của nó.</value>
+  </data>
+  <data name="MessageBoxes_AskToSaveUninstallList_Title" xml:space="preserve">
+    <value>Lưu danh sách gỡ cài đặt</value>
+  </data>
+  <data name="MessageBoxes_AskToSaveUninstallList_Message" xml:space="preserve">
+    <value>Bạn có muốn lưu các thay đổi vào danh sách gỡ cài đặt đang mở không?</value>
+  </data>
+  <data name="MessageBoxes_AskToSaveUninstallList_Details" xml:space="preserve">
+    <value>Có những thay đổi chưa được lưu trong danh sách gỡ cài đặt đang mở và sẽ bị mất khi đóng lại.</value>
+  </data>
+  <data name="FileTargeter_SelectDirectoryWithAppsToRemove" xml:space="preserve">
+    <value>Chọn thư mục chứa các ứng dụng mà bạn muốn gỡ cài đặt.</value>
+  </data>
+  <data name="JunkRemoveWindow_SelectBackupDirectoryTitle" xml:space="preserve">
+    <value>Chọn nơi để lưu bản sao lưu. Một thư mục mới sẽ được tạo.</value>
+  </data>
+  <data name="NewsPopup_UpdatedTitle" xml:space="preserve">
+    <value>AnyU đã được cập nhật lên v{0}!</value>
+  </data>
+  <data name="NewsPopup_FirstStartTitle" xml:space="preserve">
+    <value>Chào mừng bạn đến với AnyU phiên bản {0}!</value>
+  </data>
+  <data name="UninstallProgressWindow_StatusPuttingToSleepInSeconds" xml:space="preserve">
+    <value>Máy tính sẽ chuyển sang chế độ ngủ (Sleep) sau {0} giây nữa. Bỏ tích để hủy bỏ.</value>
+  </data>
+  <data name="UninstallerListDoubleClickAction_DoNothing" xml:space="preserve">
+    <value>Không làm gì cả</value>
+    <comment>Option for "Double clicking in application list..."</comment>
+  </data>
+  <data name="UninstallerListDoubleClickAction_Properties" xml:space="preserve">
+    <value>Mở thuộc tính</value>
+    <comment>Option for "Double clicking in application list..."</comment>
+  </data>
+  <data name="UninstallerListDoubleClickAction_Uninstall" xml:space="preserve">
+    <value>Gỡ cài đặt</value>
+    <comment>Option for "Double clicking in application list..."</comment>
+  </data>
+  <data name="LocalizedX509Certificate2_Archived" xml:space="preserve">
+    <value>Đã lưu trữ (Archived)</value>
+  </data>
+  <data name="LocalizedX509Certificate2_Issuer" xml:space="preserve">
+    <value>Đơn vị cấp phát (Issuer)</value>
+  </data>
+  <data name="LocalizedX509Certificate2_Subject" xml:space="preserve">
+    <value>Đối tượng được cấp (Subject)</value>
+  </data>
+  <data name="LocalizedX509Certificate2_Extensions" xml:space="preserve">
+    <value>Các phần mở rộng (Extensions)</value>
+  </data>
+  <data name="LocalizedX509Certificate2_FriendlyName" xml:space="preserve">
+    <value>Tên dễ nhớ (Friendly Name)</value>
+  </data>
+  <data name="LocalizedX509Certificate2_IssuerName" xml:space="preserve">
+    <value>Tên đơn vị cấp phát</value>
+  </data>
+  <data name="LocalizedX509Certificate2_NotAfter" xml:space="preserve">
+    <value>Có hiệu lực đến ngày (Not After)</value>
+  </data>
+  <data name="LocalizedX509Certificate2_NotBefore" xml:space="preserve">
+    <value>Có hiệu lực từ ngày (Not Before)</value>
+  </data>
+  <data name="LocalizedX509Certificate2_PrivateKey" xml:space="preserve">
+    <value>Khóa bí mật (Private Key)</value>
+  </data>
+  <data name="LocalizedX509Certificate2_HasPrivateKey" xml:space="preserve">
+    <value>Có chứa khóa bí mật</value>
+  </data>
+  <data name="LocalizedX509Certificate2_PublicKey" xml:space="preserve">
+    <value>Khóa công khai (Public Key)</value>
+  </data>
+  <data name="LocalizedX509Certificate2_RawData" xml:space="preserve">
+    <value>Dữ liệu thô (Raw Data)</value>
+  </data>
+  <data name="LocalizedX509Certificate2_SerialNumber" xml:space="preserve">
+    <value>Số sê-ri (Serial Number)</value>
+  </data>
+  <data name="LocalizedX509Certificate2_SubjectName" xml:space="preserve">
+    <value>Tên đối tượng được cấp</value>
+  </data>
+  <data name="LocalizedX509Certificate2_Version" xml:space="preserve">
+    <value>Phiên bản chứng chỉ</value>
+  </data>
+  <data name="LocalizedX509Certificate2_Thumbprint" xml:space="preserve">
+    <value>Mã băm chứng chỉ (Thumbprint)</value>
+  </data>
+  <data name="LocalizedX509Certificate2_SignatureAlgorithm" xml:space="preserve">
+    <value>Thuật toán ký chữ ký số</value>
+  </data>
+  <data name="MessageBoxes_CantRenameUninstallerKind_Title" xml:space="preserve">
+    <value>Không thể đổi tên mục {0}</value>
+  </data>
+  <data name="MessageBoxes_CantRenameUninstallerKind_Details" xml:space="preserve">
+    <value>Loại trình gỡ cài đặt này không hỗ trợ tính năng đổi tên ({0}).</value>
+  </data>
+</root>

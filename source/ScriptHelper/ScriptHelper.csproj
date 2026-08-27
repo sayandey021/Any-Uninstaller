@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+
+		<AssemblyTitle>Provides various registry tweaks and scripts to AnyU</AssemblyTitle>
+
+		<StartupObject>ScriptHelper.Program</StartupObject>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\KlocTools\KlocTools.csproj" />
+	</ItemGroup>
+</Project>

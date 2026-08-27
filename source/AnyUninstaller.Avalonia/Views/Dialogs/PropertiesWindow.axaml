@@ -1,0 +1,140 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AnyUninstaller.Avalonia.ViewModels"
+        x:Class="AnyUninstaller.Avalonia.Views.Dialogs.PropertiesWindow"
+        x:DataType="vm:PropertiesViewModel"
+        Title="{Binding WindowTitle}"
+        Icon="/Assets/logo.ico"
+        Width="920" Height="620"
+        Background="{DynamicResource AppBgBrush}"
+        CanResize="True"
+        WindowStartupLocation="CenterOwner">
+
+    <Window.Styles>
+        <Style Selector="TabControl">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        <Style Selector="TabItem">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Padding" Value="14,8"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+        </Style>
+        <Style Selector="TabItem:selected">
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryAccentBrush}"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="*,Auto" Margin="14">
+        <!-- Main Tabbed Detail Area -->
+        <Border Grid.Row="0" Classes="card" Padding="8">
+            <TabControl x:Name="MainTabControl">
+                <!-- TAB 1: OVERVIEW -->
+                <TabItem Header="Overview">
+                    <DataGrid x:Name="OverviewDataGrid"
+                              ItemsSource="{Binding OverviewItems}"
+                              AutoGenerateColumns="False"
+                              CanUserResizeColumns="True"
+                              CanUserSortColumns="True"
+                              GridLinesVisibility="All"
+                              IsReadOnly="True"
+                              SelectionMode="Extended"
+                              Margin="0,6,0,0">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="250" CanUserSort="True"/>
+                            <DataGridTemplateColumn Header="Value" Width="*" CanUserSort="True">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate DataType="vm:PropertyItemViewModel">
+                                        <SelectableTextBlock Text="{Binding Value}" VerticalAlignment="Center" Margin="2,0" TextTrimming="CharacterEllipsis"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </TabItem>
+
+                <!-- TAB 2: UNINSTALLER INFORMATION -->
+                <TabItem Header="Uninstaller information">
+                    <DataGrid x:Name="UninstallerDataGrid"
+                              ItemsSource="{Binding UninstallerItems}"
+                              AutoGenerateColumns="False"
+                              CanUserResizeColumns="True"
+                              CanUserSortColumns="True"
+                              GridLinesVisibility="All"
+                              IsReadOnly="True"
+                              SelectionMode="Extended"
+                              Margin="0,6,0,0">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="250" CanUserSort="True"/>
+                            <DataGridTemplateColumn Header="Value" Width="*" CanUserSort="True">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate DataType="vm:PropertyItemViewModel">
+                                        <SelectableTextBlock Text="{Binding Value}" VerticalAlignment="Center" Margin="2,0" TextTrimming="CharacterEllipsis"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </TabItem>
+
+                <!-- TAB 3: REGISTRY -->
+                <TabItem Header="Registry">
+                    <DataGrid x:Name="RegistryDataGrid"
+                              ItemsSource="{Binding RegistryItems}"
+                              AutoGenerateColumns="False"
+                              CanUserResizeColumns="True"
+                              CanUserSortColumns="True"
+                              GridLinesVisibility="All"
+                              IsReadOnly="True"
+                              SelectionMode="Extended"
+                              Margin="0,6,0,0">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="250" CanUserSort="True"/>
+                            <DataGridTemplateColumn Header="Value" Width="*" CanUserSort="True">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate DataType="vm:PropertyItemViewModel">
+                                        <SelectableTextBlock Text="{Binding Value}" VerticalAlignment="Center" Margin="2,0" TextTrimming="CharacterEllipsis"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </TabItem>
+
+                <!-- TAB 4: CERTIFICATE -->
+                <TabItem Header="Certificate">
+                    <DataGrid x:Name="CertificateDataGrid"
+                              ItemsSource="{Binding CertificateItems}"
+                              AutoGenerateColumns="False"
+                              CanUserResizeColumns="True"
+                              CanUserSortColumns="True"
+                              GridLinesVisibility="All"
+                              IsReadOnly="True"
+                              SelectionMode="Extended"
+                              Margin="0,6,0,0">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="250" CanUserSort="True"/>
+                            <DataGridTemplateColumn Header="Value" Width="*" CanUserSort="True">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate DataType="vm:PropertyItemViewModel">
+                                        <SelectableTextBlock Text="{Binding Value}" VerticalAlignment="Center" Margin="2,0" TextTrimming="CharacterEllipsis"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </TabItem>
+            </TabControl>
+        </Border>
+
+        <!-- Bottom Action Bar -->
+        <Border Grid.Row="1" Margin="0,12,0,0">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <Button Grid.Column="0" Content="📋 Copy Tab to Clipboard" Classes="toolbar" Click="OnCopyTabClick"/>
+                <Button Grid.Column="2" Content="Close" Classes="action-quiet" Width="100" Click="OnCloseClick"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

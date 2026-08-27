@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<AssemblyName>AnyUninstaller.Avalonia</AssemblyName>
+		<Product>Any Uninstaller</Product>
+		<AssemblyTitle>Any Uninstaller</AssemblyTitle>
+		<ApplicationIcon>Assets\logo.ico</ApplicationIcon>
+		<Nullable>enable</Nullable>
+		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+		<ApplicationManifest>..\app.manifest</ApplicationManifest>
+		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia" Version="11.2.3" />
+		<PackageReference Include="Avalonia.Desktop" Version="11.2.3" />
+		<PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.3" />
+		<PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.3" />
+		<PackageReference Include="Avalonia.Controls.DataGrid" Version="11.2.3" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<AvaloniaResource Include="Assets\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\KlocTools\KlocTools.csproj" />
+		<ProjectReference Include="..\NetSettingBinder\NetSettingBinder.csproj" />
+		<ProjectReference Include="..\PortableSettingsProvider\PortableSettingsProvider.csproj" />
+		<ProjectReference Include="..\SimpleTreeMap\SimpleTreeMap.csproj" />
+		<ProjectReference Include="..\UninstallTools\UninstallTools.csproj" />
+		<ProjectReference Include="..\UninstallerAutomatizer\UninstallerAutomatizer.csproj" />
+		<ProjectReference Include="..\UniversalUninstaller\UniversalUninstaller.csproj" />
+		<ProjectReference Include="..\StoreAppHelper\StoreAppHelper.csproj" />
+		<ProjectReference Include="..\SteamHelper\SteamHelper.csproj" />
+		<ProjectReference Include="..\OculusHelper\OculusHelper.csproj" />
+	</ItemGroup>
+</Project>

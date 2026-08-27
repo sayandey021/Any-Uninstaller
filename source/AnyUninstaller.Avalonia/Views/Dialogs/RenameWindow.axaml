@@ -1,0 +1,24 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="AnyUninstaller.Avalonia.Views.Dialogs.RenameWindow"
+        Title="Rename Entry — Any Uninstaller"
+        Icon="/Assets/logo.ico"
+        Width="480" Height="220"
+        Background="{DynamicResource AppBgBrush}"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner">
+
+    <Border Margin="16" Classes="card" Padding="20">
+        <Grid RowDefinitions="Auto,Auto,*,Auto">
+            <TextBlock Grid.Row="0" Text="✏️ Rename Application Entry" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,8"/>
+            <TextBlock Grid.Row="1" Text="Enter a new display name for this application registry entry:" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,12"/>
+
+            <TextBox Grid.Row="2" x:Name="NameTextBox" Height="34" VerticalContentAlignment="Center" Margin="0,0,0,16"/>
+
+            <Grid Grid.Row="3" ColumnDefinitions="*,Auto,Auto">
+                <Button Grid.Column="1" Content="Cancel" Classes="toolbar" Width="90" Margin="0,0,10,0" Click="OnCancelClick"/>
+                <Button Grid.Column="2" Content="Rename" Classes="action-quiet" Width="100" Click="OnRenameClick"/>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

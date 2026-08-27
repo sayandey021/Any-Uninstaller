@@ -1,0 +1,83 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AnyUninstaller.Avalonia.ViewModels"
+        x:Class="AnyUninstaller.Avalonia.Views.Dialogs.JunkRemoveWindow"
+        x:DataType="vm:JunkRemovalViewModel"
+        Title="Clean Leftover Junk"
+        Icon="/Assets/logo.ico"
+        Width="900" Height="550"
+        MinWidth="750" MinHeight="450"
+        Background="{DynamicResource AppBgBrush}"
+        WindowStartupLocation="CenterOwner">
+
+    <DockPanel LastChildFill="True" Margin="16">
+        <!-- Top Title & Toolbar Card -->
+        <Border DockPanel.Dock="Top" Classes="card" Padding="12" Margin="0,0,0,12">
+            <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto">
+                <TextBlock Grid.Column="0" Text="🧹 Residual Junk Items" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource PrimaryAccentBrush}" VerticalAlignment="Center" Margin="0,0,16,0"/>
+                
+                <!-- Merged Select All / None Toggle Button -->
+                <Button Grid.Column="1" Classes="toolbar" Command="{Binding ToggleSelectAllCommand}"
+                        ToolTip.Tip="{Binding ToggleSelectAllTooltip}" Margin="0,0,10,0">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBlock Text="{Binding ToggleSelectAllIcon}" FontWeight="Bold" FontSize="11"/>
+                        <TextBlock Text="{Binding ToggleSelectAllText}"/>
+                    </StackPanel>
+                </Button>
+                
+                <!-- Selection Badge -->
+                <Border Grid.Column="2" Background="{DynamicResource CardHoverBrush}" CornerRadius="12" Padding="10,4" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding SelectionSummaryText}" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryAccentBrush}"/>
+                </Border>
+
+                <TextBlock Grid.Column="3" Text="{Binding StatusMessage}" VerticalAlignment="Center" Margin="16,0"
+                           Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" TextTrimming="CharacterEllipsis"/>
+            </Grid>
+        </Border>
+
+        <!-- Bottom Controls -->
+        <Border DockPanel.Dock="Bottom" Padding="0,12,0,0">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                <ProgressBar Grid.Column="0" IsIndeterminate="True" IsVisible="{Binding IsBusy}" Width="150" Height="10" VerticalAlignment="Center" Margin="0,0,16,0" Foreground="#f85149"/>
+                <TextBlock Grid.Column="1" Text="{Binding SelectionSummaryText}" VerticalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12"/>
+                <Button Grid.Column="2" Content="{Binding DeleteButtonText}" Command="{Binding DeleteSelectedJunkCommand}"
+                        IsEnabled="{Binding CanDelete}"
+                        Classes="action-uninstall" Margin="0,0,8,0"/>
+                <Button Grid.Column="3" Content="Close" Classes="toolbar" Click="OnCloseClick" Width="90"/>
+            </Grid>
+        </Border>
+
+        <!-- Junk List Card -->
+        <Border Classes="card" Padding="4">
+            <DataGrid ItemsSource="{Binding JunkItems}"
+                      AutoGenerateColumns="False"
+                      CanUserResizeColumns="True"
+                      CanUserReorderColumns="True"
+                      ScrollViewer.VerticalScrollBarVisibility="Visible"
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                <DataGrid.Columns>
+                    <DataGridCheckBoxColumn Header="✓" Binding="{Binding IsChecked}" Width="42"/>
+                    <DataGridTextColumn Header="Type" Binding="{Binding JunkType}" Width="110"/>
+                    <DataGridTextColumn Header="Path / Key" Binding="{Binding DisplayName}" Width="2*" MinWidth="200"/>
+                    <DataGridTextColumn Header="Application" Binding="{Binding ApplicationName}" Width="1.2*" MinWidth="130"/>
+                    <DataGridTextColumn Header="Confidence" Binding="{Binding Confidence}" Width="100"/>
+                    <DataGridTemplateColumn Header="Status" Width="120">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="vm:JunkEntryViewModel">
+                                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="4,2">
+                                    <Border Classes="chip" Padding="6,2"
+                                            Background="{Binding HasError, Converter={x:Null}}"
+                                            ToolTip.Tip="{Binding ErrorMessage}">
+                                        <TextBlock Text="{Binding Status}" FontSize="11"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{Binding HasError, Converter={x:Null}}"/>
+                                    </Border>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+    </DockPanel>
+</Window>

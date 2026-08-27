@@ -1,0 +1,467 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AnyUninstaller.Avalonia.ViewModels"
+        x:Class="AnyUninstaller.Avalonia.Views.Dialogs.SettingsWindow"
+        x:DataType="vm:SettingsViewModel"
+        Title="Settings — Any Uninstaller"
+        Icon="/Assets/logo.ico"
+        Width="860" Height="590"
+        Background="{DynamicResource AppBgBrush}"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="*,Auto" Margin="16">
+        <!-- Main Body: Master-Detail Settings Layout -->
+        <Grid Grid.Row="0" ColumnDefinitions="200,12,*">
+            <!-- 1. LEFT NAVIGATION SIDEBAR CARD -->
+            <Border Grid.Column="0" Classes="card" Padding="10">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="⚙️ Settings" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="10,8,10,14"/>
+
+                    <ListBox SelectedIndex="{Binding SelectedCategoryIndex, Mode=TwoWay}"
+                             Background="Transparent" BorderThickness="0">
+                        <ListBox.Styles>
+                            <Style Selector="ListBoxItem">
+                                <Setter Property="CornerRadius" Value="8"/>
+                                <Setter Property="Margin" Value="2,3"/>
+                                <Setter Property="Padding" Value="12,10"/>
+                                <Setter Property="FontWeight" Value="Medium"/>
+                                <Setter Property="FontSize" Value="13"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                <Setter Property="Transitions">
+                                    <Transitions>
+                                        <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                                        <BrushTransition Property="Foreground" Duration="0:0:0.15"/>
+                                    </Transitions>
+                                </Setter>
+                            </Style>
+                            <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+                                <Setter Property="Background" Value="{DynamicResource CardInnerBorderBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                            </Style>
+                            <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+                                <Setter Property="Background" Value="{DynamicResource PrimaryAccentBrush}"/>
+                                <Setter Property="Foreground" Value="#ffffff"/>
+                            </Style>
+                        </ListBox.Styles>
+
+                        <ListBoxItem>
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <TextBlock Text="⚙️" FontSize="14"/>
+                                <TextBlock Text="General" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+
+                        <ListBoxItem>
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <TextBlock Text="🔍" FontSize="14"/>
+                                <TextBlock Text="Scanner &amp; Detection" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+
+                        <ListBoxItem>
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <TextBlock Text="📋" FontSize="14"/>
+                                <TextBlock Text="Column Visibility" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+
+                        <ListBoxItem>
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <TextBlock Text="🚀" FontSize="14"/>
+                                <TextBlock Text="Automation" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+
+                        <ListBoxItem>
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <TextBlock Text="🎨" FontSize="14"/>
+                                <TextBlock Text="Appearance" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+
+                        <ListBoxItem>
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <TextBlock Text="ℹ️" FontSize="14"/>
+                                <TextBlock Text="About &amp; Info" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+                    </ListBox>
+                </DockPanel>
+            </Border>
+
+            <!-- 2. RIGHT CONTENT AREA CARD -->
+            <Border Grid.Column="2" Classes="card" Padding="20,18,20,18" ClipToBounds="True">
+                <Carousel SelectedIndex="{Binding SelectedCategoryIndex}">
+                    <!-- PAGE 0: GENERAL -->
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="General Preferences" Classes="setting-section" Margin="0,0,0,12"/>
+
+                            <Border Classes="setting-card">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center" Margin="0,0,20,0">
+                                        <TextBlock Text="Confirm Before Uninstallation" Classes="setting-title"/>
+                                        <TextBlock Text="Display a confirmation summary dialog before batch uninstallation starts." Classes="setting-desc"/>
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding ConfirmBeforeUninstall, Mode=TwoWay}" OnContent="" OffContent="" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Classes="setting-card">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center" Margin="0,0,20,0">
+                                        <TextBlock Text="Pre-cache Application Icons" Classes="setting-title"/>
+                                        <TextBlock Text="Extract icons in advance to maximize list scrolling responsiveness." Classes="setting-desc"/>
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding PrecacheIcons, Mode=TwoWay}" OnContent="" OffContent="" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Classes="setting-card">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center" Margin="0,0,20,0">
+                                        <TextBlock Text="Automatic Post-Uninstall Cleanup" Classes="setting-title"/>
+                                        <TextBlock Text="Scan for residual files, directories, and registry items immediately after uninstall." Classes="setting-desc"/>
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding AutoScanJunkAfterUninstall, Mode=TwoWay}" OnContent="" OffContent="" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Classes="setting-card">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center" Margin="0,0,20,0">
+                                        <TextBlock Text="Show Selection Checkbox Column" Classes="setting-title"/>
+                                        <TextBlock Text="Show or hide the leading checkbox (✓) column in the applications list for batch selection." Classes="setting-desc"/>
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding ShowColumnCheckboxes, Mode=TwoWay}" OnContent="" OffContent="" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- PAGE 1: SCANNER & DETECTION -->
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Scanner &amp; Detection Settings" Classes="setting-section" Margin="0,0,0,12"/>
+
+                            <Border Classes="setting-card">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center" Margin="0,0,20,0">
+                                        <TextBlock Text="Drive Orphan Scanning (ScanDrives)" Classes="setting-title"/>
+                                        <TextBlock Text="Deep scan drive folders to discover orphaned, unregistered, and corrupted programs." Classes="setting-desc"/>
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding ScanDrives, Mode=TwoWay}" OnContent="" OffContent="" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Classes="setting-card">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center" Margin="0,0,20,0">
+                                        <TextBlock Text="Auto-Detect Custom Program Directories" Classes="setting-title"/>
+                                        <TextBlock Text="Detect custom install directories (e.g. Games, PortableApps, AppData)." Classes="setting-desc"/>
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding AutoDetectCustomProgramFiles, Mode=TwoWay}" OnContent="" OffContent="" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Classes="setting-card">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center" Margin="0,0,20,0">
+                                        <TextBlock Text="Scan Windows Store (UWP) Packages" Classes="setting-title"/>
+                                        <TextBlock Text="Enumerate packaged Microsoft Store and modern Windows applications." Classes="setting-desc"/>
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding ScanStoreApps, Mode=TwoWay}" OnContent="" OffContent="" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Classes="setting-card">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center" Margin="0,0,20,0">
+                                        <TextBlock Text="Scan System Components &amp; Runtimes" Classes="setting-title"/>
+                                        <TextBlock Text="Include system components, DirectX, Visual C++ redistributables, and runtimes." Classes="setting-desc"/>
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding ScanSystemComponents, Mode=TwoWay}" OnContent="" OffContent="" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Classes="setting-card">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center" Margin="0,0,20,0">
+                                        <TextBlock Text="Scan Protected Software" Classes="setting-title"/>
+                                        <TextBlock Text="Show packages flagged with protected or no-remove status." Classes="setting-desc"/>
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding ScanProtectedItems, Mode=TwoWay}" OnContent="" OffContent="" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- PAGE 2: COLUMN VISIBILITY -->
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0">
+                        <StackPanel Spacing="8">
+                            <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,12">
+                                <TextBlock Grid.Column="0" Text="Table Column Visibility" Classes="setting-section" Margin="0"/>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                    <Button Content="Show All" Classes="preset-pill" Command="{Binding ShowAllColumnsCommand}"/>
+                                    <Button Content="Reset Default" Classes="preset-pill" Command="{Binding ResetDefaultColumnsCommand}"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <Border Classes="setting-card">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center" Margin="0,0,20,0">
+                                        <TextBlock Text="Publisher / Author" Classes="setting-title"/>
+                                        <TextBlock Text="Show application publisher, company, or developer name." Classes="setting-desc"/>
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding ShowColumnPublisher, Mode=TwoWay}" OnContent="" OffContent="" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Classes="setting-card">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center" Margin="0,0,20,0">
+                                        <TextBlock Text="Version Number" Classes="setting-title"/>
+                                        <TextBlock Text="Display release version strings and build identifiers." Classes="setting-desc"/>
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding ShowColumnVersion, Mode=TwoWay}" OnContent="" OffContent="" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Classes="setting-card">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center" Margin="0,0,20,0">
+                                        <TextBlock Text="Estimated Size" Classes="setting-title"/>
+                                        <TextBlock Text="Show calculated or registered application disk footprint." Classes="setting-desc"/>
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding ShowColumnSize, Mode=TwoWay}" OnContent="" OffContent="" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Classes="setting-card">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center" Margin="0,0,20,0">
+                                        <TextBlock Text="Status &amp; Health Badge" Classes="setting-title"/>
+                                        <TextBlock Text="Display integrity status pills (Verified, Orphaned, Invalid, System, Protected)." Classes="setting-desc"/>
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding ShowColumnStatus, Mode=TwoWay}" OnContent="" OffContent="" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Classes="setting-card">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center" Margin="0,0,20,0">
+                                        <TextBlock Text="Installation Date" Classes="setting-title"/>
+                                        <TextBlock Text="Show the date when the program was installed on your PC." Classes="setting-desc"/>
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding ShowColumnInstallDate, Mode=TwoWay}" OnContent="" OffContent="" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Classes="setting-card">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center" Margin="0,0,20,0">
+                                        <TextBlock Text="Uninstaller Type / Kind" Classes="setting-title"/>
+                                        <TextBlock Text="Identify uninstaller technology (InnoSetup, NSIS, MSI, StoreApp, Steam, etc.)." Classes="setting-desc"/>
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding ShowColumnType, Mode=TwoWay}" OnContent="" OffContent="" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Classes="setting-card">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center" Margin="0,0,20,0">
+                                        <TextBlock Text="Quiet Uninstall Support (⚡)" Classes="setting-title"/>
+                                        <TextBlock Text="Indicate whether the application supports silent unattended uninstallation." Classes="setting-desc"/>
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding ShowColumnQuiet, Mode=TwoWay}" OnContent="" OffContent="" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Classes="setting-card">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center" Margin="0,0,20,0">
+                                        <TextBlock Text="Installation Directory / Location" Classes="setting-title"/>
+                                        <TextBlock Text="Display the file system path where the program files reside." Classes="setting-desc"/>
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding ShowColumnLocation, Mode=TwoWay}" OnContent="" OffContent="" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- PAGE 3: AUTOMATION -->
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Uninstaller Automation" Classes="setting-section" Margin="0,0,0,12"/>
+
+                            <Border Classes="setting-card">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center" Margin="0,0,20,0">
+                                        <TextBlock Text="Default to Quiet Uninstallation" Classes="setting-title"/>
+                                        <TextBlock Text="Automatically invoke unattended / silent mode whenever supported by the installer." Classes="setting-desc"/>
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding DefaultQuietUninstall, Mode=TwoWay}" OnContent="" OffContent="" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Classes="setting-card">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center" Margin="0,0,20,0">
+                                        <TextBlock Text="Kill Stuck Processes Automatically" Classes="setting-title"/>
+                                        <TextBlock Text="Terminate unresponsive uninstaller processes after a safety timeout period." Classes="setting-desc"/>
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding AutoKillStuckProcesses, Mode=TwoWay}" OnContent="" OffContent="" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Classes="setting-card">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center" Margin="0,0,20,0">
+                                        <TextBlock Text="Create System Restore Point" Classes="setting-title"/>
+                                        <TextBlock Text="Create a Windows System Restore Point prior to initiating bulk uninstallation." Classes="setting-desc"/>
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding CreateRestorePoint, Mode=TwoWay}" OnContent="" OffContent="" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- PAGE 4: APPEARANCE -->
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Appearance &amp; Personalization" Classes="setting-section" Margin="0,0,0,12"/>
+
+                            <Border Classes="setting-card">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center" Margin="0,0,20,0">
+                                        <TextBlock Text="Application Theme" Classes="setting-title"/>
+                                        <TextBlock Text="Choose between modern dark palettes or OLED high-contrast." Classes="setting-desc"/>
+                                    </StackPanel>
+                                    <ComboBox Grid.Column="1" SelectedIndex="{Binding SelectedThemeIndex, Mode=TwoWay}" Width="160" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                        <ComboBoxItem Content="Use System Theme"/>
+                                        <ComboBoxItem Content="Light Mode"/>
+                                        <ComboBoxItem Content="Dark Mode"/>
+                                        <ComboBoxItem Content="Midnight Blue"/>
+                                        <ComboBoxItem Content="OLED Black"/>
+                                    </ComboBox>
+                                </Grid>
+                            </Border>
+
+                            <Border Classes="setting-card">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center" Margin="0,0,20,0">
+                                        <TextBlock Text="Smooth UI Transitions &amp; Animations" Classes="setting-title"/>
+                                        <TextBlock Text="Enable interactive hover highlights, card elevation, and smooth transitions." Classes="setting-desc"/>
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding EnableAnimations, Mode=TwoWay}" OnContent="" OffContent="" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Classes="setting-card">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center" Margin="0,0,20,0">
+                                        <TextBlock Text="Interactive Storage TreeMap" Classes="setting-title"/>
+                                        <TextBlock Text="Show the Skia visual disk space distribution chart below the list." Classes="setting-desc"/>
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding ShowTreemap, Mode=TwoWay}" OnContent="" OffContent="" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Classes="setting-card">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center" Margin="0,0,20,0">
+                                        <TextBlock Text="Status Badges in Application Table" Classes="setting-title"/>
+                                        <TextBlock Text="Display colored status pills (Verified, Orphaned, Invalid, System)." Classes="setting-desc"/>
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding ShowStatusPills, Mode=TwoWay}" OnContent="" OffContent="" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Classes="setting-card">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center" Margin="0,0,20,0">
+                                        <TextBlock Text="Modern Rounded Corners" Classes="setting-title"/>
+                                        <TextBlock Text="Apply 12px rounded capsule styling to panels, cards, and buttons." Classes="setting-desc"/>
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding RoundedCorners, Mode=TwoWay}" OnContent="" OffContent="" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- PAGE 5: ABOUT -->
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0,0,14,0">
+                        <StackPanel Spacing="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,20,0,0">
+                            <!-- App Logo in Rounded Squircle Container -->
+                            <Border Width="84" Height="84" CornerRadius="20" Background="#1E293B"
+                                    HorizontalAlignment="Center" BoxShadow="0 4 16 0 #35000000">
+                                <Image Source="/Assets/logo.png" Width="68" Height="68"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+
+                            <!-- App Title -->
+                            <TextBlock Text="Any Uninstaller" FontSize="22" FontWeight="Bold"
+                                       Foreground="White" HorizontalAlignment="Center" Margin="0,14,0,0"/>
+
+                            <!-- Version -->
+                            <TextBlock Text="{Binding AppVersion, StringFormat='v{0}'}" FontSize="13"
+                                       Foreground="#7E8E9F" HorizontalAlignment="Center" Margin="0,3,0,0"/>
+
+                            <!-- Tagline / Description -->
+                            <TextBlock Text="Clean, fast, and effortless batch application uninstaller." FontSize="13"
+                                       Foreground="#7E8E9F" TextAlignment="Center" TextWrapping="Wrap"
+                                       MaxWidth="320" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+
+                            <!-- Subtle Divider -->
+                            <Rectangle Width="64" Height="1" Fill="#2A3744" HorizontalAlignment="Center" Margin="0,18,0,18"/>
+
+                            <!-- Developer Section -->
+                            <TextBlock Text="{Binding DeveloperTitle}" FontSize="13"
+                                       Foreground="#7E8E9F" HorizontalAlignment="Center"/>
+                            <TextBlock Text="{Binding DeveloperName}" FontSize="16" FontWeight="Bold"
+                                       Foreground="White" HorizontalAlignment="Center" Margin="0,3,0,14"/>
+
+                            <!-- Links -->
+                            <StackPanel Spacing="6" HorizontalAlignment="Center">
+                                <Button Background="Transparent" BorderThickness="0" Padding="8,4" Cursor="Hand" Command="{Binding OpenLinkedInCommand}" ToolTip.Tip="Open LinkedIn Profile">
+                                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                        <Border Width="18" Height="18" CornerRadius="4" Background="#0A66C2" VerticalAlignment="Center">
+                                            <TextBlock Text="in" FontSize="11" FontWeight="Bold" Foreground="White"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,1"/>
+                                        </Border>
+                                        <TextBlock Text="{Binding LinkedInDisplay}" FontSize="13" Foreground="#38BDF8" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <Button Background="Transparent" BorderThickness="0" Padding="8,4" Cursor="Hand" Command="{Binding OpenGitHubCommand}" ToolTip.Tip="Open GitHub Profile">
+                                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                        <Path Data="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.1-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2Z"
+                                              Fill="#38BDF8" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{Binding GitHubDisplay}" FontSize="13" Foreground="#38BDF8" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <Button Background="Transparent" BorderThickness="0" Padding="8,4" Cursor="Hand" Command="{Binding OpenPrivacyPolicyCommand}" ToolTip.Tip="View Privacy Policy">
+                                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                        <TextBlock Text="🛡️" FontSize="14" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Privacy Policy" FontSize="13" Foreground="#38BDF8" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Carousel>
+            </Border>
+        </Grid>
+
+        <!-- Bottom Action Buttons -->
+        <Border Grid.Row="1" Margin="0,14,0,0">
+            <Grid ColumnDefinitions="*,Auto,Auto">
+                <TextBlock Grid.Column="0" Text="Settings are applied immediately upon saving." Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11.5" VerticalAlignment="Center"/>
+                <Button Grid.Column="1" Content="Cancel" Classes="toolbar" Width="100" Height="36" Margin="0,0,10,0" Command="{Binding CancelCommand}"/>
+                <Button Grid.Column="2" Content="Save Changes" Classes="action-quiet" Width="140" Height="36" Command="{Binding SaveCommand}"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

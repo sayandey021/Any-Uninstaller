@@ -1,0 +1,316 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="buttonExit.Text" xml:space="preserve">
+    <value>Ukončit průvodce</value>
+  </data>
+  <data name="buttonPrev.Text" xml:space="preserve">
+    <value>Zpět</value>
+  </data>
+  <data name="buttonNext.Text" xml:space="preserve">
+    <value>Pokračovat</value>
+  </data>
+  <data name="buttonMore.Text" xml:space="preserve">
+    <value>Další nastavení</value>
+  </data>
+  <data name="buttonFinish.Text" xml:space="preserve">
+    <value>Ukončete průvodce</value>
+  </data>
+  <data name="p5finishContact.Text" xml:space="preserve">
+    <value>Nyní můžete začít používat AnyUninstaller. Máte-li jakékoli dotazy nebo chcete-li navrhnout novou funkci navštivte odkaz níže.</value>
+  </data>
+  <data name="p5LinkContact.Text" xml:space="preserve">
+    <value>Otevřete kontaktní formulář</value>
+  </data>
+  <data name="p5finishHomepage.Text" xml:space="preserve">
+    <value>Můžete si přečíst podrobné protokoly změn a podívejte se na více mého softwaru na domovské stránce.</value>
+  </data>
+  <data name="p5LinkHomepage.Text" xml:space="preserve">
+    <value>Otevřete domovskou stránku</value>
+  </data>
+  <data name="p5finishTitle.Text" xml:space="preserve">
+    <value>Instalační program byl dokončen</value>
+  </data>
+  <data name="p4netTitle.Text" xml:space="preserve">
+    <value>Přístup k síti</value>
+  </data>
+  <data name="p4netDesc.Text" xml:space="preserve">
+    <value>AnyUninstaller se může připojit k internetu z následujících důvodů:</value>
+  </data>
+  <data name="p4netDesc1.Text" xml:space="preserve">
+    <value>● Chcete-li hledat aktualizací programu.</value>
+  </data>
+  <data name="p4netDesc2.Text" xml:space="preserve">
+    <value>● Chcete-li nahrát chybové hlášení.</value>
+  </data>
+  <data name="p4netDesc3.Text" xml:space="preserve">
+    <value>● Chcete-li poslat anonymní statistiku používání.</value>
+  </data>
+  <data name="p4netErrors.Text" xml:space="preserve">
+    <value>Pokaždé, když dojde k chybě, budete dotázáni, zda ji chcete odeslat. Můžete zkontrolovat, jaké údaje jsou odesílány ve zprávách o chybách a používání programu, kontrolou XML soubory v adresáři AnyUninstaller .Odeslaná data nejsou poskytována třetími stranám.</value>
+  </data>
+  <data name="checkBoxUpdateSearch.Text" xml:space="preserve">
+    <value>Automaticky hledat aktualizace při startu aplikace</value>
+  </data>
+  <data name="p4netUpdateAdd.Text" xml:space="preserve">
+    <value>Můžete vyhledávat aktualizace ručně  na liště nabídky.</value>
+  </data>
+  <data name="checkBoxSendStats.Text" xml:space="preserve">
+    <value>Automaticky posílat anonymní statistiku používání programu</value>
+  </data>
+  <data name="p4netUsageAdd.Text" xml:space="preserve">
+    <value>Odesláním této statistiky pomůže zlepšit AnyUninstaller.</value>
+  </data>
+  <data name="pCorTitle.Text" xml:space="preserve">
+    <value>Poškozený odinstalátor</value>
+  </data>
+  <data name="pCorDesc.Text" xml:space="preserve">
+    <value>Časem možná zjistíte, že některé aplikace se odmítnou odinstalovat, nebo si jen tak zmizí  z většiny manažerů pro odinstalování.</value>
+  </data>
+  <data name="pCorViewInvalidTitle.Text" xml:space="preserve">
+    <value>Poškozený nebo chybějící odinstalátor</value>
+  </data>
+  <data name="pCorViewInvalid.Text" xml:space="preserve">
+    <value>V některých případech odinstalátor může být poškozen, a není nemožná odinstalace. AnyUninstaller umožňuje odebrat tyto položky snadno pomocí volby "Odinstalovat ručně".</value>
+  </data>
+  <data name="checkBoxInvalidTest.Text" xml:space="preserve">
+    <value>Zvýraznit neplatné odinstalátory</value>
+  </data>
+  <data name="pCorViewinvalidComment.Text" xml:space="preserve">
+    <value>Neplatné odinstalátory jsou označeny šedě.</value>
+  </data>
+  <data name="pCorOrphansTitle.Text" xml:space="preserve">
+    <value>Neregistrované aplikace</value>
+  </data>
+  <data name="pCorOrphansMessage.Text" xml:space="preserve">
+    <value>Někdy celé aplikace mohou být ponechána na disku, i poté, co byl odinstalovány. To se také může stát, když se pouze program na odinstalaci odstraní.</value>
+  </data>
+  <data name="checkBoxOrphans.Text" xml:space="preserve">
+    <value>Zobrazit neregistrované aplikace v seznamu</value>
+  </data>
+  <data name="pCorOrphansComment.Text" xml:space="preserve">
+    <value>Neregistrované aplikace jsou označeny červeně.
+Pokud původní odinstalátor není nalezen, budete muset použít volbu "Odinstalovat ručně", k jejich odstranění.</value>
+  </data>
+  <data name="p3advTitle.Text" xml:space="preserve">
+    <value>Zkušení uživatelé</value>
+  </data>
+  <data name="p3advDesc.Text" xml:space="preserve">
+    <value>Zatímco AnyUninstaller může být použit jako základní odinstalátor, většina z jeho funkcí jsou zaměřeny pro zkušené uživatele. Postupujte opatrně!</value>
+  </data>
+  <data name="p3advSyscompTitle.Text" xml:space="preserve">
+    <value>Systémové součásti</value>
+  </data>
+  <data name="p3advSyscomp.Text" xml:space="preserve">
+    <value>Aplikace označené jako "součásti systému", jsou skryty pro většinu základních manažerů pro odinstalování. Tato značka Neznamená, že aplikace je součástí operačního systému.</value>
+  </data>
+  <data name="checkBoxListSysComp.Text" xml:space="preserve">
+    <value>Zobrazit odinstalátory označené jako "součástí systému"</value>
+  </data>
+  <data name="p3advProtectTitle.Text" xml:space="preserve">
+    <value>Chráněné odinstalátory</value>
+  </data>
+  <data name="p3advProtect.Text" xml:space="preserve">
+    <value>Chráněné položky jsou označeny "NoRemove" značka, což znamená, že vydavatel nechce jejich odstranění. Tato značka je často používána u velkých softwarových balíčků, aby vám zabránila odinstalování jejich jednotlivých částí.</value>
+  </data>
+  <data name="checkBoxListProtected.Text" xml:space="preserve">
+    <value>Zobrazit odinstalátory označené jako "chráněné"</value>
+  </data>
+  <data name="checkBoxDiisableProtection.Text" xml:space="preserve">
+    <value>Zakázat ochranu odinstalátorů označených jako "chráněné"</value>
+  </data>
+  <data name="p3advProtectAdd.Text" xml:space="preserve">
+    <value>To vám umožní odinstalovat chráněné položky.</value>
+  </data>
+  <data name="p2viewTitle.Text" xml:space="preserve">
+    <value>Odinstalátor zobrazení seznamu</value>
+  </data>
+  <data name="p2viewDetail.Text" xml:space="preserve">
+    <value>Všechny odinstalátory nalezené ve vašem systému jsou v hlavním zobrazení seznamu. Zde jsou některé způsoby, jak procházet tyto údaje:</value>
+  </data>
+  <data name="p2viewDetail1.Text" xml:space="preserve">
+    <value>● Pomocí filtrů a hledání klíčových slov (ve všech sloupcích)</value>
+  </data>
+  <data name="p2viewDetail2.Text" xml:space="preserve">
+    <value>● Řadit odinstalátory podle libovolného sloupce. Volně uspořádání sloupců.</value>
+  </data>
+  <data name="p2viewDetail3.Text" xml:space="preserve">
+    <value>● Seskupení podobných odinstalátorů</value>
+  </data>
+  <data name="checkBoxGroups.Text" xml:space="preserve">
+    <value>Zobrazit odinstalátory ve skupinách</value>
+  </data>
+  <data name="checkBoxCheckboxes.Text" xml:space="preserve">
+    <value>Vyberte pomocí zaškrtávacích políček</value>
+  </data>
+  <data name="p2viewCertsTitle.Text" xml:space="preserve">
+    <value>Certifikované odinstalátory</value>
+  </data>
+  <data name="p2viewCerts.Text" xml:space="preserve">
+    <value>Odinstalátory mohou být podepsána certifikáty vydanými příslušnými orgány. Pokud certifikát projde validace, softwarový balík nebyl změněn a je seriózní.</value>
+  </data>
+  <data name="checkBoxCertTest.Text" xml:space="preserve">
+    <value>Zvýraznit certifikované odinstalátory</value>
+  </data>
+  <data name="p2viewAdd.Text" xml:space="preserve">
+    <value>Ověřené odinstalátory jsou označeny zeleně, neověřené jsou v modré barvě.
+Upozornění: Ověření může trvat delší dobu.</value>
+  </data>
+  <data name="p1welcomeHeading.Text" xml:space="preserve">
+    <value>Vítejte v AnyUninstaller!</value>
+  </data>
+  <data name="p1welcomeSubheading.Text" xml:space="preserve">
+    <value>Tento průvodce umožní rychlou prohlídku a pomůže s konfiguraci aplikace.</value>
+  </data>
+  <data name="p1languageHeading.Text" xml:space="preserve">
+    <value>Výběr jazyka</value>
+  </data>
+  <data name="p1languageDesc.Text" xml:space="preserve">
+    <value>Můžete vynutit AnyUninstaller použít konkrétní lokalizaci, pokud výchozí jazyk je nesprávný. Po restartu bude aplikován nový jazyk.</value>
+  </data>
+  <data name="buttonLanguageApply.Text" xml:space="preserve">
+    <value>Použít</value>
+  </data>
+  <data name="p1languageExtradetails.Text" xml:space="preserve">
+    <value>Pokud jste ochotni pomoci s překladem AnyUninstaller do Vašeho jazyka, klikněte na odkaz níže, aby jste mě kontaktovali. Veškerou pomoc velmi ocenim!</value>
+  </data>
+  <data name="p1linkLabelContact.Text" xml:space="preserve">
+    <value>Otevřete kontaktní formulář</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Vítejte v AnyUninstaller</value>
+  </data>
+  <data name="p4netDesc4.Text" xml:space="preserve">
+    <value>● Chcete-li načíst a nahrajte aplikační ratingy</value>
+  </data>
+  <data name="checkBoxRatings.Text" xml:space="preserve">
+    <value>Aktivovat uživatelských ratingy aplikací</value>
+  </data>
+  <data name="label2.Text" xml:space="preserve">
+    <value>ulk crap
+uninstaller</value>
+    <comment>The missing B is in an image next to the text</comment>
+  </data>
+  <data name="buttonHelp.Text" xml:space="preserve">
+    <value>Zobrazit nápovědu</value>
+  </data>
+  <data name="labelProgress.Text" xml:space="preserve">
+    <value>1 / 6</value>
+  </data>
+</root>

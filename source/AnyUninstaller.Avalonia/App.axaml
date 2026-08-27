@@ -1,0 +1,448 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:AnyUninstaller.Avalonia"
+             x:Class="AnyUninstaller.Avalonia.App"
+             RequestedThemeVariant="Dark">
+    <Application.Resources>
+        <!-- Dynamic Theme Brushes -->
+        <SolidColorBrush x:Key="AppBgBrush" Color="#0d1117"/>
+        <SolidColorBrush x:Key="CardBgBrush" Color="#161b22"/>
+        <SolidColorBrush x:Key="CardBorderBrush" Color="#30363d"/>
+        <SolidColorBrush x:Key="CardInnerBgBrush" Color="#0d1117"/>
+        <SolidColorBrush x:Key="CardInnerBorderBrush" Color="#21262d"/>
+        <SolidColorBrush x:Key="ToolbarBtnBgBrush" Color="#21262d"/>
+        <SolidColorBrush x:Key="ToolbarBtnBorderBrush" Color="#30363d"/>
+        <SolidColorBrush x:Key="PrimaryAccentBrush" Color="#58a6ff"/>
+        <SolidColorBrush x:Key="ChipBgBrush" Color="#21262d"/>
+        <SolidColorBrush x:Key="TextPrimaryBrush" Color="#e6edf3"/>
+        <SolidColorBrush x:Key="TextSecondaryBrush" Color="#8b949e"/>
+        <SolidColorBrush x:Key="GridLinesBrush" Color="#21262d"/>
+        <SolidColorBrush x:Key="RowHoverBrush" Color="#21262d"/>
+        <SolidColorBrush x:Key="RowSelectedBrush" Color="#1d4ed8"/>
+        <SolidColorBrush x:Key="ScrollThumbBrush" Color="#484f58"/>
+        <CornerRadius x:Key="CardCornerRadius">12</CornerRadius>
+        <CornerRadius x:Key="CardInnerCornerRadius">8</CornerRadius>
+        <GridLength x:Key="ToggleSwitchPreContentMargin">0</GridLength>
+        <GridLength x:Key="ToggleSwitchPostContentMargin">0</GridLength>
+    </Application.Resources>
+
+    <Application.Styles>
+        <FluentTheme />
+        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+
+        <!-- 1. Modern Rounded Card Containers -->
+        <Style Selector="Border.card">
+            <Setter Property="CornerRadius" Value="{DynamicResource CardCornerRadius}"/>
+            <Setter Property="Background" Value="{DynamicResource CardBgBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="ClipToBounds" Value="True"/>
+        </Style>
+
+        <Style Selector="Border.card-inner">
+            <Setter Property="CornerRadius" Value="{DynamicResource CardInnerCornerRadius}"/>
+            <Setter Property="Background" Value="{DynamicResource CardInnerBgBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource CardInnerBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="ClipToBounds" Value="True"/>
+        </Style>
+
+        <!-- Global Button Alignment -->
+        <Style Selector="Button">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="Button /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button > TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button StackPanel">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button StackPanel > TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- 2. Modern Rounded Toolbar Buttons -->
+        <Style Selector="Button.toolbar">
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Margin" Value="3"/>
+            <Setter Property="MinHeight" Value="32"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Background" Value="{DynamicResource ToolbarBtnBgBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ToolbarBtnBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.toolbar:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource CardInnerBorderBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryAccentBrush}"/>
+        </Style>
+
+        <!-- 3. Primary Uninstall Action Button -->
+        <Style Selector="Button.action-uninstall">
+            <Setter Property="Padding" Value="14,6"/>
+            <Setter Property="Margin" Value="3"/>
+            <Setter Property="MinHeight" Value="32"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Background" Value="#dc2626"/>
+            <Setter Property="BorderBrush" Value="#ef4444"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.action-uninstall:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#b91c1c"/>
+            <Setter Property="BorderBrush" Value="#f87171"/>
+        </Style>
+
+        <!-- 4. Quiet Uninstall Action Button -->
+        <Style Selector="Button.action-quiet">
+            <Setter Property="Padding" Value="14,6"/>
+            <Setter Property="Margin" Value="3"/>
+            <Setter Property="MinHeight" Value="32"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Background" Value="#4f46e5"/>
+            <Setter Property="BorderBrush" Value="#6366f1"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.action-quiet:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#4338ca"/>
+            <Setter Property="BorderBrush" Value="#818cf8"/>
+        </Style>
+
+        <!-- 5. Capsule Rounded Search Input -->
+        <Style Selector="TextBox.search-capsule">
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="Background" Value="{DynamicResource CardInnerBgBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="14,6"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+        </Style>
+        <Style Selector="TextBox.search-capsule:focus /template/ Border">
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryAccentBrush}"/>
+        </Style>
+
+        <!-- 6. Rounded Status Chips -->
+        <Style Selector="Border.chip">
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="Background" Value="{DynamicResource ChipBgBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,4"/>
+        </Style>
+
+        <!-- 7. Rounded DataGrid Styling -->
+        <Style Selector="DataGrid">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="GridLinesVisibility" Value="All"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource GridLinesBrush}"/>
+            <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource GridLinesBrush}"/>
+        </Style>
+
+        <!-- Column Headers with Clean Vertical Dividers & Compact Padding -->
+        <Style Selector="DataGridColumnHeader">
+            <Setter Property="Background" Value="{DynamicResource CardBgBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="0,0,1,1"/>
+            <Setter Property="Padding" Value="4,6,2,6"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="MinHeight" Value="28"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="11.5"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="DataGridColumnHeader:pointerover">
+            <Setter Property="Background" Value="{DynamicResource CardInnerBorderBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+        </Style>
+        <Style Selector="DataGridColumnHeader /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Padding" Value="2,0"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        </Style>
+        <Style Selector="DataGridColumnHeader /template/ Path#SortIcon">
+            <Setter Property="Margin" Value="2,0,2,0"/>
+        </Style>
+
+        <!-- Compact DataGridCell with minimal wasted blank space -->
+        <Style Selector="DataGridCell">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="4,2"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="DataGridCell /template/ Rectangle#CurrencyVisual">
+            <Setter Property="IsVisible" Value="False"/>
+            <Setter Property="Stroke" Value="Transparent"/>
+        </Style>
+        <Style Selector="DataGridCell /template/ Grid#FocusVisual">
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
+        <Style Selector="DataGridCell:current /template/ Rectangle#CurrencyVisual">
+            <Setter Property="IsVisible" Value="False"/>
+            <Setter Property="Stroke" Value="Transparent"/>
+        </Style>
+        <Style Selector="DataGridCell:focus /template/ Grid#FocusVisual">
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
+
+        <!-- Row Selection & Hover -->
+        <Style Selector="DataGridRow">
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Margin" Value="2,1"/>
+        </Style>
+        <Style Selector="DataGridRow:pointerover">
+            <Setter Property="Background" Value="{DynamicResource RowHoverBrush}"/>
+        </Style>
+        <Style Selector="DataGridRow:pointerover /template/ Rectangle#BackgroundRectangle">
+            <Setter Property="Fill" Value="{DynamicResource RowHoverBrush}"/>
+            <Setter Property="IsVisible" Value="True"/>
+        </Style>
+        <Style Selector="DataGridRow:selected">
+            <Setter Property="Background" Value="{DynamicResource RowSelectedBrush}"/>
+        </Style>
+        <Style Selector="DataGridRow:selected /template/ Rectangle#BackgroundRectangle">
+            <Setter Property="Fill" Value="{DynamicResource RowSelectedBrush}"/>
+            <Setter Property="IsVisible" Value="True"/>
+        </Style>
+        <Style Selector="DataGridRow:selected:pointerover /template/ Rectangle#BackgroundRectangle">
+            <Setter Property="Fill" Value="{DynamicResource RowSelectedBrush}"/>
+            <Setter Property="IsVisible" Value="True"/>
+        </Style>
+
+        <!-- 8. Rounded ProgressBar -->
+        <Style Selector="ProgressBar">
+            <Setter Property="CornerRadius" Value="6"/>
+        </Style>
+
+        <!-- 9. Modern Sleek Smooth ScrollBars -->
+        <Style Selector="ScrollBar">
+            <Setter Property="AllowAutoHide" Value="True"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style Selector="ScrollBar /template/ Grid#Root">
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+        <Style Selector="ScrollBar /template/ Border#TrackBackground">
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+        <Style Selector="ScrollBar /template/ Rectangle#TrackBackground">
+            <Setter Property="Fill" Value="Transparent"/>
+        </Style>
+        <Style Selector="ScrollBar:vertical">
+            <Setter Property="Width" Value="8"/>
+            <Setter Property="MinWidth" Value="8"/>
+            <Setter Property="Margin" Value="0,2,2,2"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Property="Width" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="ScrollBar:vertical:pointerover">
+            <Setter Property="Width" Value="10"/>
+        </Style>
+        <Style Selector="ScrollBar:horizontal">
+            <Setter Property="Height" Value="8"/>
+            <Setter Property="MinHeight" Value="8"/>
+            <Setter Property="Margin" Value="2,0,2,2"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Property="Height" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="ScrollBar:horizontal:pointerover">
+            <Setter Property="Height" Value="10"/>
+        </Style>
+
+        <!-- Rounded Thumb Capsule across all templates -->
+        <Style Selector="ScrollBar Thumb">
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Background" Value="{DynamicResource ScrollThumbBrush}"/>
+            <Setter Property="MinHeight" Value="32"/>
+            <Setter Property="MinWidth" Value="32"/>
+            <Setter Property="ClipToBounds" Value="True"/>
+        </Style>
+        <Style Selector="ScrollBar Thumb /template/ Border">
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="ClipToBounds" Value="True"/>
+        </Style>
+        <Style Selector="ScrollBar Thumb /template/ Rectangle">
+            <Setter Property="RadiusX" Value="6"/>
+            <Setter Property="RadiusY" Value="6"/>
+        </Style>
+        <Style Selector="ScrollBar /template/ Thumb">
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Background" Value="{DynamicResource ScrollThumbBrush}"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="ScrollBar /template/ Thumb:pointerover">
+            <Setter Property="Background" Value="{DynamicResource PrimaryAccentBrush}"/>
+        </Style>
+        <Style Selector="ScrollBar /template/ Thumb:pressed">
+            <Setter Property="Background" Value="{DynamicResource PrimaryAccentBrush}"/>
+        </Style>
+        <Style Selector="ScrollBar /template/ RepeatButton">
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
+
+        <!-- 10. Modern Professional Settings Styles (Perfect Symmetry) -->
+        <Style Selector="Border.setting-card">
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Background" Value="{DynamicResource CardInnerBgBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="18,0"/>
+            <Setter Property="Height" Value="66"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Border.setting-card:pointerover">
+            <Setter Property="Background" Value="{DynamicResource CardBgBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource CardInnerBorderBrush}"/>
+        </Style>
+
+        <!-- Symmetric Settings ToggleSwitch & ComboBox Styling -->
+        <Style Selector="Border.setting-card ToggleSwitch">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="MinWidth" Value="0"/>
+        </Style>
+        <Style Selector="Border.setting-card ToggleSwitch /template/ ContentPresenter#PART_OffContentPresenter">
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
+        <Style Selector="Border.setting-card ToggleSwitch /template/ ContentPresenter#PART_OnContentPresenter">
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
+        <Style Selector="Border.setting-card ComboBox">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="Margin" Value="0"/>
+        </Style>
+
+        <Style Selector="TextBlock.setting-title">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+        </Style>
+
+        <Style Selector="TextBlock.setting-desc">
+            <Setter Property="FontSize" Value="11.5"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="LineHeight" Value="16"/>
+        </Style>
+
+        <Style Selector="TextBlock.setting-section">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryAccentBrush}"/>
+            <Setter Property="Margin" Value="0,4,0,8"/>
+        </Style>
+
+        <!-- 11. Filter Sidebar & Preset Pill Styling -->
+        <Style Selector="Button.preset-pill">
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="MinHeight" Value="24"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Background" Value="{DynamicResource CardInnerBgBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+                    <BrushTransition Property="Foreground" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.preset-pill:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource CardInnerBorderBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryAccentBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+        </Style>
+
+        <Style Selector="Border.filter-badge">
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Background" Value="{DynamicResource ChipBgBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource CardInnerBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="6,1"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style Selector="Border.legend-chip">
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Background" Value="{DynamicResource CardInnerBgBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,5"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Border.legend-chip:pointerover">
+            <Setter Property="Background" Value="{DynamicResource CardInnerBorderBrush}"/>
+        </Style>
+    </Application.Styles>
+</Application>

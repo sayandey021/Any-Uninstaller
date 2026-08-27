@@ -1,0 +1,319 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="buttonExit.Text" xml:space="preserve">
+    <value>Quitter l'assistant</value>
+  </data>
+  <data name="buttonPrev.Text" xml:space="preserve">
+    <value>Précédent</value>
+  </data>
+  <data name="buttonNext.Text" xml:space="preserve">
+    <value>Continuer</value>
+  </data>
+  <data name="buttonFinish.Text" xml:space="preserve">
+    <value>Terminer l'installation</value>
+  </data>
+  <data name="p5finishContact.Text" xml:space="preserve">
+    <value>Vous pouvez maintenant utiliser AnyUninstaller. Si vous des questions ou souhaiteriez suggérer une nouvelle fonction, visitez le lien ci-dessous.</value>
+  </data>
+  <data name="p5LinkContact.Text" xml:space="preserve">
+    <value>Ouvrir le formulaire de contact</value>
+  </data>
+  <data name="p5finishHomepage.Text" xml:space="preserve">
+    <value>Vous pouvez lire le journal détaillé des changements et voir davantage de mes logiciels sur la page d'accueil.</value>
+  </data>
+  <data name="p5LinkHomepage.Text" xml:space="preserve">
+    <value>Ouvrir la page d'accueil</value>
+  </data>
+  <data name="p5finishTitle.Text" xml:space="preserve">
+    <value>L'installation est terminée</value>
+  </data>
+  <data name="p4netTitle.Text" xml:space="preserve">
+    <value>Accès réseau</value>
+  </data>
+  <data name="p4netDesc.Text" xml:space="preserve">
+    <value>AnyUninstaller peut tenter de se connecter à internet pour les raisons suivantes :</value>
+  </data>
+  <data name="p4netDesc1.Text" xml:space="preserve">
+    <value>● Pour chercher des mises à jour du programme.</value>
+  </data>
+  <data name="p4netDesc2.Text" xml:space="preserve">
+    <value>● Pour télécharger des rapports d'erreurs.</value>
+  </data>
+  <data name="p4netDesc3.Text" xml:space="preserve">
+    <value>● Pour envoyer des statistiques anonymes d'utilisation.</value>
+  </data>
+  <data name="p4netErrors.Text" xml:space="preserve">
+    <value>Chaque fois qu'une erreur survient, il vous sera demandé si vous voulez l'envoyer. Vous pouvez vérifier quelle donnée est envoyée dans les rapports d'erreur et d'utilisation en inspectant leurs fichiers XML respectifs dans le dossier de AnyUninstaller. Les données envoyées ne sont partagées avec aucune tierce partie. </value>
+  </data>
+  <data name="checkBoxUpdateSearch.Text" xml:space="preserve">
+    <value>Chercher automatiquement les mises à jour au démarrage 
+de l'application</value>
+  </data>
+  <data name="p4netUpdateAdd.Text" xml:space="preserve">
+    <value>Vous pouvez chercher manuellement les mises à jour depuis la barre de menus.</value>
+  </data>
+  <data name="checkBoxSendStats.Text" xml:space="preserve">
+    <value>Envoyer automatiquement les statistiques anonymes d'utilisation</value>
+  </data>
+  <data name="p4netUsageAdd.Text" xml:space="preserve">
+    <value>L'envoi de ces statistiques aidera à améliorer AnyUninstaller.</value>
+  </data>
+  <data name="pCorTitle.Text" xml:space="preserve">
+    <value>Désinstalleurs corrompus</value>
+  </data>
+  <data name="pCorDesc.Text" xml:space="preserve">
+    <value>Au fil du temps, vous pouvez découvrir que certaines applications refuseront de se désinstaller, ou disparaitront juste de la plupart des gestionnaires de désinstallation.</value>
+  </data>
+  <data name="pCorViewInvalidTitle.Text" xml:space="preserve">
+    <value>Désinstalleurs corrompus ou manquants</value>
+  </data>
+  <data name="pCorViewInvalid.Text" xml:space="preserve">
+    <value>Dans quelques cas, les désinstalleurs peuvent être corrompus, rendant impossible la désinstallation. AnyUninstaller peut supprimer facilement ces entrées en utilisant l'option "Désinstaller manuellement".</value>
+  </data>
+  <data name="checkBoxInvalidTest.Text" xml:space="preserve">
+    <value>Surligner les désinstalleurs invalides</value>
+  </data>
+  <data name="pCorViewinvalidComment.Text" xml:space="preserve">
+    <value>Les désinstalleurs invalides sont marqués en gris.</value>
+  </data>
+  <data name="pCorOrphansTitle.Text" xml:space="preserve">
+    <value>Applications non enregistrées</value>
+  </data>
+  <data name="pCorOrphansMessage.Text" xml:space="preserve">
+    <value>Parfois, des applications entières peuvent être laissées sur votre lecteur après avoir été désinstallées. Cela peut aussi arriver si seul le désinstalleur est supprimé.</value>
+  </data>
+  <data name="checkBoxOrphans.Text" xml:space="preserve">
+    <value>Montrer les applications non enregistrées dans la liste</value>
+  </data>
+  <data name="pCorOrphansComment.Text" xml:space="preserve">
+    <value>Les applications non enregistrées sont marquées en rouge.
+Si le désinstalleur d'origine est introuvable, vous devrez utiliser l'option "Désinstaller manuellement" pour les supprimer.</value>
+  </data>
+  <data name="p3advTitle.Text" xml:space="preserve">
+    <value>Utilisateurs avancés</value>
+  </data>
+  <data name="p3advDesc.Text" xml:space="preserve">
+    <value>Quoique AnyUninstaller puisse être utilisé comme un désinstalleur basique, la plupart de ses fonctions sont destinées aux utilisateurs avancés. Procédez avec précaution !</value>
+  </data>
+  <data name="p3advSyscompTitle.Text" xml:space="preserve">
+    <value>Composants système</value>
+  </data>
+  <data name="p3advSyscomp.Text" xml:space="preserve">
+    <value>Les applications marquées comme "composants système" sont cachées de la plupart des gestionnaires basiques de désinstallation. Cette balise ne signifie PAS que l'application fait partie du système d'exploitation.</value>
+  </data>
+  <data name="checkBoxListSysComp.Text" xml:space="preserve">
+    <value>Afficher les désinstalleurs marqués comme 
+"composants système"</value>
+  </data>
+  <data name="p3advProtectTitle.Text" xml:space="preserve">
+    <value>Désinstalleurs protégés</value>
+  </data>
+  <data name="p3advProtect.Text" xml:space="preserve">
+    <value>Les éléments protégés sont marqués avec la balise "NoRemove", qui signifie que l'éditeur ne veut pas que vous les supprimiez. Cette balise est souvent utilisée par des grands ensembles de logiciels pour vous empêcher de désinstaller leurs parties individuelles.</value>
+  </data>
+  <data name="checkBoxListProtected.Text" xml:space="preserve">
+    <value>Afficher les désinstalleurs marqués comme "protégés"</value>
+  </data>
+  <data name="checkBoxDiisableProtection.Text" xml:space="preserve">
+    <value>Désactiver la protection des désinstalleurs marqués 
+comme "protégés"</value>
+  </data>
+  <data name="p3advProtectAdd.Text" xml:space="preserve">
+    <value>Cela vous laissera désinstaller les éléments protégés.</value>
+  </data>
+  <data name="p2viewTitle.Text" xml:space="preserve">
+    <value>Vue liste du désinstalleur</value>
+  </data>
+  <data name="p2viewDetail.Text" xml:space="preserve">
+    <value>Tous les désinstalleurs trouvés dans votre système sont dans la vue liste principale. Voici quelques façons de parcourir ces données :</value>
+  </data>
+  <data name="p2viewDetail1.Text" xml:space="preserve">
+    <value>● Utiliser des filtres et chercher des mots-clés (dans toutes les colonnes).</value>
+  </data>
+  <data name="p2viewDetail2.Text" xml:space="preserve">
+    <value>● Trier les désinstalleurs par toute colonne. Réarranger librement les colonnes.</value>
+  </data>
+  <data name="p2viewDetail3.Text" xml:space="preserve">
+    <value>● Grouper les désinstalleurs similaires.</value>
+  </data>
+  <data name="checkBoxGroups.Text" xml:space="preserve">
+    <value>Afficher les désinstalleurs en groupes</value>
+  </data>
+  <data name="checkBoxCheckboxes.Text" xml:space="preserve">
+    <value>Sélectionnner par cases à cocher</value>
+  </data>
+  <data name="p2viewCertsTitle.Text" xml:space="preserve">
+    <value>Désinstalleurs certifiés</value>
+  </data>
+  <data name="p2viewCerts.Text" xml:space="preserve">
+    <value>Les désinstalleurs peuvent être signés avec des certificats publiés par les autorités compétentes. Si le certificat passe la validation, le progiciel n'a pas été altéré et est réputé.</value>
+  </data>
+  <data name="checkBoxCertTest.Text" xml:space="preserve">
+    <value>Surligner les désinstalleurs certifiés</value>
+  </data>
+  <data name="p2viewAdd.Text" xml:space="preserve">
+    <value>Les désinstalleurs vérifiés sont marqués en vert, non vérifiés en bleu.
+Attention : la vérification peut mettre longtemps.</value>
+  </data>
+  <data name="p1welcomeHeading.Text" xml:space="preserve">
+    <value>Bienvenue à AnyUninstaller !</value>
+  </data>
+  <data name="p1welcomeSubheading.Text" xml:space="preserve">
+    <value>Cet assistant vous fera faire un tour rapide et aidera à configurer l'application.</value>
+  </data>
+  <data name="p1languageHeading.Text" xml:space="preserve">
+    <value>Langue sélectionnée</value>
+  </data>
+  <data name="p1languageDesc.Text" xml:space="preserve">
+    <value>Vous pouvez forcer AnyUninstaller à utiliser une localisation spécifique si la langue par défaut est incorrecte. Un redémarrage sera réalisé pour appliquer la nouvelle langue. </value>
+  </data>
+  <data name="buttonLanguageApply.Text" xml:space="preserve">
+    <value>Appliquer</value>
+  </data>
+  <data name="p1languageExtradetails.Text" xml:space="preserve">
+    <value>Si vous souhaitez aider à traduire AnyUninstaller dans votre langue, cliquez sur le lien ci-dessous pour me contacter. Toute aide est grandement appréciée !</value>
+  </data>
+  <data name="p1linkLabelContact.Text" xml:space="preserve">
+    <value>Ouvrir le formulaire de contact</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Bienvenue dans AnyUninstaller </value>
+  </data>
+  <data name="label2.Text" xml:space="preserve">
+    <value>ulk crap
+uninstaller</value>
+    <comment>The missing B is in an image next to the text</comment>
+  </data>
+  <data name="buttonMore.Text" xml:space="preserve">
+    <value>Plus de réglages</value>
+  </data>
+  <data name="p4netDesc4.Text" xml:space="preserve">
+    <value>● Pour récupérer et envoyer les notes d'application.</value>
+  </data>
+  <data name="checkBoxRatings.Text" xml:space="preserve">
+    <value>Activer les notes utilisateur des applications</value>
+  </data>
+  <data name="buttonHelp.Text" xml:space="preserve">
+    <value>Voir l'aide</value>
+  </data>
+  <data name="labelProgress.Text" xml:space="preserve">
+    <value>1 / 6</value>
+  </data>
+</root>

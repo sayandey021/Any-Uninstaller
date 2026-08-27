@@ -1,0 +1,52 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AnyUninstaller.Avalonia.ViewModels"
+        x:Class="AnyUninstaller.Avalonia.Views.Dialogs.UninstallProgressWindow"
+        x:DataType="vm:UninstallProgressViewModel"
+        Title="Uninstallation Progress"
+        Icon="/Assets/logo.ico"
+        Width="680" Height="480"
+        Background="{DynamicResource AppBgBrush}"
+        WindowStartupLocation="CenterOwner">
+
+    <DockPanel LastChildFill="True" Margin="16">
+        <!-- Top Status Card -->
+        <Border DockPanel.Dock="Top" Classes="card" Padding="14" Margin="0,0,0,12">
+            <StackPanel Spacing="10">
+                <TextBlock Text="{Binding CurrentStatus}" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource PrimaryAccentBrush}"/>
+                <ProgressBar Minimum="0" Maximum="{Binding TotalCount}" Value="{Binding CompletedCount}" Height="12" Foreground="#3fb950"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Bottom Controls -->
+        <Border DockPanel.Dock="Bottom" Padding="0,12,0,0">
+            <Grid ColumnDefinitions="*,Auto">
+                <Button Grid.Column="1" Content="Abort Process" Classes="action-uninstall" Command="{Binding AbortCommand}" Width="130"/>
+            </Grid>
+        </Border>
+
+        <!-- Task List Card -->
+        <Border Classes="card" Padding="4">
+            <ListBox ItemsSource="{Binding Items}" Background="Transparent">
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="vm:UninstallTaskItemViewModel">
+                        <Border Classes="card-inner" Padding="10,8" Margin="0,2">
+                            <Grid ColumnDefinitions="*,Auto,Auto">
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    <TextBlock Text="{Binding UninstallerKind}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                </StackPanel>
+                                <Border Grid.Column="1" Classes="chip" IsVisible="{Binding IsQuiet}" Margin="10,0" VerticalAlignment="Center">
+                                    <TextBlock Text="⚡ Quiet" Foreground="#3fb950" FontSize="11" FontWeight="SemiBold"/>
+                                </Border>
+                                <Border Grid.Column="2" Classes="chip" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Status}" FontWeight="SemiBold" FontSize="11" Foreground="{DynamicResource PrimaryAccentBrush}"/>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
+    </DockPanel>
+</Window>

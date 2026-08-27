@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+
+		<AssemblyTitle>Utility used by AnyU in place of missing/broken uninstallers to remove applications</AssemblyTitle>
+
+		<ApplicationIcon>UniversalUninstaller.ico</ApplicationIcon>
+		<StartupObject>UniversalUninstaller.Program</StartupObject>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<ProjectReference Include="..\KlocTools\KlocTools.csproj" />
+		<ProjectReference Include="..\ObjectListView\ObjectListView.csproj" />
+	</ItemGroup>
+
+
+
+	<ItemGroup>
+	  <Compile Update="Properties\Localisation.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Localisation.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Properties\Resources.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Resources.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Properties\Localisation.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Localisation.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Properties\Resources.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
+</Project>
