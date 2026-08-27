@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+using System.Linq;
+using Avalonia.Controls;
 using Avalonia.Interactivity;
 using AnyUninstaller.Avalonia.ViewModels;
 
@@ -14,6 +15,15 @@ namespace AnyUninstaller.Avalonia.Views.Dialogs
         public JunkRemoveWindow(JunkRemovalViewModel viewModel) : this()
         {
             DataContext = viewModel;
+        }
+
+        private void OnJunkDataGridSelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            foreach (var item in e.AddedItems.OfType<JunkEntryViewModel>())
+            {
+                if (!item.IsDeleted)
+                    item.IsChecked = true;
+            }
         }
 
         private void OnCloseClick(object? sender, RoutedEventArgs e)

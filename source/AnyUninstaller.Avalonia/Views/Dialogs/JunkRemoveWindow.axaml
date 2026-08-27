@@ -58,7 +58,9 @@
 
         <!-- Junk List Card -->
         <Border Classes="card" Padding="4">
-            <DataGrid ItemsSource="{Binding JunkItems}"
+            <DataGrid x:Name="JunkDataGrid"
+                      ItemsSource="{Binding JunkItems}"
+                      SelectionChanged="OnJunkDataGridSelectionChanged"
                       AutoGenerateColumns="False"
                       CanUserResizeColumns="True"
                       CanUserReorderColumns="True"

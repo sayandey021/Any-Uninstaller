@@ -32,6 +32,7 @@ namespace AnyUninstaller.Avalonia.Views
             RestoreWindowSettings();
             DataContextChanged += OnDataContextChanged;
             ApplicationsDataGrid.AddHandler(PointerPressedEvent, OnDataGridPointerPressed, RoutingStrategies.Tunnel);
+            ApplicationsDataGrid.SelectionChanged += OnApplicationsDataGridSelectionChanged;
             Closing += OnWindowClosing;
         }
 
@@ -93,6 +94,37 @@ namespace AnyUninstaller.Avalonia.Views
                         if (ViewModel != null) ViewModel.SelectedItem = item;
                     }
                 }
+            }
+        }
+
+        private bool _isSyncingSelection;
+
+        private void OnApplicationsDataGridSelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            if (_isSyncingSelection) return;
+
+            try
+            {
+                _isSyncingSelection = true;
+
+                // When user selects row(s), mark their checkboxes as checked
+                foreach (var item in e.AddedItems.OfType<ApplicationEntryViewModel>())
+                {
+                    item.IsChecked = true;
+                }
+
+                // When row(s) are unselected (e.g. clicking another row without Ctrl)
+                foreach (var item in e.RemovedItems.OfType<ApplicationEntryViewModel>())
+                {
+                    if (!ApplicationsDataGrid.SelectedItems.Contains(item))
+                    {
+                        item.IsChecked = false;
+                    }
+                }
+            }
+            finally
+            {
+                _isSyncingSelection = false;
             }
         }
 
@@ -648,15 +680,28 @@ namespace AnyUninstaller.Avalonia.Views
 
             var targets = ViewModel.GetSelectedOrCurrent().Select(x => x.Entry).ToList();
             if (targets.Count == 0)
-                targets = ViewModel.FilteredUninstallers.Select(x => x.Entry).ToList();
+            {
+                ViewModel.StatusBar.StatusMessage = "Please select an application to scan for leftover junk.";
+                return;
+            }
 
             ViewModel.StatusBar.IsBusy = true;
-            ViewModel.StatusBar.StatusMessage = "Scanning for residual junk...";
+            ViewModel.StatusBar.StatusMessage = targets.Count == 1
+                ? $"Scanning for residual junk for {targets[0].DisplayNameTrimmed}..."
+                : $"Scanning for residual junk for {targets.Count} selected applications...";
 
             try
             {
                 var allEntries = ViewModel.FilteredUninstallers.Select(x => x.Entry).ToList();
                 var junk = await JunkCleaningService.Instance.ScanJunkAsync(targets, allEntries);
+
+                if (junk.Count == 0)
+                {
+                    ViewModel.StatusBar.StatusMessage = targets.Count == 1
+                        ? $"No residual junk found for {targets[0].DisplayNameTrimmed}."
+                        : "No residual junk found for selected applications.";
+                    return;
+                }
 
                 var junkVm = new JunkRemovalViewModel(junk);
                 var junkWindow = new JunkRemoveWindow(junkVm);
