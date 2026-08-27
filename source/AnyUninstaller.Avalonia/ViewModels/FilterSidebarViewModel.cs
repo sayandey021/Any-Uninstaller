@@ -122,8 +122,8 @@ namespace AnyUninstaller.Avalonia.ViewModels
             FilteredCount = filtered;
             CountStoreApps = allEntries.Count(x => x.IsStoreApp);
             CountSystemComponents = allEntries.Count(x => x.IsSystemComponent && !x.IsProtected && !x.IsOrphaned && x.IsValid && !x.IsUpdate);
-            CountProtected = allEntries.Count(x => x.IsProtected);
-            CountUpdates = allEntries.Count(x => x.IsUpdate && !x.IsProtected && !x.IsOrphaned && x.IsValid);
+            CountProtected = allEntries.Count(x => x.IsProtected && !x.IsUpdate);
+            CountUpdates = allEntries.Count(x => x.IsUpdate);
             CountOrphans = allEntries.Count(x => x.IsOrphaned);
             CountInvalid = allEntries.Count(x => !x.IsValid);
             CountVerified = allEntries.Count(x => x.IsValid && !x.IsOrphaned && !x.IsProtected && !x.IsSystemComponent && !x.IsUpdate);

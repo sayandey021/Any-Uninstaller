@@ -210,7 +210,7 @@ namespace AnyUninstaller.Avalonia.ViewModels
 
                 // 4. Status & Health / Category filter
                 // An entry is shown if it matches any checked status/category:
-                if (Sidebar.ShowProtected && x.IsProtected)
+                if (Sidebar.ShowProtected && x.IsProtected && !x.IsUpdate)
                     return true;
 
                 if (Sidebar.ShowOrphans && x.IsOrphaned)
@@ -225,7 +225,7 @@ namespace AnyUninstaller.Avalonia.ViewModels
                 if (Sidebar.ShowSystemComponents && x.IsSystemComponent && !x.IsProtected && !x.IsOrphaned && x.IsValid && !x.IsUpdate)
                     return true;
 
-                if (Sidebar.ShowUpdates && x.IsUpdate && !x.IsProtected && !x.IsOrphaned && x.IsValid)
+                if (Sidebar.ShowUpdates && x.IsUpdate)
                     return true;
 
                 return false;
