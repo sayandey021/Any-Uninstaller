@@ -62,8 +62,9 @@ function Resize-Image($targetPath, $width, $height, $bgHex) {
         $g.Clear([System.Drawing.Color]::Transparent)
     }
 
-    $padW = [int]($width * 0.12)
-    $padH = [int]($height * 0.12)
+    # Minimal padding to avoid clipping while maximizing icon size on taskbar/store
+    $padW = [int]($width * 0.02)
+    $padH = [int]($height * 0.02)
     $destW = $width - ($padW * 2)
     $destH = $height - ($padH * 2)
 
