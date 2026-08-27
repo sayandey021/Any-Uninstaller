@@ -1,8 +1,8 @@
-# Any Uninstaller
-
 <div align="center">
 
-![Any Uninstaller Logo](source/AnyUninstaller.Avalonia/Assets/logo.png)
+<img src="source/AnyUninstaller.Avalonia/Assets/logo.png" alt="Any Uninstaller Logo" width="128" height="128" />
+
+# Any Uninstaller
 
 **The clean, fast, and effortless batch application uninstaller for Windows.**
 
