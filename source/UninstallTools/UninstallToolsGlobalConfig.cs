@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -84,6 +84,41 @@ namespace UninstallTools
             var vsPath = Path.Combine(localData, "VirtualStore");
             if (Directory.Exists(vsPath))
                 paths.AddRange(Directory.GetDirectories(vsPath));
+
+            // User Temp Directory (%TEMP%, AppData\Local\Temp)
+            try
+            {
+                var userTemp = Path.GetTempPath();
+                if (!string.IsNullOrEmpty(userTemp) && Directory.Exists(userTemp))
+                    paths.Add(userTemp);
+            }
+            catch { }
+
+            // Windows System Temp Directory (C:\Windows\Temp)
+            try
+            {
+                var winDir = WindowsTools.GetEnvironmentPath(CSIDL.CSIDL_WINDOWS);
+                if (!string.IsNullOrEmpty(winDir))
+                {
+                    var winTemp = Path.Combine(winDir, "Temp");
+                    if (Directory.Exists(winTemp))
+                        paths.Add(winTemp);
+                }
+            }
+            catch { }
+
+            // Common Package Cache (ProgramData\Package Cache)
+            try
+            {
+                var progData = WindowsTools.GetEnvironmentPath(CSIDL.CSIDL_COMMON_APPDATA);
+                if (!string.IsNullOrEmpty(progData))
+                {
+                    var pkgCache = Path.Combine(progData, "Package Cache");
+                    if (Directory.Exists(pkgCache))
+                        paths.Add(pkgCache);
+                }
+            }
+            catch { }
 
             JunkSearchDirs = paths.Distinct().ToList();
 

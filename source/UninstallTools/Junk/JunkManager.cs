@@ -1,4 +1,4 @@
-﻿/*
+/*
     Copyright (c) 2017 Marcin Szeniak (https://github.com/Klocman/)
     Apache License Version 2.0
 */
@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using Klocman.Extensions;
 using Klocman.Forms.Tools;
@@ -111,6 +112,22 @@ namespace UninstallTools.Junk
                     Trace.WriteLine("Failed to collect KnownFolders: " + ex);
                 }
             }
+
+            try
+            {
+                var userTemp = Path.GetTempPath();
+                if (!string.IsNullOrEmpty(userTemp))
+                    results.Add(Path.GetFullPath(userTemp).TrimEnd('\\', '/').ToLowerInvariant());
+            }
+            catch { }
+
+            try
+            {
+                var winDir = WindowsTools.GetEnvironmentPath(Klocman.Native.CSIDL.CSIDL_WINDOWS);
+                if (!string.IsNullOrEmpty(winDir))
+                    results.Add(Path.GetFullPath(Path.Combine(winDir, "Temp")).TrimEnd('\\', '/').ToLowerInvariant());
+            }
+            catch { }
 
             return results;
         }

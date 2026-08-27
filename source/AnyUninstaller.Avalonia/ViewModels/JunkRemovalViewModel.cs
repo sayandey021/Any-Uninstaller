@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -7,6 +7,7 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using UninstallTools.Junk;
+using UninstallTools.Junk.Confidence;
 using UninstallTools.Junk.Containers;
 
 namespace AnyUninstaller.Avalonia.ViewModels
@@ -16,7 +17,7 @@ namespace AnyUninstaller.Avalonia.ViewModels
         public IJunkResult Result { get; }
 
         [ObservableProperty]
-        private bool _isChecked = true;
+        private bool _isChecked;
 
         [ObservableProperty]
         private bool _isDeleted;
@@ -30,15 +31,29 @@ namespace AnyUninstaller.Avalonia.ViewModels
         [ObservableProperty]
         private string _status = "Pending";
 
+        public ConfidenceLevel ConfidenceLevel => Result.Confidence?.GetConfidence() ?? ConfidenceLevel.Unknown;
+        public bool IsConfident => ConfidenceLevel >= ConfidenceLevel.Good;
+
         public JunkEntryViewModel(IJunkResult result)
         {
             Result = result;
+            // Select only the most confident leftovers by default (Good and VeryGood)
+            _isChecked = IsConfident;
         }
 
         public string DisplayName => Result.GetDisplayName() ?? string.Empty;
         public string ApplicationName => Result.Application?.DisplayName ?? "Unknown";
-        public string Confidence => Result.Confidence.GetConfidence().ToString();
+        public string Confidence => Result.Confidence?.GetConfidence().ToString() ?? "Unknown";
         public string JunkType => Result.GetType().Name.Replace("Junk", "");
+
+        public string ConfidenceBrush => ConfidenceLevel switch
+        {
+            ConfidenceLevel.VeryGood => "#3fb950",
+            ConfidenceLevel.Good => "#58a6ff",
+            ConfidenceLevel.Questionable => "#d29922",
+            ConfidenceLevel.Bad => "#f85149",
+            _ => "#8b949e"
+        };
     }
 
     public partial class JunkRemovalViewModel : ViewModelBase
@@ -81,6 +96,20 @@ namespace AnyUninstaller.Avalonia.ViewModels
                 JunkItems.Add(vm);
             }
             UpdateSelectionStats();
+
+            int confidentCount = JunkItems.Count(x => x.IsConfident);
+            if (confidentCount > 0 && confidentCount < TotalCount)
+            {
+                StatusMessage = $"Selected {confidentCount} high-confidence item(s) by default ({TotalCount - confidentCount} questionable unselected).";
+            }
+            else if (confidentCount == TotalCount && TotalCount > 0)
+            {
+                StatusMessage = $"Selected all {TotalCount} high-confidence leftover item(s).";
+            }
+            else
+            {
+                StatusMessage = "Review and select items to remove.";
+            }
         }
 
         public void UpdateSelectionStats()
@@ -94,6 +123,18 @@ namespace AnyUninstaller.Avalonia.ViewModels
             OnPropertyChanged(nameof(ToggleSelectAllText));
             OnPropertyChanged(nameof(ToggleSelectAllIcon));
             OnPropertyChanged(nameof(ToggleSelectAllTooltip));
+        }
+
+        [RelayCommand]
+        public void SelectConfidentOnly()
+        {
+            foreach (var item in JunkItems)
+            {
+                if (!item.IsDeleted)
+                    item.IsChecked = item.IsConfident;
+            }
+            UpdateSelectionStats();
+            StatusMessage = $"Selected {SelectedCount} high-confidence item(s).";
         }
 
         [RelayCommand]

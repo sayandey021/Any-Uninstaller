@@ -1,4 +1,4 @@
-﻿/*
+/*
     Copyright (c) 2017 Marcin Szeniak (https://github.com/Klocman/)
     Apache License Version 2.0
 */
@@ -52,6 +52,18 @@ namespace UninstallTools.Junk.Confidence
                 yield return ConfidenceRecords.DirectlyInsideKnownFolder;
         }
 
+        private static readonly HashSet<string> GenericNamesBlacklist = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "bin", "cache", "caches", "config", "configuration", "data", "database", "desktop", "docs", "documentation",
+            "download", "downloads", "driver", "drivers", "engine", "error", "extension", "extensions", "framework",
+            "help", "install", "installer", "installers", "lib", "library", "local", "locale", "locales", "log", "logs",
+            "media", "patch", "patches", "plugin", "plugins", "profile", "profiles", "release", "releases", "resource",
+            "resources", "server", "service", "services", "setting", "settings", "setup", "share", "shared", "studio",
+            "system", "system32", "temp", "template", "templates", "theme", "themes", "tmp", "tool", "tools", "update",
+            "updates", "user", "users", "util", "utils", "utility", "x64", "x86", "32-bit", "64-bit", "common",
+            "client", "package", "packages", "program", "programs", "app", "apps", "application", "applications"
+        };
+
         /// <summary>
         /// -1 if match failed, 0 if string matched perfectly, higher if match was worse
         /// </summary>
@@ -65,6 +77,10 @@ namespace UninstallTools.Junk.Confidence
             if (lowestLength <= 4)
                 return -1;
 
+            // Reject matching if string is a generic system/folder keyword
+            if (GenericNamesBlacklist.Contains(str))
+                return -1;
+
             var result = Sift4.SimplestDistance(productName, str, 1);
 
             // Strings match perfectly
@@ -76,7 +92,7 @@ namespace UninstallTools.Junk.Confidence
             if (publisher.Length > 4 && productName.Contains(publisher))
             {
                 var trimmedProductName = productName.Replace(publisher, "").Trim();
-                if (trimmedProductName.Length <= 4)
+                if (trimmedProductName.Length <= 4 || GenericNamesBlacklist.Contains(trimmedProductName))
                     return -1;
 
                 var trimmedResult = Sift4.SimplestDistance(trimmedProductName, str, 1);
@@ -86,7 +102,8 @@ namespace UninstallTools.Junk.Confidence
             }
 
             var dirToName = str.Contains(productName);
-            var nameToDir = productName.Contains(str);
+            // Require at least 6 characters and non-generic term for reverse containment
+            var nameToDir = str.Length >= 6 && productName.Contains(str) && !GenericNamesBlacklist.Contains(str);
 
             if (dirToName || nameToDir)
                 return 2;

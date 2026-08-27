@@ -44,6 +44,23 @@ namespace UninstallTools.Junk.Finders
             return !string.IsNullOrEmpty(location) && otherInstallLocations.Any(x => x.TrimEnd('\\').StartsWith(location, StringComparison.InvariantCultureIgnoreCase));
         }
 
+        /// <summary>
+        /// Returns true if a folder or key name matches another still-installed application's publisher.
+        /// </summary>
+        protected bool CheckIfPublisherIsStillUsed(ApplicationUninstallerEntry target, string name)
+        {
+            if (string.IsNullOrWhiteSpace(name)) return false;
+            var cleanName = name.Trim().ToLowerInvariant();
+            if (cleanName.Length < 3) return false;
+
+            return GetOtherUninstallers(target)
+                .Any(x => !string.IsNullOrEmpty(x.PublisherTrimmed) &&
+                          x.PublisherTrimmed.Length >= 3 &&
+                          (cleanName.Equals(x.PublisherTrimmed.ToLowerInvariant()) ||
+                           cleanName.Contains(x.PublisherTrimmed.ToLowerInvariant()) ||
+                           x.PublisherTrimmed.ToLowerInvariant().Contains(cleanName)));
+        }
+
         private static readonly string FullWindowsDirectoryName = PathTools.GetWindowsDirectory().FullName;
 
         // TODO overhaul

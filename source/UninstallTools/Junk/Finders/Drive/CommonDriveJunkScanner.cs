@@ -1,4 +1,4 @@
-﻿/*
+/*
     Copyright (c) 2017 Marcin Szeniak (https://github.com/Klocman/)
     Apache License Version 2.0
 */
@@ -66,6 +66,9 @@ namespace UninstallTools.Junk.Finders.Drive
 
                             if (CheckIfDirIsStillUsed(dir.FullName, GetOtherInstallLocations(uninstaller)))
                                 newNode.Confidence.Add(ConfidenceRecords.DirectoryStillUsed);
+
+                            if (CheckIfPublisherIsStillUsed(uninstaller, dir.Name))
+                                newNode.Confidence.Add(ConfidenceRecords.PublisherIsStillUsed);
 
                             added.Add(newNode);
                         }

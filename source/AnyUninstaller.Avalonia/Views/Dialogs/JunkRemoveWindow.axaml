@@ -1,4 +1,4 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
+<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:AnyUninstaller.Avalonia.ViewModels"
         x:Class="AnyUninstaller.Avalonia.Views.Dialogs.JunkRemoveWindow"
@@ -13,11 +13,20 @@
     <DockPanel LastChildFill="True" Margin="16">
         <!-- Top Title & Toolbar Card -->
         <Border DockPanel.Dock="Top" Classes="card" Padding="12" Margin="0,0,0,12">
-            <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto">
+            <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto">
                 <TextBlock Grid.Column="0" Text="🧹 Residual Junk Items" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource PrimaryAccentBrush}" VerticalAlignment="Center" Margin="0,0,16,0"/>
                 
+                <!-- Confident Only Button (Default Recommended) -->
+                <Button Grid.Column="1" Classes="toolbar" Command="{Binding SelectConfidentOnlyCommand}"
+                        ToolTip.Tip="Select only high-confidence items (Good &amp; Very Good)" Margin="0,0,8,0">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBlock Text="🎯" FontSize="11"/>
+                        <TextBlock Text="Confident Only"/>
+                    </StackPanel>
+                </Button>
+
                 <!-- Merged Select All / None Toggle Button -->
-                <Button Grid.Column="1" Classes="toolbar" Command="{Binding ToggleSelectAllCommand}"
+                <Button Grid.Column="2" Classes="toolbar" Command="{Binding ToggleSelectAllCommand}"
                         ToolTip.Tip="{Binding ToggleSelectAllTooltip}" Margin="0,0,10,0">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <TextBlock Text="{Binding ToggleSelectAllIcon}" FontWeight="Bold" FontSize="11"/>
@@ -26,11 +35,11 @@
                 </Button>
                 
                 <!-- Selection Badge -->
-                <Border Grid.Column="2" Background="{DynamicResource CardHoverBrush}" CornerRadius="12" Padding="10,4" VerticalAlignment="Center">
+                <Border Grid.Column="3" Background="{DynamicResource CardHoverBrush}" CornerRadius="12" Padding="10,4" VerticalAlignment="Center">
                     <TextBlock Text="{Binding SelectionSummaryText}" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryAccentBrush}"/>
                 </Border>
 
-                <TextBlock Grid.Column="3" Text="{Binding StatusMessage}" VerticalAlignment="Center" Margin="16,0"
+                <TextBlock Grid.Column="4" Text="{Binding StatusMessage}" VerticalAlignment="Center" Margin="16,0"
                            Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" TextTrimming="CharacterEllipsis"/>
             </Grid>
         </Border>
@@ -60,7 +69,17 @@
                     <DataGridTextColumn Header="Type" Binding="{Binding JunkType}" Width="110"/>
                     <DataGridTextColumn Header="Path / Key" Binding="{Binding DisplayName}" Width="2*" MinWidth="200"/>
                     <DataGridTextColumn Header="Application" Binding="{Binding ApplicationName}" Width="1.2*" MinWidth="130"/>
-                    <DataGridTextColumn Header="Confidence" Binding="{Binding Confidence}" Width="100"/>
+                    <DataGridTemplateColumn Header="Confidence" Width="115">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="vm:JunkEntryViewModel">
+                                <Border Classes="chip" Padding="8,2" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="4,0"
+                                        Background="{DynamicResource CardHoverBrush}">
+                                    <TextBlock Text="{Binding Confidence}" FontSize="11" FontWeight="SemiBold"
+                                               Foreground="{Binding ConfidenceBrush}"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Status" Width="120">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="vm:JunkEntryViewModel">
