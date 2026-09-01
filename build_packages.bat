@@ -3,7 +3,7 @@ cd /d "%~dp0"
 title Building Any Uninstaller Packages...
 
 echo ========================================================================
-echo         Any Uninstaller - Packaging Pipeline (v1.2.0)
+echo         Any Uninstaller - Packaging Pipeline (v1.3.4)
 echo ========================================================================
 echo Target Packages:
 echo   1. App:        Release application folder

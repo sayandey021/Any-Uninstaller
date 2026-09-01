@@ -68,27 +68,59 @@
                       ScrollViewer.HorizontalScrollBarVisibility="Auto">
                 <DataGrid.Columns>
                     <DataGridCheckBoxColumn Header="✓" Binding="{Binding IsChecked}" Width="42"/>
-                    <DataGridTextColumn Header="Type" Binding="{Binding JunkType}" Width="110"/>
-                    <DataGridTextColumn Header="Path / Key" Binding="{Binding DisplayName}" Width="2*" MinWidth="200"/>
-                    <DataGridTextColumn Header="Application" Binding="{Binding ApplicationName}" Width="1.2*" MinWidth="130"/>
+                    
+                    <!-- Type -->
+                    <DataGridTemplateColumn Header="Type" Width="110" MinWidth="80">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="vm:JunkEntryViewModel">
+                                <TextBlock Text="{Binding JunkType}" VerticalAlignment="Center" Margin="4,0"
+                                           TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding JunkType}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- Path / Key -->
+                    <DataGridTemplateColumn Header="Path / Key" Width="2*" MinWidth="200">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="vm:JunkEntryViewModel">
+                                <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center" Margin="4,0"
+                                           TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding DisplayName}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- Application -->
+                    <DataGridTemplateColumn Header="Application" Width="1.2*" MinWidth="130">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="vm:JunkEntryViewModel">
+                                <TextBlock Text="{Binding ApplicationName}" VerticalAlignment="Center" Margin="4,0"
+                                           TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding ApplicationName}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- Confidence -->
                     <DataGridTemplateColumn Header="Confidence" Width="115">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="vm:JunkEntryViewModel">
                                 <Border Classes="chip" Padding="8,2" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="4,0"
-                                        Background="{DynamicResource CardHoverBrush}">
+                                        Background="{DynamicResource CardHoverBrush}"
+                                        ToolTip.Tip="{Binding Confidence}">
                                     <TextBlock Text="{Binding Confidence}" FontSize="11" FontWeight="SemiBold"
                                                Foreground="{Binding ConfidenceBrush}"/>
                                 </Border>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
+
+                    <!-- Status -->
                     <DataGridTemplateColumn Header="Status" Width="120">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="vm:JunkEntryViewModel">
                                 <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="4,2">
                                     <Border Classes="chip" Padding="6,2"
                                             Background="{Binding HasError, Converter={x:Null}}"
-                                            ToolTip.Tip="{Binding ErrorMessage}">
+                                            ToolTip.Tip="{Binding ErrorMessage, FallbackValue={Binding Status}}">
                                         <TextBlock Text="{Binding Status}" FontSize="11"
                                                    FontWeight="SemiBold"
                                                    Foreground="{Binding HasError, Converter={x:Null}}"/>

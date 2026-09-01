@@ -103,7 +103,7 @@ namespace AnyUninstaller.Avalonia.ViewModels
         [ObservableProperty]
         private bool _showColumnLocation = AppSettingsService.Instance.ShowColumnLocation;
 
-        public string AppVersion => "1.3.0";
+        public string AppVersion => "1.3.4";
         public string DeveloperTitle => "Developed by";
         public string DeveloperName => "Sayan Dey";
         public string LinkedInDisplay => "www.linkedin.com/in/sayan-dey021";

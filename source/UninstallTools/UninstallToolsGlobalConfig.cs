@@ -122,7 +122,29 @@ namespace UninstallTools
 
             JunkSearchDirs = paths.Distinct().ToList();
 
-            AppInfoCachePath = Path.Combine(AssemblyLocation, "InfoCache.xml");
+            string cacheDir = AssemblyLocation;
+            try
+            {
+                var testFile = Path.Combine(cacheDir, "test_write.tmp");
+                File.WriteAllText(testFile, "test");
+                File.Delete(testFile);
+            }
+            catch
+            {
+                try
+                {
+                    cacheDir = Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                        "Any Uninstaller");
+                    Directory.CreateDirectory(cacheDir);
+                }
+                catch
+                {
+                    cacheDir = Path.GetTempPath();
+                }
+            }
+
+            AppInfoCachePath = Path.Combine(cacheDir, "InfoCache.xml");
 
             _pf32 = WindowsTools.GetProgramFilesX86Path();
             _pf64 = WindowsTools.GetEnvironmentPath(CSIDL.CSIDL_PROGRAM_FILES);

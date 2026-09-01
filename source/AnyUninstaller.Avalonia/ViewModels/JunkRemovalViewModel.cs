@@ -176,39 +176,38 @@ namespace AnyUninstaller.Avalonia.ViewModels
             }
 
             IsBusy = true;
-            StatusMessage = $"Deleting {selected.Count} item(s)...";
+            StatusMessage = $"Deleting {selected.Count} leftover item(s)...";
 
             var successfullyDeleted = new List<JunkEntryViewModel>();
             var errors = new List<string>();
 
             await Task.Run(() =>
             {
+                var junkResults = selected.Select(x => x.Result).ToList();
+                var result = JunkManager.DeleteJunkBatch(junkResults, (current, total, msg) =>
+                {
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        StatusMessage = $"Cleaning item {current} of {total}...";
+                    });
+                });
+
                 foreach (var item in selected)
                 {
-                    try
+                    if (result.SuccessfullyDeleted.Contains(item.Result))
                     {
-                        item.Result.Delete();
                         item.IsDeleted = true;
                         item.HasError = false;
                         item.ErrorMessage = null;
                         item.Status = "Deleted";
                         successfullyDeleted.Add(item);
                     }
-                    catch (UnauthorizedAccessException)
+                    else if (result.FailedItems.TryGetValue(item.Result, out var errorMsg))
                     {
                         item.HasError = true;
-                        string msg = "Access Denied (Admin rights required)";
-                        item.ErrorMessage = msg;
-                        item.Status = msg;
-                        errors.Add($"Access Denied on '{item.DisplayName}' (Run app as Administrator)");
-                    }
-                    catch (Exception ex)
-                    {
-                        item.HasError = true;
-                        string msg = ex.Message;
-                        item.ErrorMessage = msg;
-                        item.Status = $"Error: {msg}";
-                        errors.Add($"{item.DisplayName}: {msg}");
+                        item.ErrorMessage = errorMsg;
+                        item.Status = errorMsg;
+                        errors.Add($"{item.DisplayName}: {errorMsg}");
                     }
                 }
             });

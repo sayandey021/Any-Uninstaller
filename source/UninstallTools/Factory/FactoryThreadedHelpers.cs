@@ -16,7 +16,7 @@ namespace UninstallTools.Factory
 {
     internal static class FactoryThreadedHelpers
     {
-        public static int MaxThreadsPerDrive = 2;
+        public static int MaxThreadsPerDrive = Math.Clamp(Environment.ProcessorCount, 4, 16);
 
         public static IList<ApplicationUninstallerEntry> DriveApplicationScan(
             ListGenerationProgress.ListGenerationCallback progressCallback,
@@ -87,51 +87,35 @@ namespace UninstallTools.Factory
 
         private static IList<IList<TData>> SplitByPhysicalDrives<TData>(IList<TData> itemsToScan, Func<TData, DirectoryInfo> locationGetter)
         {
-            var output = new List<IList<TData>>();
+            if (itemsToScan == null || itemsToScan.Count == 0)
+                return new List<IList<TData>>();
+
             try
             {
-                using (var searcherDtp = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_DiskDriveToDiskPartition"))
-                using (var searcherLtp = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_LogicalDiskToPartition"))
-                {
-                    var dtp = searcherDtp.Get().Cast<ManagementObject>().Select(queryObj => new
+                // Fast grouping by drive root (e.g. C:\, D:\) without slow WMI queries
+                var groups = itemsToScan
+                    .GroupBy(x =>
                     {
-                        Drive = queryObj["Antecedent"] as string,
-                        Partition = queryObj["Dependent"] as string
-                    });
+                        try
+                        {
+                            var dir = locationGetter(x);
+                            return dir?.Root?.FullName?.ToUpperInvariant() ?? "UNKNOWN";
+                        }
+                        catch
+                        {
+                            return "UNKNOWN";
+                        }
+                    })
+                    .Select(g => (IList<TData>)g.ToList())
+                    .ToList();
 
-                    var ltp = searcherLtp.Get().Cast<ManagementObject>().Select(queryObj => new
-                    {
-                        Partition = queryObj["Antecedent"] as string,
-                        LogicalDrive = queryObj["Dependent"] as string
-                    });
-
-                    var correlatedDriveList = ltp.Join(dtp, arg => arg.Partition, arg => arg.Partition, (x, y) => new
-                    {
-                        LogicalName = x.LogicalDrive.Split(new[] { '"' }, StringSplitOptions.RemoveEmptyEntries).LastOrDefault()?.Append(@"\"),
-                        y.Drive
-                    }).Where(x => !string.IsNullOrEmpty(x.LogicalName)).GroupBy(x => x.Drive);
-
-                    var inputList = itemsToScan.Select(x => new { locationGetter(x).Root.Name, x }).ToList();
-                    foreach (var logicalDriveGroup in correlatedDriveList)
-                    {
-                        var filteredByPhysicalDrive = inputList.Where(x =>
-                            logicalDriveGroup.Any(y =>
-                                y.LogicalName.Equals(x.Name, StringComparison.OrdinalIgnoreCase))).ToList();
-
-                        inputList.RemoveAll(filteredByPhysicalDrive);
-                        output.Add(filteredByPhysicalDrive.Select(x => x.x).ToList());
-                    }
-                    // Bundle leftovers as a single drive
-                    output.Add(inputList.Select(x => x.x).ToList());
-                }
+                return groups.Count > 0 ? groups : new List<IList<TData>> { itemsToScan };
             }
-            catch (SystemException ex)
+            catch (Exception ex)
             {
-                Trace.WriteLine(@"Failed to get logical disk to physical drive relationships - " + ex);
-                output.Clear();
-                output.Add(itemsToScan);
+                Trace.WriteLine("Failed to partition items by drive: " + ex);
+                return new List<IList<TData>> { itemsToScan };
             }
-            return output;
         }
     }
 }

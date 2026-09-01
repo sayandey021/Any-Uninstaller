@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -210,7 +210,7 @@ namespace AnyUninstaller.Avalonia.ViewModels
                 if (cert != null)
                 {
                     items.Add(new PropertyItemViewModel("Archived", cert.Archived ? "Yes" : "No"));
-                    items.Add(new PropertyItemViewModel("Extensions", string.Join(", ", cert.Extensions.Cast<X509Extension>().Where(x => x.Oid != null).Select(x => x.Oid.FriendlyName))));
+                    items.Add(new PropertyItemViewModel("Extensions", string.Join(", ", cert.Extensions.Cast<X509Extension>().Where(x => x.Oid != null).Select(x => x.Oid?.FriendlyName ?? string.Empty))));
                     items.Add(new PropertyItemViewModel("Friendly Name", cert.FriendlyName));
                     items.Add(new PropertyItemViewModel("Has Private Key", cert.HasPrivateKey ? "Yes" : "No"));
                     items.Add(new PropertyItemViewModel("Issuer", cert.Issuer));

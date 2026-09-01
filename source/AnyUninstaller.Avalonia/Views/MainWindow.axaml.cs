@@ -66,14 +66,24 @@ namespace AnyUninstaller.Avalonia.Views
                 AppSettingsService.Instance.ShowTreemap = ViewModel.IsTreeMapVisible;
                 AppSettingsService.Instance.IsSidebarVisible = ViewModel.Sidebar.IsSidebarVisible;
 
+                AppSettingsService.Instance.FilterShowDesktopApps = ViewModel.Sidebar.ShowDesktopApps;
                 AppSettingsService.Instance.FilterShowStoreApps = ViewModel.Sidebar.ShowStoreApps;
+                AppSettingsService.Instance.FilterShowGames = ViewModel.Sidebar.ShowGames;
                 AppSettingsService.Instance.FilterShowSystemComponents = ViewModel.Sidebar.ShowSystemComponents;
-                AppSettingsService.Instance.FilterShowProtected = ViewModel.Sidebar.ShowProtected;
                 AppSettingsService.Instance.FilterShowUpdates = ViewModel.Sidebar.ShowUpdates;
+                AppSettingsService.Instance.FilterShowWindowsFeatures = ViewModel.Sidebar.ShowWindowsFeatures;
+                AppSettingsService.Instance.FilterShowProtected = ViewModel.Sidebar.ShowProtected;
                 AppSettingsService.Instance.FilterShowOrphans = ViewModel.Sidebar.ShowOrphans;
                 AppSettingsService.Instance.FilterShowInvalid = ViewModel.Sidebar.ShowInvalid;
                 AppSettingsService.Instance.FilterShowVerified = ViewModel.Sidebar.ShowVerified;
+                AppSettingsService.Instance.FilterShow64Bit = ViewModel.Sidebar.Show64Bit;
+                AppSettingsService.Instance.FilterShow32Bit = ViewModel.Sidebar.Show32Bit;
+                AppSettingsService.Instance.FilterSelectedSizeIndex = ViewModel.Sidebar.SelectedSizeFilterIndex;
+                AppSettingsService.Instance.FilterSelectedDateIndex = ViewModel.Sidebar.SelectedDateFilterIndex;
                 AppSettingsService.Instance.FilterShowOnlyQuiet = ViewModel.Sidebar.ShowOnlyQuiet;
+                AppSettingsService.Instance.FilterShowOnlyStartup = ViewModel.Sidebar.ShowOnlyStartup;
+                AppSettingsService.Instance.FilterShowSigned = ViewModel.Sidebar.ShowSigned;
+                AppSettingsService.Instance.FilterShowUnsigned = ViewModel.Sidebar.ShowUnsigned;
             }
 
             AppSettingsService.Instance.Save();
@@ -422,11 +432,22 @@ namespace AnyUninstaller.Avalonia.Views
                     catch
                     {
                         // Reg.exe fallback for protected/virtualized 64-bit and 32-bit registry keys
-                        Process.Start(new ProcessStartInfo("reg.exe", $"delete \"{item.RegistryPath}\" /f")
+                        var proc = Process.Start(new ProcessStartInfo("reg.exe", $"delete \"{item.RegistryPath}\" /f")
                         {
                             CreateNoWindow = true,
                             UseShellExecute = false
-                        })?.WaitForExit();
+                        });
+                        proc?.WaitForExit(3000);
+                        if (proc == null || proc.ExitCode != 0)
+                        {
+                            // Prompt for elevation on-demand
+                            Process.Start(new ProcessStartInfo("reg.exe", $"delete \"{item.RegistryPath}\" /f")
+                            {
+                                UseShellExecute = true,
+                                Verb = "runas",
+                                WindowStyle = ProcessWindowStyle.Hidden
+                            })?.WaitForExit(5000);
+                        }
                     }
                 }
 
@@ -711,6 +732,21 @@ namespace AnyUninstaller.Avalonia.Views
             {
                 ViewModel.StatusBar.IsBusy = false;
                 ViewModel.StatusBar.StatusMessage = "Ready";
+            }
+        }
+
+        private async void OnDeleteTempFilesClick(object? sender, RoutedEventArgs e)
+        {
+            if (ViewModel == null) return;
+
+            try
+            {
+                var tempCleanerWindow = new TempCleanerWindow();
+                await tempCleanerWindow.ShowDialog(this);
+            }
+            catch (Exception ex)
+            {
+                ViewModel.StatusBar.StatusMessage = $"Temp cleaner error: {ex.Message}";
             }
         }
 
@@ -1057,6 +1093,21 @@ namespace AnyUninstaller.Avalonia.Views
                     ViewModel.Sidebar.ShowStoreApps = true;
                     filterNeedsUpdate = true;
                 }
+                if (item.IsDesktopApp && !ViewModel.Sidebar.ShowDesktopApps)
+                {
+                    ViewModel.Sidebar.ShowDesktopApps = true;
+                    filterNeedsUpdate = true;
+                }
+                if (item.IsGame && !ViewModel.Sidebar.ShowGames)
+                {
+                    ViewModel.Sidebar.ShowGames = true;
+                    filterNeedsUpdate = true;
+                }
+                if (item.IsWindowsFeature && !ViewModel.Sidebar.ShowWindowsFeatures)
+                {
+                    ViewModel.Sidebar.ShowWindowsFeatures = true;
+                    filterNeedsUpdate = true;
+                }
                 if (item.IsSystemComponent && !ViewModel.Sidebar.ShowSystemComponents)
                 {
                     ViewModel.Sidebar.ShowSystemComponents = true;
@@ -1082,6 +1133,33 @@ namespace AnyUninstaller.Avalonia.Views
                     ViewModel.Sidebar.ShowInvalid = true;
                     filterNeedsUpdate = true;
                 }
+                if (item.IsVerified && !ViewModel.Sidebar.ShowVerified)
+                {
+                    ViewModel.Sidebar.ShowVerified = true;
+                    filterNeedsUpdate = true;
+                }
+                if (item.Is64Bit && !ViewModel.Sidebar.Show64Bit)
+                {
+                    ViewModel.Sidebar.Show64Bit = true;
+                    filterNeedsUpdate = true;
+                }
+                if (!item.Is64Bit && !ViewModel.Sidebar.Show32Bit)
+                {
+                    ViewModel.Sidebar.Show32Bit = true;
+                    filterNeedsUpdate = true;
+                }
+            }
+
+            if (ViewModel.Sidebar.SelectedSizeFilterIndex != 0)
+            {
+                ViewModel.Sidebar.SelectedSizeFilterIndex = 0;
+                filterNeedsUpdate = true;
+            }
+
+            if (ViewModel.Sidebar.SelectedDateFilterIndex != 0)
+            {
+                ViewModel.Sidebar.SelectedDateFilterIndex = 0;
+                filterNeedsUpdate = true;
             }
 
             if (!string.IsNullOrEmpty(ViewModel.Sidebar.SearchText))
@@ -1108,8 +1186,8 @@ namespace AnyUninstaller.Avalonia.Views
 
         private async void OnAboutClick(object? sender, RoutedEventArgs e)
         {
-            var aboutWindow = new AboutWindow();
-            await aboutWindow.ShowDialog(this);
+            var settingsWindow = new SettingsWindow(5);
+            await settingsWindow.ShowDialog(this);
         }
 
         private async void OnSettingsClick(object? sender, RoutedEventArgs e)

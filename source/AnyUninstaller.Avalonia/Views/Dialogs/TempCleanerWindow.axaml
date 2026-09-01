@@ -1,0 +1,228 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AnyUninstaller.Avalonia.ViewModels"
+        xmlns:conv="using:AnyUninstaller.Avalonia.Converters"
+        x:Class="AnyUninstaller.Avalonia.Views.Dialogs.TempCleanerWindow"
+        x:DataType="vm:TempCleanerViewModel"
+        Title="Delete Temporary Files"
+        Icon="/Assets/logo.ico"
+        Width="1020" Height="640"
+        MinWidth="800" MinHeight="500"
+        Background="{DynamicResource AppBgBrush}"
+        WindowStartupLocation="CenterOwner">
+
+    <Window.Resources>
+        <conv:FileSizeConverter x:Key="FileSizeConverter"/>
+        <conv:DateTimeFormatConverter x:Key="DateTimeConverter"/>
+    </Window.Resources>
+
+    <DockPanel LastChildFill="True" Margin="14">
+        <!-- Top Category Summary Cards -->
+        <Grid DockPanel.Dock="Top" Margin="0,0,0,10" ColumnDefinitions="*,*,*,*,*">
+            <!-- 1. User Temp -->
+            <Border Grid.Column="0" Classes="card" Margin="0,0,6,0" Padding="10,8">
+                <StackPanel Spacing="2">
+                    <TextBlock Text="👤 User Temp" FontSize="11.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding UserTempSizeFormatted}" FontSize="15" FontWeight="Bold" Foreground="#58a6ff"/>
+                </StackPanel>
+            </Border>
+
+            <!-- 2. Windows Temp -->
+            <Border Grid.Column="1" Classes="card" Margin="0,0,6,0" Padding="10,8">
+                <StackPanel Spacing="2">
+                    <TextBlock Text="🪟 Windows Temp" FontSize="11.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding SystemTempSizeFormatted}" FontSize="15" FontWeight="Bold" Foreground="#bc8cff"/>
+                </StackPanel>
+            </Border>
+
+            <!-- 3. Crash Dumps -->
+            <Border Grid.Column="2" Classes="card" Margin="0,0,6,0" Padding="10,8">
+                <StackPanel Spacing="2">
+                    <TextBlock Text="💥 Crash Dumps &amp; WER" FontSize="11.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding CrashDumpsSizeFormatted}" FontSize="15" FontWeight="Bold" Foreground="#f85149"/>
+                </StackPanel>
+            </Border>
+
+            <!-- 4. Windows Update Cache -->
+            <Border Grid.Column="3" Classes="card" Margin="0,0,6,0" Padding="10,8">
+                <StackPanel Spacing="2">
+                    <TextBlock Text="📦 Update Cache" FontSize="11.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding UpdateCacheSizeFormatted}" FontSize="15" FontWeight="Bold" Foreground="#3fb950"/>
+                </StackPanel>
+            </Border>
+
+            <!-- 5. Web & App Caches -->
+            <Border Grid.Column="4" Classes="card" Padding="10,8">
+                <StackPanel Spacing="2">
+                    <TextBlock Text="🌐 App &amp; Web Caches" FontSize="11.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding WebCacheSizeFormatted}" FontSize="15" FontWeight="Bold" Foreground="#d29922"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Top Actions / Filter Toolbar Card -->
+        <Border DockPanel.Dock="Top" Classes="card" Padding="10,8" Margin="0,0,0,10">
+            <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto">
+                <!-- Rescan Button -->
+                <Button Grid.Column="0" Classes="toolbar" Command="{Binding ScanCommand}"
+                        IsEnabled="{Binding CanScan}" ToolTip.Tip="Rescan temporary directories" Margin="0,0,6,0">
+                    <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                        <TextBlock Text="🔄" FontSize="12"/>
+                        <TextBlock Text="Rescan"/>
+                    </StackPanel>
+                </Button>
+
+                <!-- Select All / None Toggle -->
+                <Button Grid.Column="1" Classes="toolbar" Command="{Binding ToggleSelectAllCommand}"
+                        ToolTip.Tip="{Binding ToggleSelectAllTooltip}" Margin="0,0,10,0">
+                    <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding ToggleSelectAllIcon}" FontWeight="Bold" FontSize="12"/>
+                        <TextBlock Text="{Binding ToggleSelectAllText}"/>
+                    </StackPanel>
+                </Button>
+
+                <!-- Category Filter Dropdown -->
+                <ComboBox Grid.Column="2" SelectedIndex="{Binding SelectedCategoryFilterIndex, Mode=TwoWay}"
+                          Width="190" VerticalAlignment="Center" Margin="0,0,10,0">
+                    <ComboBoxItem Content="All Categories"/>
+                    <ComboBoxItem Content="👤 User Temp (%TEMP%)"/>
+                    <ComboBoxItem Content="🪟 Windows Temp"/>
+                    <ComboBoxItem Content="💥 Crash Dumps &amp; Diagnostics"/>
+                    <ComboBoxItem Content="📦 Windows Update Cache"/>
+                    <ComboBoxItem Content="🌐 App &amp; Web Caches"/>
+                </ComboBox>
+
+                <!-- Search Capsule Box -->
+                <TextBox Grid.Column="3" Classes="search-capsule" Margin="0,0,10,0"
+                         Watermark="🔍 Filter by name or path..."
+                         Text="{Binding SearchText, Mode=TwoWay}" VerticalAlignment="Center">
+                    <TextBox.InnerRightContent>
+                        <Button Classes="preset-pill" Command="{Binding ClearSearchCommand}"
+                                IsVisible="{Binding HasSearchText}"
+                                Padding="6,2" Margin="0,0,4,0" ToolTip.Tip="Clear search filter">
+                            <TextBlock Text="✕" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        </Button>
+                    </TextBox.InnerRightContent>
+                </TextBox>
+
+                <!-- Selection Badge -->
+                <Border Grid.Column="4" Background="{DynamicResource CardHoverBrush}" CornerRadius="12" Padding="10,4" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding SelectionSummaryText}" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryAccentBrush}"/>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Bottom Controls -->
+        <Border DockPanel.Dock="Bottom" Padding="0,10,0,0">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                <ProgressBar Grid.Column="0" IsIndeterminate="True" IsVisible="{Binding IsBusy}" Width="160" Height="10" VerticalAlignment="Center" Margin="0,0,14,0" Foreground="#f85149"/>
+                <TextBlock Grid.Column="1" Text="{Binding StatusMessage}" VerticalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" TextTrimming="CharacterEllipsis"/>
+                
+                <Button Grid.Column="2" Content="{Binding DeleteButtonText}" Command="{Binding DeleteSelectedCommand}"
+                        IsEnabled="{Binding CanDelete}"
+                        Classes="action-uninstall" Margin="0,0,8,0"/>
+                <Button Grid.Column="3" Content="Close" Classes="toolbar" Click="OnCloseClick" Width="85"/>
+            </Grid>
+        </Border>
+
+        <!-- Main Temp Items DataGrid Card -->
+        <Border Classes="card" Padding="4">
+            <DataGrid x:Name="TempDataGrid"
+                      ItemsSource="{Binding FilteredTempItems}"
+                      SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                      AutoGenerateColumns="False"
+                      CanUserResizeColumns="True"
+                      CanUserReorderColumns="True"
+                      ScrollViewer.VerticalScrollBarVisibility="Visible"
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Open containing folder in Explorer" Command="{Binding OpenItemLocationCommand}">
+                            <MenuItem.Icon>
+                                <TextBlock Text="📂" FontSize="12"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+                <DataGrid.Columns>
+                    <!-- Checkbox Column -->
+                    <DataGridCheckBoxColumn Header="✓" Binding="{Binding IsChecked}" Width="36"/>
+
+                    <!-- Type Icon -->
+                    <DataGridTextColumn Header="Type" Binding="{Binding TypeIcon}" Width="46"/>
+
+                    <!-- Category Badge -->
+                    <DataGridTemplateColumn Header="Category" Width="170" MinWidth="130">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="vm:TempItemViewModel">
+                                <Border Classes="chip" Padding="8,2" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="4,0"
+                                        Background="{DynamicResource CardHoverBrush}"
+                                        ToolTip.Tip="{Binding CategoryName}">
+                                    <TextBlock Text="{Binding CategoryName}" FontSize="11" FontWeight="SemiBold"
+                                               Foreground="{Binding CategoryBrush}" TextTrimming="CharacterEllipsis"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- Name -->
+                    <DataGridTemplateColumn Header="Name" Width="1.5*" MinWidth="140">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="vm:TempItemViewModel">
+                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="4,0"
+                                           TextTrimming="CharacterEllipsis"
+                                           ToolTip.Tip="{Binding Name}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- Path -->
+                    <DataGridTemplateColumn Header="Full Path" Width="3*" MinWidth="220">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="vm:TempItemViewModel">
+                                <TextBlock Text="{Binding FullPath}" VerticalAlignment="Center" Margin="4,0"
+                                           TextTrimming="CharacterEllipsis"
+                                           ToolTip.Tip="{Binding FullPath}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- Size -->
+                    <DataGridTemplateColumn Header="Size" Width="100" MinWidth="80">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="vm:TempItemViewModel">
+                                <TextBlock Text="{Binding SizeFormatted}" VerticalAlignment="Center" Margin="4,0"
+                                           FontWeight="Medium"
+                                           ToolTip.Tip="{Binding SizeFormatted}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- Last Modified -->
+                    <DataGridTemplateColumn Header="Last Modified" Width="125" MinWidth="110">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="vm:TempItemViewModel">
+                                <TextBlock Text="{Binding LastModified, Converter={StaticResource DateTimeConverter}}"
+                                           VerticalAlignment="Center" Margin="4,0"
+                                           ToolTip.Tip="{Binding LastModified}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- Status -->
+                    <DataGridTemplateColumn Header="Status" Width="130" MinWidth="90">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="vm:TempItemViewModel">
+                                <Border Classes="chip" Padding="6,2" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="4,0"
+                                        ToolTip.Tip="{Binding ErrorMessage, FallbackValue={Binding Status}}">
+                                    <TextBlock Text="{Binding Status}" FontSize="11" FontWeight="SemiBold"
+                                               Foreground="{Binding StatusBrush}"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+    </DockPanel>
+</Window>

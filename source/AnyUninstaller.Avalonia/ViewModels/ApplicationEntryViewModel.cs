@@ -16,7 +16,7 @@ namespace AnyUninstaller.Avalonia.ViewModels
         private bool _isChecked;
 
         private Bitmap? _icon;
-        private bool _iconLoaded;
+        private bool _iconLoadingRequested;
 
         public ApplicationEntryViewModel(ApplicationUninstallerEntry entry)
         {
@@ -83,7 +83,15 @@ namespace AnyUninstaller.Avalonia.ViewModels
         public FileSize EstimatedSize => Entry.EstimatedSize;
         public string InstallLocation => Entry.InstallLocation ?? string.Empty;
         public string UninstallerKind => Entry.UninstallerKind.ToString();
-        public bool QuietUninstallPossible => Entry.QuietUninstallPossible;
+        public bool QuietUninstallPossible => Entry.QuietUninstallPossible ||
+                                              !string.IsNullOrWhiteSpace(Entry.QuietUninstallString) ||
+                                              Entry.UninstallerKind == UninstallerType.Msiexec ||
+                                              Entry.UninstallerKind == UninstallerType.StoreApp ||
+                                              Entry.UninstallerKind == UninstallerType.Steam ||
+                                              Entry.UninstallerKind == UninstallerType.Oculus ||
+                                              Entry.UninstallerKind == UninstallerType.Chocolatey ||
+                                              Entry.UninstallerKind == UninstallerType.WindowsFeature ||
+                                              Entry.UninstallerKind == UninstallerType.WindowsUpdate;
         public bool IsValid => Entry.IsValid;
         public bool IsProtected => Entry.IsProtected;
         public bool IsOrphaned => Entry.IsOrphaned;
@@ -107,8 +115,43 @@ namespace AnyUninstaller.Avalonia.ViewModels
         public string InstallSource => Entry.InstallSource ?? string.Empty;
         public bool Is64Bit => Entry.Is64Bit == Klocman.Tools.MachineType.X64 || Entry.Is64Bit == Klocman.Tools.MachineType.Ia64 || Entry.Is64Bit == Klocman.Tools.MachineType.ARM64;
         public string Architecture => Entry.Is64Bit != Klocman.Tools.MachineType.Unknown ? Entry.Is64Bit.ToString() : (Is64Bit ? "64-bit (x64)" : "32-bit (x86)");
-        public string CertificateIssuer => Entry.GetCertificate()?.Subject ?? "Unsigned / No Certificate";
+        public string CertificateIssuer => IsStoreApp ? "Microsoft Store Verified" : (Entry.IsCertificateValid(true) == true ? "Digitally Signed" : "Unsigned / No Certificate");
         public string Comment => Entry.Comment ?? string.Empty;
+
+        public bool IsGame => Entry.UninstallerKind == UninstallerType.Steam || 
+                              Entry.UninstallerKind == UninstallerType.Oculus || 
+                              (!string.IsNullOrEmpty(InstallLocation) && (
+                                  InstallLocation.Contains("SteamApps", StringComparison.OrdinalIgnoreCase) ||
+                                  InstallLocation.Contains("Epic Games", StringComparison.OrdinalIgnoreCase) ||
+                                  InstallLocation.Contains("GOG Games", StringComparison.OrdinalIgnoreCase) ||
+                                  InstallLocation.Contains("Riot Games", StringComparison.OrdinalIgnoreCase) ||
+                                  InstallLocation.Contains("Ubisoft Game Launcher", StringComparison.OrdinalIgnoreCase) ||
+                                  InstallLocation.Contains("EA Games", StringComparison.OrdinalIgnoreCase)));
+        public bool IsWindowsFeature => Entry.UninstallerKind == UninstallerType.WindowsFeature;
+        public bool IsDesktopApp => !IsStoreApp && !IsWindowsFeature && !IsUpdate && !IsSystemComponent && !IsGame;
+        public bool IsVerified => IsValid && !IsOrphaned && !IsProtected;
+
+        private bool? _isSigned;
+        public bool IsSigned
+        {
+            get
+            {
+                if (_isSigned.HasValue) return _isSigned.Value;
+                if (IsStoreApp) { _isSigned = true; return true; }
+                var valid = Entry.IsCertificateValid(true);
+                if (valid.HasValue)
+                {
+                    _isSigned = valid.Value;
+                    return _isSigned.Value;
+                }
+                return false;
+            }
+        }
+
+        public bool HasStartupEntries => Entry.HasStartups;
+        public long EstimatedSizeKb => EstimatedSize.GetKbSize();
+        public bool HasInstallDate => InstallDate > DateTime.MinValue && InstallDate < DateTime.MaxValue && InstallDate.Year >= 1980;
+        public double InstallAgeDays => HasInstallDate ? (DateTime.Now - InstallDate).TotalDays : double.MaxValue;
 
         public string StatusDescription
         {
@@ -134,22 +177,35 @@ namespace AnyUninstaller.Avalonia.ViewModels
         public bool HasBundleProviderKey => !string.IsNullOrWhiteSpace(BundleProviderKey);
         public bool HasRegistryPath => !string.IsNullOrWhiteSpace(RegistryPath);
         public bool HasRegistryEntry => !string.IsNullOrWhiteSpace(RegistryPath) || !string.IsNullOrWhiteSpace(RegistryKeyName);
-        public bool HasInstallLocation => !string.IsNullOrWhiteSpace(InstallLocation) && System.IO.Directory.Exists(InstallLocation);
-        public bool HasUninstallerLocation => !string.IsNullOrWhiteSpace(UninstallerLocation) || (!string.IsNullOrWhiteSpace(UninstallerFullFilename) && System.IO.File.Exists(UninstallerFullFilename));
+
+        private bool? _hasInstallLocation;
+        public bool HasInstallLocation => _hasInstallLocation ??= (!string.IsNullOrWhiteSpace(InstallLocation) && System.IO.Directory.Exists(InstallLocation));
+
+        private bool? _hasUninstallerLocation;
+        public bool HasUninstallerLocation => _hasUninstallerLocation ??= (!string.IsNullOrWhiteSpace(UninstallerLocation) || (!string.IsNullOrWhiteSpace(UninstallerFullFilename) && System.IO.File.Exists(UninstallerFullFilename)));
+
         public bool HasAboutUrl => !string.IsNullOrWhiteSpace(AboutUrl) && (AboutUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || AboutUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase));
+
+        private bool? _canRunExecutable;
         public bool CanRunExecutable
         {
             get
             {
-                if (string.IsNullOrWhiteSpace(InstallLocation) || !System.IO.Directory.Exists(InstallLocation)) return false;
+                if (_canRunExecutable.HasValue) return _canRunExecutable.Value;
+                if (string.IsNullOrWhiteSpace(InstallLocation) || !HasInstallLocation)
+                {
+                    _canRunExecutable = false;
+                    return false;
+                }
                 try
                 {
-                    return System.IO.Directory.GetFiles(InstallLocation, "*.exe", System.IO.SearchOption.TopDirectoryOnly).Length > 0;
+                    _canRunExecutable = System.IO.Directory.GetFiles(InstallLocation, "*.exe", System.IO.SearchOption.TopDirectoryOnly).Length > 0;
                 }
                 catch
                 {
-                    return false;
+                    _canRunExecutable = false;
                 }
+                return _canRunExecutable.Value;
             }
         }
 
@@ -157,12 +213,41 @@ namespace AnyUninstaller.Avalonia.ViewModels
         {
             get
             {
-                if (!_iconLoaded)
+                if (_icon != null) return _icon;
+
+                if (IconExtractionService.Instance.TryGetCachedIcon(Entry, out var cached) && cached != null)
                 {
-                    _iconLoaded = true;
-                    _icon = IconExtractionService.Instance.GetIcon(Entry);
+                    _icon = cached;
+                    return _icon;
                 }
-                return _icon ?? IconExtractionService.DefaultApplicationIcon;
+
+                if (!_iconLoadingRequested)
+                {
+                    _iconLoadingRequested = true;
+                    _ = LoadIconAsync();
+                }
+
+                return IconExtractionService.GetFallbackIcon(Entry);
+            }
+        }
+
+        private async System.Threading.Tasks.Task LoadIconAsync()
+        {
+            try
+            {
+                var loaded = await IconExtractionService.Instance.GetIconAsync(Entry);
+                if (loaded != null)
+                {
+                    await global::Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        _icon = loaded;
+                        OnPropertyChanged(nameof(Icon));
+                    });
+                }
+            }
+            catch
+            {
+                // Ignore background extraction exceptions
             }
         }
     }

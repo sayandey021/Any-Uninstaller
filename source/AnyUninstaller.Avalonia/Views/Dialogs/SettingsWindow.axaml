@@ -392,35 +392,32 @@
 
                     <!-- PAGE 5: ABOUT -->
                     <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0,0,14,0">
-                        <StackPanel Spacing="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,20,0,0">
-                            <!-- App Logo in Rounded Squircle Container -->
-                            <Border Width="84" Height="84" CornerRadius="20" Background="#1E293B"
-                                    HorizontalAlignment="Center" BoxShadow="0 4 16 0 #35000000">
-                                <Image Source="/Assets/logo.png" Width="68" Height="68"
-                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
+                        <StackPanel Spacing="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,16,0,0">
+                            <!-- App Logo -->
+                            <Image Source="/Assets/logo.png" Width="108" Height="108"
+                                   HorizontalAlignment="Center"/>
 
                             <!-- App Title -->
                             <TextBlock Text="Any Uninstaller" FontSize="22" FontWeight="Bold"
-                                       Foreground="White" HorizontalAlignment="Center" Margin="0,14,0,0"/>
+                                       Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center" Margin="0,14,0,0"/>
 
                             <!-- Version -->
                             <TextBlock Text="{Binding AppVersion, StringFormat='v{0}'}" FontSize="13"
-                                       Foreground="#7E8E9F" HorizontalAlignment="Center" Margin="0,3,0,0"/>
+                                       Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" Margin="0,3,0,0"/>
 
                             <!-- Tagline / Description -->
                             <TextBlock Text="Clean, fast, and effortless batch application uninstaller." FontSize="13"
-                                       Foreground="#7E8E9F" TextAlignment="Center" TextWrapping="Wrap"
-                                       MaxWidth="320" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                                       Foreground="{DynamicResource TextSecondaryBrush}" TextAlignment="Center" TextWrapping="Wrap"
+                                       MaxWidth="340" HorizontalAlignment="Center" Margin="0,8,0,0"/>
 
                             <!-- Subtle Divider -->
-                            <Rectangle Width="64" Height="1" Fill="#2A3744" HorizontalAlignment="Center" Margin="0,18,0,18"/>
+                            <Rectangle Width="64" Height="1" Fill="{DynamicResource CardBorderBrush}" HorizontalAlignment="Center" Margin="0,16,0,16"/>
 
                             <!-- Developer Section -->
                             <TextBlock Text="{Binding DeveloperTitle}" FontSize="13"
-                                       Foreground="#7E8E9F" HorizontalAlignment="Center"/>
+                                       Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center"/>
                             <TextBlock Text="{Binding DeveloperName}" FontSize="16" FontWeight="Bold"
-                                       Foreground="White" HorizontalAlignment="Center" Margin="0,3,0,14"/>
+                                       Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center" Margin="0,3,0,14"/>
 
                             <!-- Links -->
                             <StackPanel Spacing="6" HorizontalAlignment="Center">

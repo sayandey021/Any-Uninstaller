@@ -1,8 +1,9 @@
-﻿/*
+/*
     Copyright (c) 2017 Marcin Szeniak (https://github.com/Klocman/)
     Apache License Version 2.0
 */
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -65,8 +66,14 @@ namespace UninstallTools.Junk.Containers
         {
             using (var key = RegistryTools.OpenRegistryKey(FullRegKeyPath, true))
             {
-                key?.DeleteValue(ValueName);
+                if (key != null)
+                {
+                    key.DeleteValue(ValueName, false);
+                    return;
+                }
             }
+
+            throw new IOException($"Registry key \"{FullRegKeyPath}\" could not be opened for value deletion.");
         }
     }
 }

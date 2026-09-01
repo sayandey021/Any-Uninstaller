@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
@@ -13,15 +13,25 @@ namespace AnyUninstaller.Avalonia.Converters
 
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
+            bool showZero = parameter is string paramStr && (paramStr.Equals("ShowZero", StringComparison.OrdinalIgnoreCase) || paramStr.Equals("ZeroAs0Kb", StringComparison.OrdinalIgnoreCase))
+                || (parameter is bool b && b);
+
             if (value is FileSize fs)
             {
-                return fs.GetKbSize() <= 0 ? string.Empty : fs.ToString();
+                if (fs.GetKbSize() <= 0)
+                    return showZero ? "0 KB" : string.Empty;
+                var str = fs.ToString();
+                return string.IsNullOrWhiteSpace(str) ? (showZero ? "0 KB" : string.Empty) : str;
             }
             if (value is long bytes)
             {
-                return bytes <= 0 ? string.Empty : FileSize.FromBytes(bytes).ToString();
+                if (bytes <= 0)
+                    return showZero ? "0 KB" : string.Empty;
+                var fs2 = FileSize.FromBytes(bytes);
+                var str = fs2.ToString();
+                return string.IsNullOrWhiteSpace(str) ? (showZero ? "0 KB" : string.Empty) : str;
             }
-            return string.Empty;
+            return showZero ? "0 KB" : string.Empty;
         }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

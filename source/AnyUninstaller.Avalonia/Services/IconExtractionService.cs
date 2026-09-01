@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
 using UninstallTools;
 
@@ -81,6 +82,35 @@ namespace AnyUninstaller.Avalonia.Services
             }
         }
 
+        public bool TryGetCachedIcon(ApplicationUninstallerEntry entry, out Bitmap? icon)
+        {
+            icon = null;
+            if (entry == null) return false;
+
+            var cacheKey = !string.IsNullOrEmpty(entry.DisplayName)
+                ? entry.DisplayName
+                : (entry.CacheIdOverride ?? entry.Comment ?? string.Empty);
+
+            if (!string.IsNullOrEmpty(cacheKey) && _iconCache.TryGetValue(cacheKey, out var cached))
+            {
+                icon = cached;
+                return true;
+            }
+
+            return false;
+        }
+
+        public async Task<Bitmap> GetIconAsync(ApplicationUninstallerEntry entry)
+        {
+            if (entry == null)
+                return DefaultApplicationIcon;
+
+            if (TryGetCachedIcon(entry, out var cached) && cached != null)
+                return cached;
+
+            return await Task.Run(() => GetIcon(entry));
+        }
+
         public Bitmap GetIcon(ApplicationUninstallerEntry entry)
         {
             if (entry == null)
@@ -117,9 +147,9 @@ namespace AnyUninstaller.Avalonia.Services
             return fallback;
         }
 
-        private static Bitmap GetFallbackIcon(ApplicationUninstallerEntry entry)
+        public static Bitmap GetFallbackIcon(ApplicationUninstallerEntry entry)
         {
-            if (!entry.IsValid)
+            if (entry != null && !entry.IsValid)
                 return DefaultInvalidIcon;
 
             return DefaultApplicationIcon;

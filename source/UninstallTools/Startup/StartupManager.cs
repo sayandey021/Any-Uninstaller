@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Klocman.Tools;
@@ -35,48 +35,48 @@ namespace UninstallTools.Startup
         public static void AssignStartupEntries(IEnumerable<ApplicationUninstallerEntry> allUninstallerEntries,
             IEnumerable<StartupEntryBase> allStartupEntries)
         {
-            //if (startupEntries == null || uninstallers == null)
-            //    return;
-
             var startups = allStartupEntries.ToList();
             var uninstallers = allUninstallerEntries.ToList();
 
-            if (startups.Count == 0)
+            if (startups.Count == 0 || uninstallers.Count == 0)
                 return;
+
+            var validInstallLocations = uninstallers
+                .Where(e => e.IsInstallLocationValid())
+                .Select(e => e.InstallLocation)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            var validUninLocations = uninstallers
+                .Where(e => !string.IsNullOrEmpty(e.UninstallerLocation))
+                .Select(e => e.UninstallerLocation)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
 
             foreach (var uninstaller in uninstallers)
             {
+                var instLoc = uninstaller.IsInstallLocationValid() ? uninstaller.InstallLocation : null;
+                var uninLoc = !string.IsNullOrEmpty(uninstaller.UninstallerLocation) ? uninstaller.UninstallerLocation : null;
+                var dispNameTrimmed = uninstaller.DisplayNameTrimmed;
+
                 var positives = startups.Where(startup =>
                 {
-                    if (startup.ProgramNameTrimmed?.Equals(uninstaller.DisplayNameTrimmed, StringComparison.OrdinalIgnoreCase) == true)
+                    if (dispNameTrimmed != null && startup.ProgramNameTrimmed?.Equals(dispNameTrimmed, StringComparison.OrdinalIgnoreCase) == true)
                         return true;
 
-                    if (startup.CommandFilePath == null)
+                    var cmd = startup.CommandFilePath;
+                    if (string.IsNullOrEmpty(cmd))
                         return false;
-                    
-                    var instLoc = uninstaller.InstallLocation;
-                    if (uninstaller.IsInstallLocationValid() && startup.CommandFilePath.StartsWith(instLoc, StringComparison.OrdinalIgnoreCase))
-                    {
-                        // Don't assign if there are any applications with more specific/deep install locations (same depth is fine)
-                        var instLocations = uninstallers
-                            .Where(e => e.IsInstallLocationValid())
-                            .Select(e => e.InstallLocation)
-                            .Where(i=>startup.CommandFilePath.StartsWith(i, StringComparison.OrdinalIgnoreCase));
 
-                        if (!instLocations.Any(i => i.Length > instLoc.Length))
+                    if (instLoc != null && cmd.StartsWith(instLoc, StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (!validInstallLocations.Any(i => i.Length > instLoc.Length && cmd.StartsWith(i, StringComparison.OrdinalIgnoreCase)))
                             return true;
                     }
 
-                    var uninLoc = uninstaller.UninstallerLocation;
-                    if (!string.IsNullOrEmpty(uninLoc) && startup.CommandFilePath.StartsWith(uninLoc, StringComparison.OrdinalIgnoreCase))
+                    if (uninLoc != null && cmd.StartsWith(uninLoc, StringComparison.OrdinalIgnoreCase))
                     {
-                        // Don't assign if there are any applications with more specific/deep install locations (same depth is fine)
-                        var uninLocations = uninstallers
-                            .Where(e => !string.IsNullOrEmpty(e.UninstallerLocation))
-                            .Select(e => e.UninstallerLocation)
-                            .Where(i => startup.CommandFilePath.StartsWith(i, StringComparison.OrdinalIgnoreCase)); 
-
-                        if (!uninLocations.Any(i => i.Length > uninLoc.Length))
+                        if (!validUninLocations.Any(i => i.Length > uninLoc.Length && cmd.StartsWith(i, StringComparison.OrdinalIgnoreCase)))
                             return true;
                     }
 

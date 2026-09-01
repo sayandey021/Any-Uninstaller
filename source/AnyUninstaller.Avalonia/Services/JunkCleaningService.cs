@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,13 +19,29 @@ namespace AnyUninstaller.Avalonia.Services
         {
             return await Task.Run(() =>
             {
+                long lastReportTicks = 0;
+                int lastStep = -1;
+                const int throttleMs = 35;
+
                 var targetList = targets.ToList();
                 var results = JunkManager.FindJunk(targetList, allUninstallers, p =>
                 {
-                    progress?.Report((p.CurrentCount, p.TotalCount, p.Message));
+                    long now = Environment.TickCount64;
+                    bool isStepChange = p.CurrentCount != lastStep;
+                    bool isComplete = p.CurrentCount == p.TotalCount;
+                    bool shouldReport = isStepChange || isComplete || (now - lastReportTicks >= throttleMs);
+
+                    if (shouldReport && progress != null)
+                    {
+                        lastReportTicks = now;
+                        lastStep = p.CurrentCount;
+                        progress.Report((p.CurrentCount, p.TotalCount, p.Message));
+                    }
                 });
 
-                return results.ToList();
+                var resultList = results.ToList();
+                progress?.Report((resultList.Count, resultList.Count, $"Found {resultList.Count} junk items."));
+                return resultList;
             });
         }
     }

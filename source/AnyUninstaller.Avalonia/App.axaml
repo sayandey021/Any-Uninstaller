@@ -94,6 +94,39 @@
             <Setter Property="Background" Value="{DynamicResource CardInnerBorderBrush}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource PrimaryAccentBrush}"/>
         </Style>
+        <Style Selector="Button.toolbar:disabled /template/ ContentPresenter">
+            <Setter Property="Opacity" Value="0.38"/>
+        </Style>
+
+        <!-- 2b. Modern Rounded Toolbar Toggle Buttons -->
+        <Style Selector="ToggleButton.toolbar-toggle">
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Margin" Value="3"/>
+            <Setter Property="MinHeight" Value="32"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Background" Value="{DynamicResource ToolbarBtnBgBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ToolbarBtnBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="ToggleButton.toolbar-toggle:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource CardInnerBorderBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryAccentBrush}"/>
+        </Style>
+        <Style Selector="ToggleButton.toolbar-toggle:checked /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource ChipBgBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryAccentBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryAccentBrush}"/>
+        </Style>
 
         <!-- 3. Primary Uninstall Action Button -->
         <Style Selector="Button.action-uninstall">
@@ -118,6 +151,9 @@
             <Setter Property="Background" Value="#b91c1c"/>
             <Setter Property="BorderBrush" Value="#f87171"/>
         </Style>
+        <Style Selector="Button.action-uninstall:disabled /template/ ContentPresenter">
+            <Setter Property="Opacity" Value="0.38"/>
+        </Style>
 
         <!-- 4. Quiet Uninstall Action Button -->
         <Style Selector="Button.action-quiet">
@@ -141,6 +177,9 @@
         <Style Selector="Button.action-quiet:pointerover /template/ ContentPresenter">
             <Setter Property="Background" Value="#4338ca"/>
             <Setter Property="BorderBrush" Value="#818cf8"/>
+        </Style>
+        <Style Selector="Button.action-quiet:disabled /template/ ContentPresenter">
+            <Setter Property="Opacity" Value="0.38"/>
         </Style>
 
         <!-- 5. Capsule Rounded Search Input -->
@@ -443,6 +482,74 @@
         </Style>
         <Style Selector="Border.legend-chip:pointerover">
             <Setter Property="Background" Value="{DynamicResource CardInnerBorderBrush}"/>
+        </Style>
+
+        <!-- 12. Modern Themed Rounded ComboBox & Dropdown Styling -->
+        <Style Selector="ComboBox">
+            <Setter Property="Background" Value="{DynamicResource CardInnerBgBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+            <Setter Property="Padding" Value="10,5,8,5"/>
+            <Setter Property="MinHeight" Value="32"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="ComboBox:pointerover /template/ Border#Background">
+            <Setter Property="Background" Value="{DynamicResource CardInnerBorderBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryAccentBrush}"/>
+        </Style>
+        <Style Selector="ComboBox:pointerover">
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryAccentBrush}"/>
+        </Style>
+        <Style Selector="ComboBox:focus /template/ Border#Background">
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryAccentBrush}"/>
+        </Style>
+        <Style Selector="ComboBox:dropdownopen /template/ Border#Background">
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryAccentBrush}"/>
+        </Style>
+
+        <!-- ComboBox Popup Dropdown Container -->
+        <Style Selector="ComboBox /template/ Popup">
+            <Setter Property="HorizontalOffset" Value="0"/>
+            <Setter Property="VerticalOffset" Value="4"/>
+        </Style>
+        <Style Selector="ComboBox /template/ Popup > Border">
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Background" Value="{DynamicResource CardBgBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="4,4"/>
+            <Setter Property="BoxShadow" Value="0 8 24 0 #40000000"/>
+        </Style>
+
+        <!-- ComboBox Dropdown Items -->
+        <Style Selector="ComboBoxItem">
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Margin" Value="2,1"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="ComboBoxItem:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource RowHoverBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+        </Style>
+        <Style Selector="ComboBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource RowSelectedBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryAccentBrush}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
         </Style>
     </Application.Styles>
 </Application>

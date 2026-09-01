@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Klocman.Extensions;
 using Klocman.Forms.Tools;
 using Klocman.Tools;
@@ -180,5 +181,238 @@ namespace UninstallTools.Junk
             pfScanner.Setup(allUninstallers);
             return CleanUpResults(pfScanner.FindAllJunk().ToList());
         }
+
+        /// <summary>
+        /// Deletes a collection of junk items in batch. Standard user items are deleted directly.
+        /// If any protected items require administrator privileges, they are grouped and executed
+        /// in a SINGLE elevated batch pass so the user is only prompted for elevation once.
+        /// </summary>
+        public static JunkBatchDeleteResult DeleteJunkBatch(
+            IEnumerable<IJunkResult> items,
+            Action<int, int, string>? progressCallback = null)
+        {
+            var result = new JunkBatchDeleteResult();
+            var sortedItems = items
+                .OrderByDescending(x => x is RunProcessJunk)
+                .ThenByDescending(x => x is StartupJunkNode)
+                .ToList();
+
+            if (sortedItems.Count == 0)
+                return result;
+
+            var pendingElevation = new List<IJunkResult>();
+            int current = 0;
+            int total = sortedItems.Count;
+
+            // Phase 1: Direct Standard Deletion (AppData, HKCU, and writable locations delete silently)
+            foreach (var item in sortedItems)
+            {
+                current++;
+                try
+                {
+                    progressCallback?.Invoke(current, total, item.GetDisplayName());
+                }
+                catch { }
+
+                try
+                {
+                    item.Delete();
+                    result.SuccessfullyDeleted.Add(item);
+                }
+                catch (Exception ex) when (ex is UnauthorizedAccessException or System.Security.SecurityException or IOException)
+                {
+                    pendingElevation.Add(item);
+                }
+                catch (Exception ex)
+                {
+                    result.FailedItems[item] = ex.Message;
+                }
+            }
+
+            // Phase 2: Single Elevated Batch Execution for all protected items (Program Files, HKLM, etc.)
+            if (pendingElevation.Count > 0)
+            {
+                ExecuteElevatedBatchCleanup(pendingElevation, result);
+            }
+
+            return result;
+        }
+
+        private static void ExecuteElevatedBatchCleanup(List<IJunkResult> pendingElevation, JunkBatchDeleteResult result)
+        {
+            var dirs = new List<string>();
+            var files = new List<string>();
+            var regKeys = new List<string>();
+            var regValues = new List<(string Key, string Value)>();
+
+            foreach (var item in pendingElevation)
+            {
+                if (item is FileSystemJunk fs)
+                {
+                    if (fs.Path is DirectoryInfo)
+                        dirs.Add(fs.Path.FullName);
+                    else if (fs.Path is FileInfo)
+                        files.Add(fs.Path.FullName);
+                }
+                else if (item is RegistryValueJunk rv)
+                {
+                    regValues.Add((rv.FullRegKeyPath, rv.ValueName));
+                }
+                else if (item is RegistryKeyJunk rk)
+                {
+                    regKeys.Add(rk.FullRegKeyPath);
+                }
+            }
+
+            // If there are actionable file or registry items requiring elevation
+            if (dirs.Count > 0 || files.Count > 0 || regKeys.Count > 0 || regValues.Count > 0)
+            {
+                var tempBatchPath = Path.Combine(Path.GetTempPath(), $"anyu_cleanup_{Guid.NewGuid():N}.cmd");
+                try
+                {
+                    var sb = new StringBuilder();
+                    sb.AppendLine("@echo off");
+                    sb.AppendLine("chcp 65001 >nul");
+
+                    // 1. Files
+                    foreach (var f in files.Distinct(StringComparer.OrdinalIgnoreCase))
+                    {
+                        var escaped = f.Replace("\"", "\\\"");
+                        sb.AppendLine($"attrib -r -s -h \"{escaped}\" >nul 2>&1");
+                        sb.AppendLine($"del /f /q \"{escaped}\" >nul 2>&1");
+                    }
+
+                    // 2. Directories (sorted by path length descending so children get cleaned before parents)
+                    foreach (var d in dirs.Distinct(StringComparer.OrdinalIgnoreCase).OrderByDescending(x => x.Length))
+                    {
+                        var escaped = d.Replace("\"", "\\\"");
+                        sb.AppendLine($"takeown /f \"{escaped}\" /r /d y >nul 2>&1");
+                        sb.AppendLine($"icacls \"{escaped}\" /grant *S-1-5-32-544:F /t /c /q >nul 2>&1");
+                        sb.AppendLine($"rd /s /q \"{escaped}\" >nul 2>&1");
+                    }
+
+                    // 3. Registry values
+                    foreach (var rv in regValues.Distinct())
+                    {
+                        var keyEscaped = rv.Key.Replace("\"", "\\\"");
+                        var valEscaped = rv.Value.Replace("\"", "\\\"");
+                        sb.AppendLine($"reg delete \"{keyEscaped}\" /v \"{valEscaped}\" /f >nul 2>&1");
+                    }
+
+                    // 4. Registry keys (sorted by path length descending)
+                    foreach (var k in regKeys.Distinct(StringComparer.OrdinalIgnoreCase).OrderByDescending(x => x.Length))
+                    {
+                        var keyEscaped = k.Replace("\"", "\\\"");
+                        sb.AppendLine($"reg delete \"{keyEscaped}\" /f >nul 2>&1");
+                    }
+
+                    File.WriteAllText(tempBatchPath, sb.ToString(), new UTF8Encoding(false));
+
+                    var startInfo = new ProcessStartInfo
+                    {
+                        FileName = "cmd.exe",
+                        Arguments = $"/c \"{tempBatchPath}\"",
+                        UseShellExecute = true,
+                        Verb = "runas",
+                        WindowStyle = ProcessWindowStyle.Hidden,
+                        CreateNoWindow = true
+                    };
+
+                    using var proc = Process.Start(startInfo);
+                    proc?.WaitForExit(30000);
+                }
+                catch (System.ComponentModel.Win32Exception)
+                {
+                    // User cancelled single UAC prompt
+                    foreach (var item in pendingElevation)
+                    {
+                        if (!result.SuccessfullyDeleted.Contains(item) && !result.FailedItems.ContainsKey(item))
+                        {
+                            result.FailedItems[item] = "Administrator permission was cancelled by user.";
+                        }
+                    }
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    foreach (var item in pendingElevation)
+                    {
+                        if (!result.SuccessfullyDeleted.Contains(item) && !result.FailedItems.ContainsKey(item))
+                        {
+                            result.FailedItems[item] = $"Elevation error: {ex.Message}";
+                        }
+                    }
+                    return;
+                }
+                finally
+                {
+                    try { if (File.Exists(tempBatchPath)) File.Delete(tempBatchPath); } catch { }
+                }
+            }
+
+            // Verification pass
+            foreach (var item in pendingElevation)
+            {
+                if (result.SuccessfullyDeleted.Contains(item) || result.FailedItems.ContainsKey(item))
+                    continue;
+
+                if (item is FileSystemJunk fs)
+                {
+                    if (fs.Path is DirectoryInfo dir)
+                    {
+                        if (!Directory.Exists(dir.FullName))
+                            result.SuccessfullyDeleted.Add(fs);
+                        else
+                            result.FailedItems[fs] = "Directory could not be removed (In use or locked).";
+                    }
+                    else if (fs.Path is FileInfo file)
+                    {
+                        if (!File.Exists(file.FullName))
+                            result.SuccessfullyDeleted.Add(fs);
+                        else
+                            result.FailedItems[fs] = "File could not be removed (In use or locked).";
+                    }
+                }
+                else if (item is RegistryValueJunk rv)
+                {
+                    try
+                    {
+                        using var rk = RegistryTools.OpenRegistryKey(rv.FullRegKeyPath);
+                        if (rk == null || rk.GetValue(rv.ValueName) == null)
+                            result.SuccessfullyDeleted.Add(rv);
+                        else
+                            result.FailedItems[rv] = "Registry value could not be removed.";
+                    }
+                    catch
+                    {
+                        result.SuccessfullyDeleted.Add(rv);
+                    }
+                }
+                else if (item is RegistryKeyJunk rk)
+                {
+                    try
+                    {
+                        if (!rk.RegKeyExists())
+                            result.SuccessfullyDeleted.Add(rk);
+                        else
+                            result.FailedItems[rk] = "Registry key could not be removed.";
+                    }
+                    catch
+                    {
+                        result.SuccessfullyDeleted.Add(rk);
+                    }
+                }
+                else
+                {
+                    result.SuccessfullyDeleted.Add(item);
+                }
+            }
+        }
+    }
+
+    public class JunkBatchDeleteResult
+    {
+        public HashSet<IJunkResult> SuccessfullyDeleted { get; } = new();
+        public Dictionary<IJunkResult, string> FailedItems { get; } = new();
     }
 }

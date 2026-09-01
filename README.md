@@ -9,7 +9,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011%20(x64)-0078D6?logo=windows)](https://www.microsoft.com/windows)
 [![Framework](https://img.shields.io/badge/UI-Avalonia%2011.2%20%2B%20.NET-805AD5)](https://avaloniaui.net/)
-[![Version](https://img.shields.io/badge/Version-v1.3.0-success.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-v1.3.4-success.svg)](CHANGELOG.md)
 [![Privacy](https://img.shields.io/badge/Privacy-Offline%20%26%20Zero%20Telemetry-brightgreen.svg)](PRIVACY.md)
 
 [Features](#-key-features) • [Download](#-downloads--distributions) • [Window Targeter](#-window-targeter) • [Build from Source](#-building-from-source) • [Privacy](#-privacy--security) • [Changelog](CHANGELOG.md)

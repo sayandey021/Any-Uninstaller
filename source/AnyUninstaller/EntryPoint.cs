@@ -32,9 +32,6 @@ namespace AnyUninstaller
         [STAThread]
         public static void Main(string[] args)
         {
-            if (!EnsureAdministrator(args))
-                return;
-
             NBugConfigurator.SetupNBug();
 
             using (LogWriter.StartLogging())
@@ -153,38 +150,6 @@ namespace AnyUninstaller
         {
             [DllImport("user32.dll")]
             public static extern int SetForegroundWindow(int hwnd);
-        }
-
-        private static bool EnsureAdministrator(string[] args)
-        {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                return true;
-
-            try
-            {
-                using var identity = System.Security.Principal.WindowsIdentity.GetCurrent();
-                var principal = new System.Security.Principal.WindowsPrincipal(identity);
-                if (principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator))
-                    return true;
-
-                var processPath = Environment.ProcessPath ?? Process.GetCurrentProcess().MainModule?.FileName;
-                if (!string.IsNullOrEmpty(processPath))
-                {
-                    var startInfo = new ProcessStartInfo
-                    {
-                        UseShellExecute = true,
-                        FileName = processPath,
-                        Arguments = string.Join(" ", args),
-                        Verb = "runas"
-                    };
-                    Process.Start(startInfo);
-                }
-                return false;
-            }
-            catch
-            {
-                return true;
-            }
         }
 
         private static void SetupDependancies()

@@ -1,6 +1,7 @@
 # Any Uninstaller - Packaging & Build Pipeline
 param (
-    [string]$Configuration = "Release"
+    [string]$Configuration = "Release",
+    [string]$Version = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -12,18 +13,42 @@ Get-Process -Name "*AnyUninstaller*" -ErrorAction SilentlyContinue | Stop-Proces
 Start-Sleep -Milliseconds 500
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$rootDir = Resolve-Path (Join-Path $scriptDir "..")
+$rootDir = (Resolve-Path (Join-Path $scriptDir "..")).Path
 $distDir = Join-Path $rootDir "dist"
 $appDir = Join-Path $distDir "app"
 $exeDir = Join-Path $distDir "exe"
 $portableDir = Join-Path $distDir "portable"
 $msixDir = Join-Path $distDir "msix"
 
+# Dynamic Version Resolution
+if (-not $Version) {
+    $propsPath = Join-Path $rootDir "source\Directory.Build.props"
+    if (Test-Path $propsPath) {
+        $propsRaw = Get-Content $propsPath -Raw
+        if ($propsRaw -match '<Version>([^<]+)</Version>') {
+            $Version = $matches[1].Trim()
+        }
+    }
+    if (-not $Version) { $Version = "1.0.0" }
+}
+
+$cleanVer = $Version.TrimStart('v', 'V').Trim()
+$parts = $cleanVer.Split('.')
+$major = [int]$parts[0]
+$minor = if ($parts.Length -ge 2) { [int]$parts[1] } else { 0 }
+$patch = if ($parts.Length -ge 3) { [int]$parts[2] } else { 0 }
+$rev   = if ($parts.Length -ge 4) { [int]$parts[3] } else { 0 }
+
+$semVer  = "$major.$minor.$patch"
+$quadVer = "$major.$minor.$patch.$rev"
+$tagVer  = "v$semVer"
+
 Write-Host "========================================================================" -ForegroundColor Cyan
-Write-Host "         Any Uninstaller - Packaging Pipeline (v1.2.0)" -ForegroundColor Cyan
+Write-Host "         Any Uninstaller - Packaging Pipeline ($tagVer)" -ForegroundColor Cyan
 Write-Host "========================================================================" -ForegroundColor Cyan
-Write-Host "Root Directory: $rootDir"
+Write-Host "Root Directory:   $rootDir"
 Write-Host "Output Directory: $distDir"
+Write-Host "Package Version:  $semVer (MSIX: $quadVer)"
 Write-Host ""
 
 # 0. Clean & Prepare Directories
@@ -106,7 +131,7 @@ Write-Host " -> Standalone EXE complete in dist\exe" -ForegroundColor Green
 
 # Step 3: Build Portable Package & Zip
 Write-Host "[5/5] Building Portable distribution (dist\portable)..." -ForegroundColor Yellow
-$portableFolder = Join-Path $portableDir "AnyUninstaller-v1.2.0-Portable"
+$portableFolder = Join-Path $portableDir "AnyUninstaller-$tagVer-Portable"
 Copy-Item -Path $appDir -Destination $portableFolder -Recurse -Force
 
 # Add portable marker file so settings remain local
@@ -114,7 +139,7 @@ New-Item -ItemType File -Force -Path (Join-Path $portableFolder "portable.dat") 
 "{}" | Out-File -FilePath (Join-Path $portableFolder "AnyUninstaller_Settings.json") -Encoding UTF8 -Force
 
 # Create Portable ZIP archive using ZipFile (fast & reliable)
-$portableZip = Join-Path $portableDir "AnyUninstaller-v1.2.0-Portable.zip"
+$portableZip = Join-Path $portableDir "AnyUninstaller-$tagVer-Portable.zip"
 if (Test-Path $portableZip) { Remove-Item $portableZip -Force }
 Start-Sleep -Milliseconds 500
 [System.IO.Compression.ZipFile]::CreateFromDirectory($portableFolder, $portableZip, [System.IO.Compression.CompressionLevel]::Optimal, $false)
@@ -157,10 +182,10 @@ if (-not $makeAppx) {
     if ($found) { $makeAppx = $found.FullName }
 }
 
+$outputMsix = Join-Path $msixDir "Saayan.AnyUninstaller_${quadVer}_x64.msix"
 if (-not $makeAppx) {
     Write-Warning "makeappx.exe not found in Windows Kits. Please ensure Windows 10/11 SDK is installed."
 } else {
-    $outputMsix = Join-Path $msixDir "Saayan.AnyUninstaller_1.2.0.0_x64.msix"
     Write-Host "Using MakeAppx: $makeAppx"
     & $makeAppx pack /o /h SHA256 /d $msixStaging /p $outputMsix
     if ($LASTEXITCODE -eq 0) {
@@ -182,7 +207,7 @@ Write-Host "Outputs:"
 Write-Host "  1. App Directory:     $appDir" -ForegroundColor White
 Write-Host "  2. Standalone EXE:    $exeDir\AnyUninstaller.exe" -ForegroundColor White
 Write-Host "  3. Portable ZIP:      $portableZip" -ForegroundColor White
-if (Test-Path (Join-Path $msixDir "Saayan.AnyUninstaller_1.1.0.0_x64.msix")) {
-    Write-Host "  4. Store MSIX:        $msixDir\Saayan.AnyUninstaller_1.1.0.0_x64.msix" -ForegroundColor White
+if ($outputMsix -and (Test-Path $outputMsix)) {
+    Write-Host "  4. Store MSIX:        $outputMsix" -ForegroundColor White
 }
 Write-Host "========================================================================" -ForegroundColor Cyan

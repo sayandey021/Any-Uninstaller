@@ -6,7 +6,6 @@
 using System;
 using System.IO;
 using Klocman.Tools;
-using Microsoft.VisualBasic.FileIO;
 
 namespace UninstallTools.Junk.Containers
 {
@@ -26,14 +25,39 @@ namespace UninstallTools.Junk.Containers
 
         public override void Delete()
         {
-            if (Path is DirectoryInfo)
-                FileSystem.DeleteDirectory(Path.FullName, UIOption.OnlyErrorDialogs,
-                    RecycleOption.SendToRecycleBin, UICancelOption.DoNothing);
-            else if (Path is FileInfo)
-                FileSystem.DeleteFile(Path.FullName, UIOption.OnlyErrorDialogs,
-                    RecycleOption.SendToRecycleBin, UICancelOption.DoNothing);
+            if (Path is DirectoryInfo dir)
+            {
+                if (dir.Exists)
+                {
+                    RemoveReadOnlyAttributes(dir);
+                    dir.Delete(true);
+                }
+            }
+            else if (Path is FileInfo file)
+            {
+                if (file.Exists)
+                {
+                    file.Attributes = FileAttributes.Normal;
+                    file.Delete();
+                }
+            }
             else
+            {
                 throw new NotImplementedException("Unknown FileSystemInfo implementation");
+            }
+        }
+
+        private static void RemoveReadOnlyAttributes(DirectoryInfo directory)
+        {
+            try
+            {
+                directory.Attributes = FileAttributes.Normal;
+                foreach (var f in directory.GetFiles("*", SearchOption.AllDirectories))
+                {
+                    try { f.Attributes = FileAttributes.Normal; } catch { }
+                }
+            }
+            catch { }
         }
 
         public override string GetDisplayName()

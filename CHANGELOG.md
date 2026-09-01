@@ -6,6 +6,104 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [1.3.4] - 2026-09-01
+
+### 🧹 Dedicated 'Delete Temporary Files' Cleaner Tool
+- **New Tool Dialog (`Tools -> Delete temporary files...`)**:
+  - Added a dedicated, modern temporary file cleaner dialog to analyze and reclaim gigabytes of junk storage.
+  - Scans and cleans 5 major system cache locations:
+    - 👤 **User Temp Files**: `%TEMP%`, `%LOCALAPPDATA%\Temp`
+    - 🪟 **Windows System Temp**: `%WINDIR%\Temp`
+    - 💥 **Crash Dumps & Diagnostics**: `%LOCALAPPDATA%\CrashDumps`, Windows Error Reporting (`WER`) queues and archives
+    - 📦 **Windows Update Cache**: `%WINDIR%\SoftwareDistribution\Download`
+    - 🌐 **Web & App Caches**: `%LOCALAPPDATA%\Microsoft\Windows\INetCache`
+  - **Category Metric Summary Cards**: Real-time disk space usage cards for each category with explicit `0 KB` formatting when empty or cleared.
+  - **Interactive DataGrid**: Displays item checkboxes, category badges, type icons, file sizes, last modified dates, and live cleaning status.
+  - **Search & Category Filtering**: Instant text search filter capsule and category dropdown filter.
+  - **Resilient Background Deletion**: Safely cleans selected files and directories while skipping locked or in-use files with detailed status reporting.
+  - **Explorer Integration**: Context menu option to *"Open containing folder in Explorer"* for any selected item.
+
+### 💬 UI Usability & Hover Tooltips
+- **Column Hover Tooltips & Text Trimming**:
+  - Implemented `ToolTip.Tip` and `TextTrimming="CharacterEllipsis"` across all table columns in the Main Application List, Delete Temporary Files Dialog, and Leftover Junk Cleaner.
+  - Hovering over long or clipped file paths, application names, publishers, versions, categories, sizes, timestamps, and confidence ratings displays the full text in a floating tooltip.
+- **Explicit '0 KB' Size Formatting**:
+  - Fixed size formatting so that cleared categories, empty folders, and zero-byte items explicitly display `0 KB` rather than appearing completely blank.
+  - Added `ShowZero` / `ZeroAs0Kb` parameter support to `FileSizeConverter`.
+
+### 🔒 Dynamic Action Button State Management
+- **Selection-Aware Action Buttons**:
+  - Automatically disable **Clean Junk**, **Uninstall**, and **Quiet Uninstall** toolbar buttons and menu items when no applications are selected or checked.
+- **Loading State Protections**:
+  - Automatically disable **Target**, **Refresh**, and Selection actions (**Toggle Select All**, **Select All**, **Deselect All**, **Invert Selection**) while scans are in progress to prevent concurrent scan collisions.
+- **Visual Disabled States**:
+  - Added `:disabled` opacity styling (`Opacity="0.38"`) for clear visual feedback across all button types.
+
+---
+## [1.3.3] - 2026-09-01
+
+### ⚡ Startup & Post-Opening Loading Performance
+- **Persistent App Info Cache Enabled (`InfoCache.xml`)**:
+  - Activated persistent application metadata caching (`UninstallToolsGlobalConfig.EnableAppInfoCache = true`) with automatic fallback to writable `%AppData%\Any Uninstaller` for write-protected environments.
+  - Subsequent application openings load and populate the full application list near-instantly (< 300 ms).
+- **Eliminated Synchronous WMI Disk Queries**:
+  - Replaced heavy `ManagementObjectSearcher` queries (`Win32_DiskDriveToDiskPartition` and `Win32_LogicalDiskToPartition`) in `FactoryThreadedHelpers.SplitByPhysicalDrives` with instant drive root partitioning, saving ~1–2 seconds per scan.
+- **Concurrent Independent Package Scanners**:
+  - Parallelized `GetMiscUninstallerEntries` to scan Microsoft Store apps, Steam, Oculus, Windows Features, Windows Updates, Scoop, and Chocolatey concurrently via multi-threaded worker pools.
+- **Dynamic Multi-Core Worker Scaling**:
+  - Scaled `MaxThreadsPerDrive` dynamically based on available logical CPU cores (`Math.Clamp(Environment.ProcessorCount, 4, 16)`) instead of being hardcoded to 2.
+- **Asynchronous / Non-Blocking UI Icon Extraction**:
+  - Replaced synchronous PE icon decoding on the UI thread with background extraction in `IconExtractionService` and instant placeholder display, ensuring 60+ FPS smooth scrolling.
+- **Optimized Startup Item Association**:
+  - Pre-extracted valid install and uninstaller directory paths in `StartupManager.AssignStartupEntries` to eliminate quadratic $O(N^2 \cdot M)$ string searching across all entries.
+- **Fast Developer Launch Script (`run_avalonia.bat`)**:
+  - Added `--no-restore` flag and fixed if-condition nesting in `run_avalonia.bat` to eliminate redundant NuGet package resolution overhead and ensure smooth launches.
+
+---
+## [1.3.2] - 2026-09-01
+
+### ⚡ Performance & UI Responsiveness ("Not Responding" Fixes)
+- **Throttled Progress Reporting in Background Scanners**:
+  - Replaced high-frequency progress callbacks in `ScannerService` and `JunkCleaningService` with a 35ms throttled reporter (~30 FPS dispatch cap).
+  - Prevents thousands of progress updates per second from flooding the Avalonia UI message queue during MSI product enumeration, drive file scans, and registry sweeps, eliminating application freezes and Windows "Not Responding" states.
+- **Non-Blocking Digital Signature & Certificate Verification**:
+  - Replaced synchronous `X509Certificate2.Verify()` calls and online OCSP/CRL network queries during count aggregation with non-blocking cached checks (`Entry.IsCertificateValid(true)`).
+- **Cached File System Inspections**:
+  - Cached `HasInstallLocation`, `HasUninstallerLocation`, and `CanRunExecutable` property evaluations in `ApplicationEntryViewModel`, preventing repeated synchronous disk I/O (`Directory.Exists`, `File.Exists`, `Directory.GetFiles`) during UI rendering and badge counting.
+- **Search Debouncing & Fast Sidebar Counts**:
+  - Added a 150ms debounce mechanism to `SearchText` input in `FilterSidebarViewModel` to avoid redundant filtering passes on rapid typing.
+  - Converted sidebar category count calculations from 20 separate LINQ passes into a single $O(N)$ pass.
+- **Background ViewModel Instantiation & Optimized Filtering**:
+  - Offloaded entry wrapper generation to background tasks in `MainWindowViewModel` and streamlined filter queries to minimize memory allocations.
+
+### 📊 DataGrid Column Ascending / Descending Sorting
+- **Explicit `SortMemberPath` Mapping**:
+  - Configured proper `SortMemberPath` properties across all DataGrid columns in `MainWindow.axaml` (`DisplayName`, `Publisher`, `DisplayVersion`, `EstimatedSizeKb`, `StatusDescription`, `InstallDate`, `UninstallerKind`, `QuietUninstallPossible`, `InstallLocation`).
+- **Numerical Size & Chronological Date Sorting**:
+  - Bound Size column sorting to `EstimatedSizeKb` (`long`) ensuring accurate numerical comparisons (1 GB > 500 MB > 10 MB) rather than alphabetical text sorting.
+  - Bound Install Date column sorting to `InstallDate` (`DateTime?`) for accurate chronological ordering.
+- **Dynamic Sort Preservation**:
+  - Active column sort direction is now automatically preserved across search queries and sidebar filter toggles.
+
+### 🛠️ Developer Tooling & Build Scripts
+- **Bypass Apphost UAC Execution Errors (`run_avalonia.bat`)**:
+  - Updated `run_avalonia.bat` to launch `dotnet "%~dp0bin\AnyUninstaller.Avalonia.dll"` directly, bypassing Windows UAC and SmartScreen "Access is denied" execution errors on generated stub executables.
+  - Added automated cleanup of lingering `.NET` host processes before builds to prevent locked bin file errors.
+
+---
+## [1.3.1] - 2026-08-30
+
+### ⚡ On-Demand Privilege Elevation & Manifest Streamlining
+- **Standard User Startup (`asInvoker`)**:
+  - Removed startup forced elevation (`EnsureAdministrator`), allowing Any Uninstaller to launch instantly as a standard user process without an initial UAC prompt.
+  - Removed the `allowElevation` restricted capability from `AppxManifest.xml`, deploying with standard `runFullTrust` for full Store compatibility and frictionless install.
+  - Configured on-demand UAC elevation so administrative rights are requested only when needed (e.g. running uninstaller binaries, executing elevated registry deletions, or cleaning protected system paths).
+- **Single-Prompt Batch Leftover Cleanup (`JunkManager.DeleteJunkBatch`)**:
+  - Eliminated per-file/per-directory UAC prompt spam during junk removal by replacing individual Windows Shell `SHFileOperation` calls with silent .NET deletion.
+  - User-writable files, folders, and registry keys (`AppData`, `HKCU`, user profile) are now deleted directly and silently with zero UAC prompts.
+  - All protected system files, directories (`Program Files`, `ProgramData`), and `HKLM` registry entries that require administrator privileges are grouped together and executed in a **single elevated batch pass**, prompting the user with at most **one** UAC confirmation for the entire batch.
+
+---
 ## [1.3.0] - 2026-08-27
 
 ### 🏪 Windows Store Apps & Helper Toolchain

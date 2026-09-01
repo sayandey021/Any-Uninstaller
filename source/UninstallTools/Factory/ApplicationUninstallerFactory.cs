@@ -1,4 +1,4 @@
-﻿/*
+/*
     Copyright (c) 2017 Marcin Szeniak (https://github.com/Klocman/)
     Apache License Version 2.0
 */
@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Klocman.Extensions;
 using Klocman.Forms.Tools;
@@ -201,17 +202,27 @@ namespace UninstallTools.Factory
         internal static void MergeResults(ICollection<ApplicationUninstallerEntry> baseEntries,
             ICollection<ApplicationUninstallerEntry> newResults, ListGenerationProgress.ListGenerationCallback progressCallback)
         {
+            if (newResults == null || newResults.Count == 0) return;
+
             var newToAdd = new List<ApplicationUninstallerEntry>();
             var progress = 0;
             foreach (var entry in newResults)
             {
                 progressCallback?.Invoke(new ListGenerationProgress(progress++, newResults.Count, null));
 
-                var matchedEntry = baseEntries.Select(x => new { x, score = ApplicationEntryTools.AreEntriesRelated(x, entry) })
-                    .Where(x => x.score >= 1)
-                    .OrderByDescending(x => x.score)
-                    .Select(x => x.x)
-                    .FirstOrDefault();
+                ApplicationUninstallerEntry matchedEntry = null;
+                var bestScore = 0;
+
+                foreach (var b in baseEntries)
+                {
+                    var score = ApplicationEntryTools.AreEntriesRelated(b, entry);
+                    if (score >= 1 && score > bestScore)
+                    {
+                        bestScore = score;
+                        matchedEntry = b;
+                        if (score >= 100) break; // Exact match found, stop early
+                    }
+                }
 
                 if (matchedEntry != null)
                 {
@@ -260,20 +271,39 @@ namespace UninstallTools.Factory
                 .Where(x => x.IsEnabled())
                 .ToList();
 
-            var progress = 0;
-            foreach (var kvp in miscFactories)
+            var total = miscFactories.Count;
+            var completedCount = 0;
+            var lockObj = new object();
+            var factoryResults = new List<(string Name, IList<ApplicationUninstallerEntry> Entries)>();
+
+            Parallel.ForEach(miscFactories, new ParallelOptions { MaxDegreeOfParallelism = Math.Clamp(Environment.ProcessorCount, 4, 8) }, kvp =>
             {
-                progressCallback(new ListGenerationProgress(progress++, miscFactories.Count, kvp.DisplayName));
+                var sw = Stopwatch.StartNew();
+                IList<ApplicationUninstallerEntry> entries = null;
                 try
                 {
-                    var sw = Stopwatch.StartNew();
-                    MergeResults(otherResults, kvp.GetUninstallerEntries(null), null);
+                    entries = kvp.GetUninstallerEntries(null);
                     Trace.WriteLine($"[Performance] Factory {kvp.GetType().Name} took {sw.ElapsedMilliseconds}ms to finish");
                 }
                 catch (Exception ex)
                 {
                     PremadeDialogs.GenericError(ex);
                 }
+
+                int current;
+                lock (lockObj)
+                {
+                    if (entries != null)
+                        factoryResults.Add((kvp.DisplayName, entries));
+                    current = Interlocked.Increment(ref completedCount);
+                }
+
+                progressCallback?.Invoke(new ListGenerationProgress(current, total, kvp.DisplayName));
+            });
+
+            foreach (var item in factoryResults)
+            {
+                MergeResults(otherResults, item.Entries, null);
             }
 
             return otherResults;

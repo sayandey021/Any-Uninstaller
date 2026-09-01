@@ -55,14 +55,24 @@ namespace AnyUninstaller.Avalonia.Services
         public bool IsStatusBarVisible { get; set; } = true;
 
         // 6. Sidebar Filter Preferences
+        public bool FilterShowDesktopApps { get; set; } = true;
         public bool FilterShowStoreApps { get; set; } = true;
+        public bool FilterShowGames { get; set; } = true;
         public bool FilterShowSystemComponents { get; set; } = false;
-        public bool FilterShowProtected { get; set; } = true;
         public bool FilterShowUpdates { get; set; } = false;
+        public bool FilterShowWindowsFeatures { get; set; } = false;
+        public bool FilterShowProtected { get; set; } = true;
         public bool FilterShowOrphans { get; set; } = true;
         public bool FilterShowInvalid { get; set; } = true;
         public bool FilterShowVerified { get; set; } = true;
+        public bool FilterShow64Bit { get; set; } = true;
+        public bool FilterShow32Bit { get; set; } = true;
+        public int FilterSelectedSizeIndex { get; set; } = 0; // 0 = Any Size, 1 = > 1 GB, 2 = 100 MB - 1 GB, 3 = < 100 MB, 4 = Unknown
+        public int FilterSelectedDateIndex { get; set; } = 0; // 0 = Any Time, 1 = Last 7 Days, 2 = Last 30 Days, 3 = Last 90 Days, 4 = Older than 1 Year, 5 = Unknown
         public bool FilterShowOnlyQuiet { get; set; } = false;
+        public bool FilterShowOnlyStartup { get; set; } = false;
+        public bool FilterShowSigned { get; set; } = true;
+        public bool FilterShowUnsigned { get; set; } = true;
 
         // 7. Window Session State
         public double WindowWidth { get; set; } = 1240;
@@ -221,14 +231,24 @@ namespace AnyUninstaller.Avalonia.Services
             IsSidebarVisible = source.IsSidebarVisible;
             IsStatusBarVisible = source.IsStatusBarVisible;
 
+            FilterShowDesktopApps = source.FilterShowDesktopApps;
             FilterShowStoreApps = source.FilterShowStoreApps;
+            FilterShowGames = source.FilterShowGames;
             FilterShowSystemComponents = source.FilterShowSystemComponents;
-            FilterShowProtected = source.FilterShowProtected;
             FilterShowUpdates = source.FilterShowUpdates;
+            FilterShowWindowsFeatures = source.FilterShowWindowsFeatures;
+            FilterShowProtected = source.FilterShowProtected;
             FilterShowOrphans = source.FilterShowOrphans;
             FilterShowInvalid = source.FilterShowInvalid;
             FilterShowVerified = source.FilterShowVerified;
+            FilterShow64Bit = source.FilterShow64Bit;
+            FilterShow32Bit = source.FilterShow32Bit;
+            FilterSelectedSizeIndex = source.FilterSelectedSizeIndex;
+            FilterSelectedDateIndex = source.FilterSelectedDateIndex;
             FilterShowOnlyQuiet = source.FilterShowOnlyQuiet;
+            FilterShowOnlyStartup = source.FilterShowOnlyStartup;
+            FilterShowSigned = source.FilterShowSigned;
+            FilterShowUnsigned = source.FilterShowUnsigned;
 
             WindowWidth = source.WindowWidth;
             WindowHeight = source.WindowHeight;
@@ -271,14 +291,24 @@ namespace AnyUninstaller.Avalonia.Services
             IsSidebarVisible = true;
             IsStatusBarVisible = true;
 
+            FilterShowDesktopApps = true;
             FilterShowStoreApps = true;
+            FilterShowGames = true;
             FilterShowSystemComponents = false;
-            FilterShowProtected = true;
             FilterShowUpdates = false;
+            FilterShowWindowsFeatures = false;
+            FilterShowProtected = true;
             FilterShowOrphans = true;
             FilterShowInvalid = true;
             FilterShowVerified = true;
+            FilterShow64Bit = true;
+            FilterShow32Bit = true;
+            FilterSelectedSizeIndex = 0;
+            FilterSelectedDateIndex = 0;
             FilterShowOnlyQuiet = false;
+            FilterShowOnlyStartup = false;
+            FilterShowSigned = true;
+            FilterShowUnsigned = true;
 
             WindowWidth = 1240;
             WindowHeight = 780;

@@ -32,6 +32,15 @@ namespace AnyUninstaller.Avalonia.ViewModels
         [ObservableProperty]
         private ApplicationEntryViewModel? _selectedItem;
 
+        partial void OnSelectedItemChanged(ApplicationEntryViewModel? value)
+        {
+            OnPropertyChanged(nameof(HasSelectedApplications));
+        }
+
+        public bool IsNotLoading => !StatusBar.IsBusy;
+        public bool CanSelect => !StatusBar.IsBusy && FilteredUninstallers.Count > 0;
+        public bool HasSelectedApplications => !StatusBar.IsBusy && ((FilteredUninstallers.Count > 0 && FilteredUninstallers.Any(x => x.IsChecked)) || SelectedItem != null);
+
         [ObservableProperty]
         private FilterSidebarViewModel _sidebar = new();
 
@@ -129,6 +138,15 @@ namespace AnyUninstaller.Avalonia.ViewModels
                 OnPropertyChanged(nameof(IsThemeMidnight));
                 OnPropertyChanged(nameof(IsThemeOled));
             };
+            StatusBar.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(StatusBarViewModel.IsBusy))
+                {
+                    OnPropertyChanged(nameof(IsNotLoading));
+                    OnPropertyChanged(nameof(CanSelect));
+                    OnPropertyChanged(nameof(HasSelectedApplications));
+                }
+            };
             _ = LoadApplicationsAsync();
         }
 
@@ -151,9 +169,15 @@ namespace AnyUninstaller.Avalonia.ViewModels
             try
             {
                 var results = await ScannerService.Instance.ScanApplicationsAsync(progress, _scanCts.Token);
-                _allEntries = results.Select(r =>
+
+                // Build ViewModels on worker thread
+                var vms = await Task.Run(() =>
                 {
-                    var vm = new ApplicationEntryViewModel(r);
+                    return results.Select(r => new ApplicationEntryViewModel(r)).ToList();
+                }, _scanCts.Token);
+
+                foreach (var vm in vms)
+                {
                     vm.PropertyChanged += (s, e) =>
                     {
                         if (e.PropertyName == nameof(ApplicationEntryViewModel.IsChecked))
@@ -161,9 +185,9 @@ namespace AnyUninstaller.Avalonia.ViewModels
                             UpdateSelectionStats();
                         }
                     };
-                    return vm;
-                }).ToList();
+                }
 
+                _allEntries = vms;
                 ApplyFiltering();
 
                 StatusBar.StatusMessage = $"Scan completed. Found {_allEntries.Count} applications.";
@@ -184,54 +208,133 @@ namespace AnyUninstaller.Avalonia.ViewModels
 
         public void ApplyFiltering()
         {
-            var query = _allEntries.Where(x =>
-            {
-                // 1. Search text filter
-                if (!string.IsNullOrWhiteSpace(Sidebar.SearchText))
-                {
-                    var term = Sidebar.SearchText.Trim();
-                    bool matchesSearch =
-                        x.DisplayName.Contains(term, StringComparison.OrdinalIgnoreCase) ||
-                        x.Publisher.Contains(term, StringComparison.OrdinalIgnoreCase) ||
-                        x.InstallLocation.Contains(term, StringComparison.OrdinalIgnoreCase) ||
-                        x.DisplayVersion.Contains(term, StringComparison.OrdinalIgnoreCase) ||
-                        x.UninstallerKind.Contains(term, StringComparison.OrdinalIgnoreCase);
+            var searchText = Sidebar.SearchText?.Trim();
+            string[]? searchTerms = !string.IsNullOrWhiteSpace(searchText)
+                ? searchText.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                : null;
 
-                    if (!matchesSearch) return false;
+            bool showDesktop = Sidebar.ShowDesktopApps;
+            bool showStore = Sidebar.ShowStoreApps;
+            bool showGames = Sidebar.ShowGames;
+            bool showSystem = Sidebar.ShowSystemComponents;
+            bool showUpdates = Sidebar.ShowUpdates;
+            bool showFeatures = Sidebar.ShowWindowsFeatures;
+
+            bool showVerified = Sidebar.ShowVerified;
+            bool showProtected = Sidebar.ShowProtected;
+            bool showOrphans = Sidebar.ShowOrphans;
+            bool showInvalid = Sidebar.ShowInvalid;
+
+            bool show64 = Sidebar.Show64Bit;
+            bool show32 = Sidebar.Show32Bit;
+
+            int sizeIndex = Sidebar.SelectedSizeFilterIndex;
+            int dateIndex = Sidebar.SelectedDateFilterIndex;
+
+            bool onlyQuiet = Sidebar.ShowOnlyQuiet;
+            bool onlyStartup = Sidebar.ShowOnlyStartup;
+            bool showSigned = Sidebar.ShowSigned;
+            bool showUnsigned = Sidebar.ShowUnsigned;
+
+            const long oneGbInKb = 1024 * 1024;
+            const long hundredMbInKb = 100 * 1024;
+
+            var list = new List<ApplicationEntryViewModel>(_allEntries.Count);
+            var totalSize = FileSize.Empty;
+
+            for (int i = 0; i < _allEntries.Count; i++)
+            {
+                var x = _allEntries[i];
+
+                // 1. Search text filter
+                if (searchTerms != null)
+                {
+                    bool matchesAll = true;
+                    for (int t = 0; t < searchTerms.Length; t++)
+                    {
+                        var term = searchTerms[t];
+                        bool termMatches =
+                            (!string.IsNullOrEmpty(x.DisplayName) && x.DisplayName.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                            (!string.IsNullOrEmpty(x.Publisher) && x.Publisher.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                            (!string.IsNullOrEmpty(x.InstallLocation) && x.InstallLocation.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                            (!string.IsNullOrEmpty(x.DisplayVersion) && x.DisplayVersion.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                            (!string.IsNullOrEmpty(x.UninstallerKind) && x.UninstallerKind.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                            (!string.IsNullOrEmpty(x.Comment) && x.Comment.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                            (!string.IsNullOrEmpty(x.Architecture) && x.Architecture.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                            (!string.IsNullOrEmpty(x.StatusDescription) && x.StatusDescription.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                            (!string.IsNullOrEmpty(x.CertificateIssuer) && x.CertificateIssuer.Contains(term, StringComparison.OrdinalIgnoreCase));
+
+                        if (!termMatches)
+                        {
+                            matchesAll = false;
+                            break;
+                        }
+                    }
+                    if (!matchesAll) continue;
                 }
 
-                // 2. Quiet-only filter
-                if (Sidebar.ShowOnlyQuiet && !x.QuietUninstallPossible)
-                    return false;
+                // 2. Application Type Filter
+                if (x.IsSystemComponent && !showSystem) continue;
+                if (x.IsUpdate && !showUpdates) continue;
+                if (x.IsWindowsFeature && !showFeatures) continue;
+                if (x.IsStoreApp && !showStore) continue;
+                if (x.IsGame && !showGames) continue;
+                if (x.IsDesktopApp && !showDesktop) continue;
 
-                // 3. Store Apps exclusion (if user explicitly unchecks Store Apps)
-                if (!Sidebar.ShowStoreApps && x.IsStoreApp)
-                    return false;
+                // 3. Status & Health Filter
+                if (x.IsOrphaned && !showOrphans) continue;
+                if (!x.IsValid && !showInvalid) continue;
+                if (x.IsProtected && !showProtected) continue;
+                if (x.IsVerified && !showVerified) continue;
 
-                // 4. Status & Health / Category filter
-                // An entry is shown if it matches any checked status/category:
-                if (Sidebar.ShowProtected && x.IsProtected && !x.IsUpdate)
-                    return true;
+                // 4. Architecture Filter
+                if (x.Is64Bit && !show64) continue;
+                if (!x.Is64Bit && !show32) continue;
 
-                if (Sidebar.ShowOrphans && x.IsOrphaned)
-                    return true;
+                // 5. Size Range Filter
+                if (sizeIndex != 0)
+                {
+                    long sizeKb = x.EstimatedSizeKb;
+                    if (sizeIndex == 1 && sizeKb < oneGbInKb) continue;
+                    if (sizeIndex == 2 && (sizeKb < hundredMbInKb || sizeKb >= oneGbInKb)) continue;
+                    if (sizeIndex == 3 && (sizeKb <= 0 || sizeKb >= hundredMbInKb)) continue;
+                    if (sizeIndex == 4 && sizeKb > 0) continue;
+                }
 
-                if (Sidebar.ShowInvalid && !x.IsValid)
-                    return true;
+                // 6. Installation Age Filter
+                if (dateIndex != 0)
+                {
+                    if (dateIndex == 5)
+                    {
+                        if (x.HasInstallDate) continue;
+                    }
+                    else
+                    {
+                        if (!x.HasInstallDate) continue;
+                        double age = x.InstallAgeDays;
+                        if (age < 0) continue;
+                        if (dateIndex == 1 && age > 7) continue;
+                        if (dateIndex == 2 && age > 30) continue;
+                        if (dateIndex == 3 && age > 90) continue;
+                        if (dateIndex == 4 && age <= 365) continue;
+                    }
+                }
 
-                if (Sidebar.ShowVerified && x.IsValid && !x.IsOrphaned && !x.IsProtected && !x.IsSystemComponent && !x.IsUpdate)
-                    return true;
+                // 7. Capabilities & Security Filters
+                if (onlyQuiet && !x.QuietUninstallPossible) continue;
+                if (onlyStartup && !x.HasStartupEntries) continue;
+                if (!showSigned && x.IsSigned) continue;
+                if (!showUnsigned && !x.IsSigned) continue;
 
-                if (Sidebar.ShowSystemComponents && x.IsSystemComponent && !x.IsProtected && !x.IsOrphaned && x.IsValid && !x.IsUpdate)
-                    return true;
+                list.Add(x);
+                totalSize += x.EstimatedSize;
+            }
 
-                if (Sidebar.ShowUpdates && x.IsUpdate)
-                    return true;
+            if (!string.IsNullOrEmpty(_currentSortMemberPath))
+            {
+                list = ApplySortOrdering(list, _currentSortMemberPath, _isSortAscending).ToList();
+            }
 
-                return false;
-            });
-
-            var list = query.ToList();
             FilteredUninstallers = new ObservableCollection<ApplicationEntryViewModel>(list);
 
             if (SelectedItem != null && !list.Contains(SelectedItem))
@@ -242,11 +345,58 @@ namespace AnyUninstaller.Avalonia.ViewModels
             Sidebar.UpdateCounts(_allEntries, list.Count);
 
             StatusBar.TotalItemsCount = list.Count;
-            StatusBar.TotalSize = list.Select(x => x.EstimatedSize)
-                .DefaultIfEmpty(FileSize.Empty)
-                .Aggregate((s1, s2) => s1 + s2);
+            StatusBar.TotalSize = totalSize;
 
             UpdateSelectionStats();
+        }
+
+        private string? _currentSortMemberPath;
+        private bool _isSortAscending = true;
+
+        public void SortFiltered(string? sortMemberPath, bool ascending)
+        {
+            _currentSortMemberPath = sortMemberPath;
+            _isSortAscending = ascending;
+
+            if (string.IsNullOrEmpty(sortMemberPath) || FilteredUninstallers.Count == 0) return;
+
+            var sorted = ApplySortOrdering(FilteredUninstallers, sortMemberPath, ascending);
+            FilteredUninstallers = new ObservableCollection<ApplicationEntryViewModel>(sorted);
+        }
+
+        private static IEnumerable<ApplicationEntryViewModel> ApplySortOrdering(IEnumerable<ApplicationEntryViewModel> items, string sortMemberPath, bool ascending)
+        {
+            return sortMemberPath switch
+            {
+                nameof(ApplicationEntryViewModel.DisplayName) => ascending 
+                    ? items.OrderBy(x => x.DisplayName, StringComparer.OrdinalIgnoreCase) 
+                    : items.OrderByDescending(x => x.DisplayName, StringComparer.OrdinalIgnoreCase),
+                nameof(ApplicationEntryViewModel.Publisher) => ascending 
+                    ? items.OrderBy(x => x.Publisher, StringComparer.OrdinalIgnoreCase) 
+                    : items.OrderByDescending(x => x.Publisher, StringComparer.OrdinalIgnoreCase),
+                nameof(ApplicationEntryViewModel.DisplayVersion) => ascending 
+                    ? items.OrderBy(x => x.DisplayVersion, StringComparer.OrdinalIgnoreCase) 
+                    : items.OrderByDescending(x => x.DisplayVersion, StringComparer.OrdinalIgnoreCase),
+                nameof(ApplicationEntryViewModel.EstimatedSizeKb) or nameof(ApplicationEntryViewModel.EstimatedSize) => ascending 
+                    ? items.OrderBy(x => x.EstimatedSizeKb) 
+                    : items.OrderByDescending(x => x.EstimatedSizeKb),
+                nameof(ApplicationEntryViewModel.StatusDescription) => ascending 
+                    ? items.OrderBy(x => x.StatusDescription, StringComparer.OrdinalIgnoreCase) 
+                    : items.OrderByDescending(x => x.StatusDescription, StringComparer.OrdinalIgnoreCase),
+                nameof(ApplicationEntryViewModel.InstallDate) => ascending 
+                    ? items.OrderBy(x => x.InstallDate) 
+                    : items.OrderByDescending(x => x.InstallDate),
+                nameof(ApplicationEntryViewModel.UninstallerKind) => ascending 
+                    ? items.OrderBy(x => x.UninstallerKind, StringComparer.OrdinalIgnoreCase) 
+                    : items.OrderByDescending(x => x.UninstallerKind, StringComparer.OrdinalIgnoreCase),
+                nameof(ApplicationEntryViewModel.QuietUninstallPossible) => ascending 
+                    ? items.OrderBy(x => x.QuietUninstallPossible) 
+                    : items.OrderByDescending(x => x.QuietUninstallPossible),
+                nameof(ApplicationEntryViewModel.InstallLocation) => ascending 
+                    ? items.OrderBy(x => x.InstallLocation, StringComparer.OrdinalIgnoreCase) 
+                    : items.OrderByDescending(x => x.InstallLocation, StringComparer.OrdinalIgnoreCase),
+                _ => items
+            };
         }
 
         public bool AreAllSelected => FilteredUninstallers.Count > 0 && FilteredUninstallers.All(x => x.IsChecked);
@@ -266,6 +416,8 @@ namespace AnyUninstaller.Avalonia.ViewModels
             OnPropertyChanged(nameof(ToggleSelectAllText));
             OnPropertyChanged(nameof(ToggleSelectAllIcon));
             OnPropertyChanged(nameof(ToggleSelectAllTooltip));
+            OnPropertyChanged(nameof(CanSelect));
+            OnPropertyChanged(nameof(HasSelectedApplications));
         }
 
         [RelayCommand]

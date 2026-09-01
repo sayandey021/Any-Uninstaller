@@ -45,54 +45,16 @@ namespace UninstallTools.Junk.Containers
 
         public override void Delete()
         {
-            try
+            using (var key = RegistryTools.OpenRegistryKey(RegKeyParentPath, true))
             {
-                using (var key = RegistryTools.OpenRegistryKey(RegKeyParentPath, true))
+                if (key != null)
                 {
-                    if (key != null)
-                    {
-                        key.DeleteSubKeyTree(RegKeyName, false);
-                        return;
-                    }
+                    key.DeleteSubKeyTree(RegKeyName, false);
+                    return;
                 }
             }
-            catch (UnauthorizedAccessException)
-            {
-                // Fall back to reg.exe delete if standard .NET access was denied
-                if (TryRegExeDelete(FullRegKeyPath))
-                    return;
-                throw;
-            }
-            catch (Exception)
-            {
-                if (TryRegExeDelete(FullRegKeyPath))
-                    return;
-                throw;
-            }
 
-            if (!TryRegExeDelete(FullRegKeyPath))
-            {
-                throw new IOException($"Registry key \"{FullRegKeyPath}\" could not be found or opened for deletion.");
-            }
-        }
-
-        private static bool TryRegExeDelete(string fullPath)
-        {
-            try
-            {
-                var psi = new System.Diagnostics.ProcessStartInfo("reg.exe", $"delete \"{fullPath}\" /f")
-                {
-                    CreateNoWindow = true,
-                    UseShellExecute = false
-                };
-                using var proc = System.Diagnostics.Process.Start(psi);
-                proc?.WaitForExit(3000);
-                return proc?.ExitCode == 0;
-            }
-            catch
-            {
-                return false;
-            }
+            throw new IOException($"Registry key \"{FullRegKeyPath}\" could not be opened for deletion.");
         }
 
         public override void Open()

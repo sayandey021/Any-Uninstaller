@@ -1,4 +1,4 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
+<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:AnyUninstaller.Avalonia.ViewModels"
         xmlns:controls="using:AnyUninstaller.Avalonia.Controls"
@@ -23,14 +23,14 @@
             <Image DockPanel.Dock="Left" Source="/Assets/logo.png" Width="20" Height="20" Margin="4,0,6,0" VerticalAlignment="Center"/>
             <Menu Background="Transparent">
                 <MenuItem Header="_File">
-                <MenuItem Header="_Refresh list" Command="{Binding LoadApplicationsCommand}" InputGesture="F5"/>
+                <MenuItem Header="_Refresh list" Command="{Binding LoadApplicationsCommand}" IsEnabled="{Binding IsNotLoading}" InputGesture="F5"/>
                 <Separator/>
                 <MenuItem Header="_Exit" Click="OnMenuExitClick"/>
             </MenuItem>
             <MenuItem Header="_View">
                 <MenuItem Header="Show toolbar" ToggleType="CheckBox" IsChecked="{Binding IsToolbarVisible, Mode=TwoWay}"/>
                 <MenuItem Header="Show treemap" ToggleType="CheckBox" IsChecked="{Binding IsTreeMapVisible, Mode=TwoWay}"/>
-                <MenuItem Header="Show settings sidebar" ToggleType="CheckBox" IsChecked="{Binding Sidebar.IsSidebarVisible, Mode=TwoWay}"/>
+                <MenuItem Header="Show _filter sidebar" ToggleType="CheckBox" IsChecked="{Binding Sidebar.IsSidebarVisible, Mode=TwoWay}" InputGesture="Ctrl+F"/>
                 <MenuItem Header="Show status bar" ToggleType="CheckBox" IsChecked="{Binding IsStatusBarVisible, Mode=TwoWay}"/>
                 <Separator/>
                 <MenuItem Header="_Theme">
@@ -42,17 +42,18 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="_Uninstall">
-                <MenuItem Header="_Uninstall selected" Click="OnUninstallClick" InputGesture="Ctrl+U"/>
-                <MenuItem Header="_Quietly uninstall selected" Click="OnQuietUninstallClick" InputGesture="Ctrl+Q"/>
-                <MenuItem Header="_Target an application..." Click="OnTargetApplicationClick" InputGesture="Ctrl+T"/>
+                <MenuItem Header="_Uninstall selected" Click="OnUninstallClick" IsEnabled="{Binding HasSelectedApplications}" InputGesture="Ctrl+U"/>
+                <MenuItem Header="_Quietly uninstall selected" Click="OnQuietUninstallClick" IsEnabled="{Binding HasSelectedApplications}" InputGesture="Ctrl+Q"/>
+                <MenuItem Header="_Target an application..." Click="OnTargetApplicationClick" IsEnabled="{Binding IsNotLoading}" InputGesture="Ctrl+T"/>
                 <Separator/>
-                <MenuItem Header="_Select all" Command="{Binding SelectAllCommand}" InputGesture="Ctrl+A"/>
-                <MenuItem Header="_Deselect all" Command="{Binding DeselectAllCommand}" InputGesture="Ctrl+D"/>
-                <MenuItem Header="_Invert selection" Command="{Binding InvertSelectionCommand}" InputGesture="Ctrl+I"/>
+                <MenuItem Header="_Select all" Command="{Binding SelectAllCommand}" IsEnabled="{Binding CanSelect}" InputGesture="Ctrl+A"/>
+                <MenuItem Header="_Deselect all" Command="{Binding DeselectAllCommand}" IsEnabled="{Binding CanSelect}" InputGesture="Ctrl+D"/>
+                <MenuItem Header="_Invert selection" Command="{Binding InvertSelectionCommand}" IsEnabled="{Binding CanSelect}" InputGesture="Ctrl+I"/>
             </MenuItem>
             <MenuItem Header="_Tools">
-                <MenuItem Header="_Target an application..." Click="OnTargetApplicationClick"/>
-                <MenuItem Header="_Clean leftover junk..." Click="OnCleanJunkClick"/>
+                <MenuItem Header="_Target an application..." Click="OnTargetApplicationClick" IsEnabled="{Binding IsNotLoading}"/>
+                <MenuItem Header="_Clean leftover junk..." Click="OnCleanJunkClick" IsEnabled="{Binding HasSelectedApplications}"/>
+                <MenuItem Header="_Delete temporary files..." Click="OnDeleteTempFilesClick" IsEnabled="{Binding IsNotLoading}"/>
                 <Separator/>
                 <MenuItem Header="_Settings" Click="OnSettingsClick"/>
             </MenuItem>
@@ -69,13 +70,13 @@
                 IsVisible="{Binding IsToolbarVisible}">
             <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*,Auto,Auto">
                 <!-- Uninstall Buttons -->
-                <Button Grid.Column="0" Classes="action-uninstall" Click="OnUninstallClick" ToolTip.Tip="Uninstall selected applications">
+                <Button Grid.Column="0" Classes="action-uninstall" Click="OnUninstallClick" IsEnabled="{Binding HasSelectedApplications}" ToolTip.Tip="Uninstall selected applications">
                     <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" HorizontalAlignment="Center">
                         <TextBlock Text="🗑️" FontSize="13" VerticalAlignment="Center"/>
                         <TextBlock Text="Uninstall" FontSize="12.5" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
-                <Button Grid.Column="1" Classes="action-quiet" Click="OnQuietUninstallClick" ToolTip.Tip="Quietly (unattended) uninstall selected applications">
+                <Button Grid.Column="1" Classes="action-quiet" Click="OnQuietUninstallClick" IsEnabled="{Binding HasSelectedApplications}" ToolTip.Tip="Quietly (unattended) uninstall selected applications">
                     <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" HorizontalAlignment="Center">
                         <TextBlock Text="⚡" FontSize="13" VerticalAlignment="Center"/>
                         <TextBlock Text="Quiet Uninstall" FontSize="12.5" VerticalAlignment="Center"/>
@@ -85,19 +86,19 @@
                 <Border Grid.Column="2" Width="1" Background="{DynamicResource CardBorderBrush}" Margin="6,4"/>
 
                 <!-- Selection Actions -->
-                <Button Grid.Column="3" Classes="toolbar" Command="{Binding LoadApplicationsCommand}" ToolTip.Tip="Refresh the list of installed applications (F5)">
+                <Button Grid.Column="3" Classes="toolbar" Command="{Binding LoadApplicationsCommand}" IsEnabled="{Binding IsNotLoading}" ToolTip.Tip="Refresh the list of installed applications (F5)">
                     <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" HorizontalAlignment="Center">
                         <TextBlock Text="🔄" FontSize="13" VerticalAlignment="Center"/>
                         <TextBlock Text="Refresh" FontSize="12.5" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
-                <Button Grid.Column="4" Classes="toolbar" Command="{Binding ToggleSelectAllCommand}" ToolTip.Tip="{Binding ToggleSelectAllTooltip}">
+                <Button Grid.Column="4" Classes="toolbar" Command="{Binding ToggleSelectAllCommand}" IsEnabled="{Binding CanSelect}" ToolTip.Tip="{Binding ToggleSelectAllTooltip}">
                     <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" HorizontalAlignment="Center">
                         <TextBlock Text="{Binding ToggleSelectAllIcon}" FontSize="12.5" FontWeight="Bold" VerticalAlignment="Center"/>
                         <TextBlock Text="{Binding ToggleSelectAllText}" FontSize="12.5" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
-                <Button Grid.Column="5" Classes="toolbar" Click="OnTargetApplicationClick" ToolTip.Tip="Target an application using a window, shortcut, or directory (Ctrl+T)">
+                <Button Grid.Column="5" Classes="toolbar" Click="OnTargetApplicationClick" IsEnabled="{Binding IsNotLoading}" ToolTip.Tip="Target an application using a window, shortcut, or directory (Ctrl+T)">
                     <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" HorizontalAlignment="Center">
                         <TextBlock Text="🎯" FontSize="13" VerticalAlignment="Center"/>
                         <TextBlock Text="Target" FontSize="12.5" VerticalAlignment="Center"/>
@@ -118,7 +119,7 @@
                 </TextBox>
 
                 <!-- Junk Cleaner & Settings -->
-                <Button Grid.Column="7" Classes="toolbar" Click="OnCleanJunkClick" ToolTip.Tip="Search for residual files and registry junk">
+                <Button Grid.Column="7" Classes="toolbar" Click="OnCleanJunkClick" IsEnabled="{Binding HasSelectedApplications}" ToolTip.Tip="Search for residual files and registry junk">
                     <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" HorizontalAlignment="Center">
                         <TextBlock Text="🧹" FontSize="13" VerticalAlignment="Center"/>
                         <TextBlock Text="Clean Junk" FontSize="12.5" VerticalAlignment="Center"/>
@@ -168,11 +169,11 @@
         <!-- 4. MAIN BODY (SIDEBAR + DATA TABLE + TREEMAP) -->
         <Grid ColumnDefinitions="Auto,*" Margin="10,0,10,0">
             <!-- Left Sidebar Filters Card -->
-            <Border Grid.Column="0" Width="280" IsVisible="{Binding Sidebar.IsSidebarVisible}"
+            <Border Grid.Column="0" Width="295" IsVisible="{Binding Sidebar.IsSidebarVisible}"
                     Classes="card" Margin="0,0,6,0" Padding="14,14,8,14" ClipToBounds="True">
                 <Grid RowDefinitions="Auto,Auto,*">
                     <!-- 1. Fixed Header & Reset Action -->
-                    <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,4,12">
+                    <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,4,10">
                         <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                             <TextBlock Text="🎛️ FILTERS" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource PrimaryAccentBrush}" LetterSpacing="0.8"/>
                             <Border Classes="filter-badge" IsVisible="{Binding Sidebar.IsFiltered}">
@@ -188,8 +189,8 @@
 
                     <!-- Scrollable Filter Content -->
                     <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
-                                  Padding="0,0,10,0">
-                        <StackPanel Spacing="14" Margin="0,0,2,0">
+                                  Padding="0,0,8,0">
+                        <StackPanel Spacing="12" Margin="0,0,2,0">
                             <!-- 2. Quick Filter Presets -->
                             <StackPanel Spacing="6">
                                 <TextBlock Text="QUICK PRESETS" FontWeight="SemiBold" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}" LetterSpacing="0.5"/>
@@ -197,139 +198,248 @@
                                     <Button Classes="preset-pill" Command="{Binding Sidebar.PresetDefaultCommand}" ToolTip.Tip="Standard user applications view">
                                         <TextBlock Text="Standard"/>
                                     </Button>
-                                    <Button Classes="preset-pill" Command="{Binding Sidebar.PresetAllCommand}" ToolTip.Tip="Show all items including system components &amp; updates">
+                                    <Button Classes="preset-pill" Command="{Binding Sidebar.PresetAllCommand}" ToolTip.Tip="Show all items including system components, updates &amp; features">
                                         <TextBlock Text="All Apps"/>
                                     </Button>
-                                    <Button Classes="preset-pill" Command="{Binding Sidebar.PresetIssuesOnlyCommand}" ToolTip.Tip="Show only invalid &amp; orphaned items needing attention">
+                                    <Button Classes="preset-pill" Command="{Binding Sidebar.PresetIssuesOnlyCommand}" ToolTip.Tip="Show only invalid &amp; orphaned items needing cleanup">
                                         <TextBlock Text="⚠️ Issues"/>
                                     </Button>
                                     <Button Classes="preset-pill" Command="{Binding Sidebar.PresetQuietOnlyCommand}" ToolTip.Tip="Show only apps with quiet/unattended uninstall support">
                                         <TextBlock Text="⚡ Quiet"/>
+                                    </Button>
+                                    <Button Classes="preset-pill" Command="{Binding Sidebar.PresetStartupOnlyCommand}" ToolTip.Tip="Show only apps configured to run at Windows startup">
+                                        <TextBlock Text="🚀 Startup"/>
+                                    </Button>
+                                    <Button Classes="preset-pill" Command="{Binding Sidebar.PresetLargeOnlyCommand}" ToolTip.Tip="Show only large applications (>1 GB) for disk cleanup">
+                                        <TextBlock Text="💾 >1 GB"/>
+                                    </Button>
+                                    <Button Classes="preset-pill" Command="{Binding Sidebar.PresetRecentOnlyCommand}" ToolTip.Tip="Show only applications installed within the last 30 days">
+                                        <TextBlock Text="📅 Recent"/>
+                                    </Button>
+                                    <Button Classes="preset-pill" Command="{Binding Sidebar.PresetUnsignedOnlyCommand}" ToolTip.Tip="Show unsigned applications without a digital certificate">
+                                        <TextBlock Text="🔒 Unsigned"/>
+                                    </Button>
+                                    <Button Classes="preset-pill" Command="{Binding Sidebar.PresetGamesOnlyCommand}" ToolTip.Tip="Show Steam and game installations">
+                                        <TextBlock Text="🎮 Games"/>
                                     </Button>
                                 </WrapPanel>
                             </StackPanel>
 
                             <Border Height="1" Background="{DynamicResource CardBorderBrush}"/>
 
-                        <!-- 3. Application Types -->
-                        <StackPanel Spacing="8">
-                            <TextBlock Text="APPLICATION TYPES" FontWeight="SemiBold" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}" LetterSpacing="0.5"/>
-                            
-                            <Grid ColumnDefinitions="*,Auto">
-                                <CheckBox Grid.Column="0" IsChecked="{Binding Sidebar.ShowStoreApps}" Content="Windows Store Apps" FontSize="12"/>
-                                <Border Grid.Column="1" Classes="filter-badge">
-                                    <TextBlock Text="{Binding Sidebar.CountStoreApps}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                </Border>
-                            </Grid>
+                            <!-- 3. Application Types -->
+                            <StackPanel Spacing="7">
+                                <TextBlock Text="APPLICATION TYPES" FontWeight="SemiBold" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}" LetterSpacing="0.5"/>
+                                
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <CheckBox Grid.Column="0" IsChecked="{Binding Sidebar.ShowDesktopApps}" Content="Desktop (Win32) Apps" FontSize="12"/>
+                                    <Border Grid.Column="1" Classes="filter-badge">
+                                        <TextBlock Text="{Binding Sidebar.CountDesktopApps}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </Border>
+                                </Grid>
 
-                            <Grid ColumnDefinitions="*,Auto">
-                                <CheckBox Grid.Column="0" IsChecked="{Binding Sidebar.ShowSystemComponents}" Content="System Components" FontSize="12"/>
-                                <Border Grid.Column="1" Classes="filter-badge">
-                                    <TextBlock Text="{Binding Sidebar.CountSystemComponents}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                </Border>
-                            </Grid>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <CheckBox Grid.Column="0" IsChecked="{Binding Sidebar.ShowStoreApps}" Content="Windows Store Apps" FontSize="12"/>
+                                    <Border Grid.Column="1" Classes="filter-badge">
+                                        <TextBlock Text="{Binding Sidebar.CountStoreApps}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </Border>
+                                </Grid>
 
-                            <Grid ColumnDefinitions="*,Auto">
-                                <CheckBox Grid.Column="0" IsChecked="{Binding Sidebar.ShowUpdates}" Content="Windows Updates" FontSize="12"/>
-                                <Border Grid.Column="1" Classes="filter-badge">
-                                    <TextBlock Text="{Binding Sidebar.CountUpdates}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                </Border>
-                            </Grid>
-                        </StackPanel>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <CheckBox Grid.Column="0" IsChecked="{Binding Sidebar.ShowGames}" Content="Steam &amp; Games" FontSize="12"/>
+                                    <Border Grid.Column="1" Classes="filter-badge">
+                                        <TextBlock Text="{Binding Sidebar.CountGames}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </Border>
+                                </Grid>
 
-                        <Border Height="1" Background="{DynamicResource CardBorderBrush}"/>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <CheckBox Grid.Column="0" IsChecked="{Binding Sidebar.ShowSystemComponents}" Content="System Components" FontSize="12"/>
+                                    <Border Grid.Column="1" Classes="filter-badge">
+                                        <TextBlock Text="{Binding Sidebar.CountSystemComponents}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </Border>
+                                </Grid>
 
-                        <!-- 4. Health & Status Filters -->
-                        <StackPanel Spacing="8">
-                            <TextBlock Text="STATUS &amp; HEALTH" FontWeight="SemiBold" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}" LetterSpacing="0.5"/>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <CheckBox Grid.Column="0" IsChecked="{Binding Sidebar.ShowUpdates}" Content="Windows Updates" FontSize="12"/>
+                                    <Border Grid.Column="1" Classes="filter-badge">
+                                        <TextBlock Text="{Binding Sidebar.CountUpdates}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </Border>
+                                </Grid>
 
-                            <Grid ColumnDefinitions="Auto,*,Auto">
-                                <Border Grid.Column="0" Width="8" Height="8" CornerRadius="4" Background="#2E7D32" Margin="0,0,6,0" VerticalAlignment="Center"/>
-                                <CheckBox Grid.Column="1" IsChecked="{Binding Sidebar.ShowVerified}" Content="Verified Normal" FontSize="12"/>
-                                <Border Grid.Column="2" Classes="filter-badge">
-                                    <TextBlock Text="{Binding Sidebar.CountVerified}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                </Border>
-                            </Grid>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <CheckBox Grid.Column="0" IsChecked="{Binding Sidebar.ShowWindowsFeatures}" Content="Windows Features" FontSize="12"/>
+                                    <Border Grid.Column="1" Classes="filter-badge">
+                                        <TextBlock Text="{Binding Sidebar.CountWindowsFeatures}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </Border>
+                                </Grid>
+                            </StackPanel>
 
-                            <Grid ColumnDefinitions="Auto,*,Auto">
-                                <Border Grid.Column="0" Width="8" Height="8" CornerRadius="4" Background="#6A1B9A" Margin="0,0,6,0" VerticalAlignment="Center"/>
-                                <CheckBox Grid.Column="1" IsChecked="{Binding Sidebar.ShowProtected}" Content="Protected Items" FontSize="12"/>
-                                <Border Grid.Column="2" Classes="filter-badge">
-                                    <TextBlock Text="{Binding Sidebar.CountProtected}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                </Border>
-                            </Grid>
+                            <Border Height="1" Background="{DynamicResource CardBorderBrush}"/>
 
-                            <Grid ColumnDefinitions="Auto,*,Auto">
-                                <Border Grid.Column="0" Width="8" Height="8" CornerRadius="4" Background="#EF6C00" Margin="0,0,6,0" VerticalAlignment="Center"/>
-                                <CheckBox Grid.Column="1" IsChecked="{Binding Sidebar.ShowOrphans}" Content="Orphaned Items" FontSize="12"/>
-                                <Border Grid.Column="2" Classes="filter-badge">
-                                    <TextBlock Text="{Binding Sidebar.CountOrphans}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                </Border>
-                            </Grid>
+                            <!-- 4. Health & Status Filters -->
+                            <StackPanel Spacing="7">
+                                <TextBlock Text="STATUS &amp; HEALTH" FontWeight="SemiBold" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}" LetterSpacing="0.5"/>
 
-                            <Grid ColumnDefinitions="Auto,*,Auto">
-                                <Border Grid.Column="0" Width="8" Height="8" CornerRadius="4" Background="#C62828" Margin="0,0,6,0" VerticalAlignment="Center"/>
-                                <CheckBox Grid.Column="1" IsChecked="{Binding Sidebar.ShowInvalid}" Content="Invalid / Broken" FontSize="12"/>
-                                <Border Grid.Column="2" Classes="filter-badge">
-                                    <TextBlock Text="{Binding Sidebar.CountInvalid}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                </Border>
-                            </Grid>
-                        </StackPanel>
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <Border Grid.Column="0" Width="8" Height="8" CornerRadius="4" Background="#2E7D32" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding Sidebar.ShowVerified}" Content="Verified Normal" FontSize="12"/>
+                                    <Border Grid.Column="2" Classes="filter-badge">
+                                        <TextBlock Text="{Binding Sidebar.CountVerified}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </Border>
+                                </Grid>
 
-                        <Border Height="1" Background="{DynamicResource CardBorderBrush}"/>
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <Border Grid.Column="0" Width="8" Height="8" CornerRadius="4" Background="#6A1B9A" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding Sidebar.ShowProtected}" Content="Protected Items" FontSize="12"/>
+                                    <Border Grid.Column="2" Classes="filter-badge">
+                                        <TextBlock Text="{Binding Sidebar.CountProtected}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </Border>
+                                </Grid>
 
-                        <!-- 5. Capabilities -->
-                        <StackPanel Spacing="8">
-                            <TextBlock Text="CAPABILITIES" FontWeight="SemiBold" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}" LetterSpacing="0.5"/>
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <Border Grid.Column="0" Width="8" Height="8" CornerRadius="4" Background="#EF6C00" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding Sidebar.ShowOrphans}" Content="Orphaned Items" FontSize="12"/>
+                                    <Border Grid.Column="2" Classes="filter-badge">
+                                        <TextBlock Text="{Binding Sidebar.CountOrphans}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </Border>
+                                </Grid>
 
-                            <Grid ColumnDefinitions="*,Auto">
-                                <CheckBox Grid.Column="0" IsChecked="{Binding Sidebar.ShowOnlyQuiet}" Content="⚡ Quiet Uninstall Only" FontSize="12"/>
-                                <Border Grid.Column="1" Classes="filter-badge">
-                                    <TextBlock Text="{Binding Sidebar.CountQuiet}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                </Border>
-                            </Grid>
-                        </StackPanel>
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <Border Grid.Column="0" Width="8" Height="8" CornerRadius="4" Background="#C62828" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding Sidebar.ShowInvalid}" Content="Invalid / Broken" FontSize="12"/>
+                                    <Border Grid.Column="2" Classes="filter-badge">
+                                        <TextBlock Text="{Binding Sidebar.CountInvalid}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </Border>
+                                </Grid>
+                            </StackPanel>
 
-                        <Border Height="1" Background="{DynamicResource CardBorderBrush}"/>
+                            <Border Height="1" Background="{DynamicResource CardBorderBrush}"/>
 
-                        <!-- 6. Status Legend -->
-                        <StackPanel Spacing="8">
-                            <TextBlock Text="STATUS LEGEND" FontWeight="SemiBold" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}" LetterSpacing="0.5"/>
+                            <!-- 5. Architecture & Platform -->
+                            <StackPanel Spacing="7">
+                                <TextBlock Text="ARCHITECTURE" FontWeight="SemiBold" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}" LetterSpacing="0.5"/>
+
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <CheckBox Grid.Column="0" IsChecked="{Binding Sidebar.Show64Bit}" Content="64-bit (x64 / ARM64)" FontSize="12"/>
+                                    <Border Grid.Column="1" Classes="filter-badge">
+                                        <TextBlock Text="{Binding Sidebar.Count64Bit}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </Border>
+                                </Grid>
+
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <CheckBox Grid.Column="0" IsChecked="{Binding Sidebar.Show32Bit}" Content="32-bit (x86)" FontSize="12"/>
+                                    <Border Grid.Column="1" Classes="filter-badge">
+                                        <TextBlock Text="{Binding Sidebar.Count32Bit}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </Border>
+                                </Grid>
+                            </StackPanel>
+
+                            <Border Height="1" Background="{DynamicResource CardBorderBrush}"/>
+
+                            <!-- 6. Application Size Filter -->
                             <StackPanel Spacing="6">
-                                <Border Classes="legend-chip">
-                                    <Grid ColumnDefinitions="Auto,*">
-                                        <Border Grid.Column="0" Width="10" Height="10" Background="#2E7D32" CornerRadius="5" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                                        <TextBlock Grid.Column="1" Text="Verified / Normal" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
-                                    </Grid>
-                                </Border>
-                                <Border Classes="legend-chip">
-                                    <Grid ColumnDefinitions="Auto,*">
-                                        <Border Grid.Column="0" Width="10" Height="10" Background="#1565C0" CornerRadius="5" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                                        <TextBlock Grid.Column="1" Text="System Component" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
-                                    </Grid>
-                                </Border>
-                                <Border Classes="legend-chip">
-                                    <Grid ColumnDefinitions="Auto,*">
-                                        <Border Grid.Column="0" Width="10" Height="10" Background="#EF6C00" CornerRadius="5" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                                        <TextBlock Grid.Column="1" Text="Orphaned (Residual)" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
-                                    </Grid>
-                                </Border>
-                                <Border Classes="legend-chip">
-                                    <Grid ColumnDefinitions="Auto,*">
-                                        <Border Grid.Column="0" Width="10" Height="10" Background="#6A1B9A" CornerRadius="5" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                                        <TextBlock Grid.Column="1" Text="Protected Application" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
-                                    </Grid>
-                                </Border>
-                                <Border Classes="legend-chip">
-                                    <Grid ColumnDefinitions="Auto,*">
-                                        <Border Grid.Column="0" Width="10" Height="10" Background="#C62828" CornerRadius="5" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                                        <TextBlock Grid.Column="1" Text="Invalid / Broken Entry" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
-                                    </Grid>
-                                </Border>
+                                <TextBlock Text="APPLICATION SIZE" FontWeight="SemiBold" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}" LetterSpacing="0.5"/>
+                                <ComboBox SelectedIndex="{Binding Sidebar.SelectedSizeFilterIndex, Mode=TwoWay}"
+                                          HorizontalAlignment="Stretch" FontSize="11.5" Margin="0,2,0,0">
+                                    <ComboBoxItem Content="All Sizes"/>
+                                    <ComboBoxItem Content="Large (> 1 GB)"/>
+                                    <ComboBoxItem Content="Medium (100 MB – 1 GB)"/>
+                                    <ComboBoxItem Content="Small (&lt; 100 MB)"/>
+                                    <ComboBoxItem Content="Unknown / 0 B"/>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <Border Height="1" Background="{DynamicResource CardBorderBrush}"/>
+
+                            <!-- 7. Installation Date Filter -->
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="INSTALLATION DATE" FontWeight="SemiBold" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}" LetterSpacing="0.5"/>
+                                <ComboBox SelectedIndex="{Binding Sidebar.SelectedDateFilterIndex, Mode=TwoWay}"
+                                          HorizontalAlignment="Stretch" FontSize="11.5" Margin="0,2,0,0">
+                                    <ComboBoxItem Content="Any Time"/>
+                                    <ComboBoxItem Content="Last 7 Days"/>
+                                    <ComboBoxItem Content="Last 30 Days"/>
+                                    <ComboBoxItem Content="Last 90 Days"/>
+                                    <ComboBoxItem Content="Older than 1 Year"/>
+                                    <ComboBoxItem Content="Unknown Date"/>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <Border Height="1" Background="{DynamicResource CardBorderBrush}"/>
+
+                            <!-- 8. Capabilities & Security -->
+                            <StackPanel Spacing="7">
+                                <TextBlock Text="CAPABILITIES &amp; SECURITY" FontWeight="SemiBold" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}" LetterSpacing="0.5"/>
+
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <CheckBox Grid.Column="0" IsChecked="{Binding Sidebar.ShowOnlyQuiet}" Content="⚡ Quiet Uninstall Only" FontSize="12"/>
+                                    <Border Grid.Column="1" Classes="filter-badge">
+                                        <TextBlock Text="{Binding Sidebar.CountQuiet}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </Border>
+                                </Grid>
+
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <CheckBox Grid.Column="0" IsChecked="{Binding Sidebar.ShowOnlyStartup}" Content="🚀 Startup Entry Only" FontSize="12"/>
+                                    <Border Grid.Column="1" Classes="filter-badge">
+                                        <TextBlock Text="{Binding Sidebar.CountStartup}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </Border>
+                                </Grid>
+
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <CheckBox Grid.Column="0" IsChecked="{Binding Sidebar.ShowSigned}" Content="🔒 Digitally Signed" FontSize="12"/>
+                                    <Border Grid.Column="1" Classes="filter-badge">
+                                        <TextBlock Text="{Binding Sidebar.CountSigned}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </Border>
+                                </Grid>
+
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <CheckBox Grid.Column="0" IsChecked="{Binding Sidebar.ShowUnsigned}" Content="⚠️ Unsigned / Unknown" FontSize="12"/>
+                                    <Border Grid.Column="1" Classes="filter-badge">
+                                        <TextBlock Text="{Binding Sidebar.CountUnsigned}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </Border>
+                                </Grid>
+                            </StackPanel>
+
+                            <Border Height="1" Background="{DynamicResource CardBorderBrush}"/>
+
+                            <!-- 9. Status Legend -->
+                            <StackPanel Spacing="7">
+                                <TextBlock Text="STATUS LEGEND" FontWeight="SemiBold" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}" LetterSpacing="0.5"/>
+                                <StackPanel Spacing="5">
+                                    <Border Classes="legend-chip">
+                                        <Grid ColumnDefinitions="Auto,*">
+                                            <Border Grid.Column="0" Width="10" Height="10" Background="#2E7D32" CornerRadius="5" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="1" Text="Verified / Normal" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </Border>
+                                    <Border Classes="legend-chip">
+                                        <Grid ColumnDefinitions="Auto,*">
+                                            <Border Grid.Column="0" Width="10" Height="10" Background="#1565C0" CornerRadius="5" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="1" Text="System Component" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </Border>
+                                    <Border Classes="legend-chip">
+                                        <Grid ColumnDefinitions="Auto,*">
+                                            <Border Grid.Column="0" Width="10" Height="10" Background="#EF6C00" CornerRadius="5" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="1" Text="Orphaned (Residual)" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </Border>
+                                    <Border Classes="legend-chip">
+                                        <Grid ColumnDefinitions="Auto,*">
+                                            <Border Grid.Column="0" Width="10" Height="10" Background="#6A1B9A" CornerRadius="5" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="1" Text="Protected Application" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </Border>
+                                    <Border Classes="legend-chip">
+                                        <Grid ColumnDefinitions="Auto,*">
+                                            <Border Grid.Column="0" Width="10" Height="10" Background="#C62828" CornerRadius="5" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="1" Text="Invalid / Broken Entry" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
                             </StackPanel>
                         </StackPanel>
-                    </StackPanel>
-                </ScrollViewer>
+                    </ScrollViewer>
                 </Grid>
             </Border>
 
@@ -476,10 +586,11 @@
                             </DataGridTemplateColumn>
 
                             <!-- Icon & Display Name -->
-                            <DataGridTemplateColumn Header="Name" Width="230" MinWidth="100" CanUserSort="True">
+                            <DataGridTemplateColumn Header="Name" Width="230" MinWidth="100" CanUserSort="True"
+                                                    SortMemberPath="DisplayName">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate DataType="vm:ApplicationEntryViewModel">
-                                        <StackPanel Orientation="Horizontal" Spacing="6" Margin="2,0">
+                                        <StackPanel Orientation="Horizontal" Spacing="6" Margin="2,0" ToolTip.Tip="{Binding DisplayName}">
                                             <Border Width="3" Height="14" CornerRadius="1.5"
                                                     Background="{Binding ., Converter={StaticResource StatusColorConverter}}"
                                                     ToolTip.Tip="{Binding StatusDescription}"/>
@@ -491,32 +602,53 @@
                             </DataGridTemplateColumn>
 
                             <!-- Publisher -->
-                            <DataGridTextColumn Header="Publisher" Binding="{Binding Publisher}" Width="130" MinWidth="80" IsReadOnly="True"
-                                                IsVisible="{Binding ShowColumnPublisher}"/>
+                            <DataGridTemplateColumn Header="Publisher" Width="130" MinWidth="80" CanUserSort="True"
+                                                    SortMemberPath="Publisher"
+                                                    IsVisible="{Binding ShowColumnPublisher}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate DataType="vm:ApplicationEntryViewModel">
+                                        <TextBlock Text="{Binding Publisher}" VerticalAlignment="Center" Margin="4,0"
+                                                   TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Publisher}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
 
                             <!-- Version -->
-                            <DataGridTextColumn Header="Version" Binding="{Binding DisplayVersion}" Width="90" MinWidth="60" IsReadOnly="True"
-                                                IsVisible="{Binding ShowColumnVersion}"/>
+                            <DataGridTemplateColumn Header="Version" Width="90" MinWidth="60" CanUserSort="True"
+                                                    SortMemberPath="DisplayVersion"
+                                                    IsVisible="{Binding ShowColumnVersion}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate DataType="vm:ApplicationEntryViewModel">
+                                        <TextBlock Text="{Binding DisplayVersion}" VerticalAlignment="Center" Margin="4,0"
+                                                   TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding DisplayVersion}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
 
                             <!-- Size -->
                             <DataGridTemplateColumn Header="Size" Width="85" MinWidth="60" CanUserSort="True"
+                                                    SortMemberPath="EstimatedSizeKb"
                                                     IsVisible="{Binding ShowColumnSize}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate DataType="vm:ApplicationEntryViewModel">
                                         <TextBlock Text="{Binding EstimatedSize, Converter={StaticResource FileSizeConverter}}"
-                                                   HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2,0" FontWeight="Medium"/>
+                                                   HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2,0" FontWeight="Medium"
+                                                   ToolTip.Tip="{Binding EstimatedSize, Converter={StaticResource FileSizeConverter}}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
                             <!-- Status Column -->
                             <DataGridTemplateColumn Header="Status" Width="95" MinWidth="75" CanUserSort="True"
+                                                    SortMemberPath="StatusDescription"
                                                     IsVisible="{Binding ShowColumnStatus}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate DataType="vm:ApplicationEntryViewModel">
                                         <Border Background="{Binding ., Converter={StaticResource StatusColorConverter}}"
-                                                CornerRadius="10" Padding="6,1.5" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0">
-                                            <TextBlock Text="{Binding StatusDescription}" Foreground="White" FontSize="10" FontWeight="Bold"/>
+                                                CornerRadius="10" Padding="6,1.5" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0"
+                                                ToolTip.Tip="{Binding StatusDescription}">
+                                            <TextBlock Text="{Binding StatusDescription}" Foreground="White" FontSize="10" FontWeight="Bold"
+                                                       TextTrimming="CharacterEllipsis"/>
                                         </Border>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
@@ -524,21 +656,32 @@
 
                             <!-- Install Date -->
                             <DataGridTemplateColumn Header="Install Date" Width="105" MinWidth="80" CanUserSort="True"
+                                                    SortMemberPath="InstallDate"
                                                     IsVisible="{Binding ShowColumnInstallDate}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate DataType="vm:ApplicationEntryViewModel">
                                         <TextBlock Text="{Binding InstallDate, Converter={StaticResource DateTimeConverter}}"
-                                                   VerticalAlignment="Center" Margin="2,0" Foreground="#8b949e"/>
+                                                   VerticalAlignment="Center" Margin="2,0" Foreground="#8b949e"
+                                                   ToolTip.Tip="{Binding InstallDate, Converter={StaticResource DateTimeConverter}}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
                             <!-- Type / Kind -->
-                            <DataGridTextColumn Header="Type" Binding="{Binding UninstallerKind}" Width="85" MinWidth="60" IsReadOnly="True"
-                                                IsVisible="{Binding ShowColumnType}"/>
+                            <DataGridTemplateColumn Header="Type" Width="85" MinWidth="60" CanUserSort="True"
+                                                    SortMemberPath="UninstallerKind"
+                                                    IsVisible="{Binding ShowColumnType}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate DataType="vm:ApplicationEntryViewModel">
+                                        <TextBlock Text="{Binding UninstallerKind}" VerticalAlignment="Center" Margin="4,0"
+                                                   TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding UninstallerKind}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
 
                             <!-- Quiet Uninstall Support -->
                             <DataGridTemplateColumn Header="Quiet" Width="45" MinWidth="35" CanUserSort="True"
+                                                    SortMemberPath="QuietUninstallPossible"
                                                     IsVisible="{Binding ShowColumnQuiet}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate DataType="vm:ApplicationEntryViewModel">
@@ -551,8 +694,16 @@
                             </DataGridTemplateColumn>
 
                             <!-- Install Location -->
-                            <DataGridTextColumn Header="Location" Binding="{Binding InstallLocation}" Width="*" MinWidth="120" IsReadOnly="True"
-                                                IsVisible="{Binding ShowColumnLocation}"/>
+                            <DataGridTemplateColumn Header="Location" Width="*" MinWidth="120" CanUserSort="True"
+                                                    SortMemberPath="InstallLocation"
+                                                    IsVisible="{Binding ShowColumnLocation}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate DataType="vm:ApplicationEntryViewModel">
+                                        <TextBlock Text="{Binding InstallLocation}" VerticalAlignment="Center" Margin="4,0"
+                                                   TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding InstallLocation}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Border>
