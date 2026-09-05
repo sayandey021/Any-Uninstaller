@@ -1,4 +1,4 @@
-﻿/*
+/*
     Copyright (c) 2017 Marcin Szeniak (https://github.com/Klocman/)
     Apache License Version 2.0
 */
@@ -54,17 +54,17 @@ namespace UninstallTools.Junk.Confidence
             return string.Empty;
         }
 
-        internal void Add(int value)
+        public void Add(int value)
         {
             _items.Add(new ConfidenceRecord(value));
         }
 
-        internal void Add(ConfidenceRecord value)
+        public void Add(ConfidenceRecord value)
         {
             _items.Add(value);
         }
 
-        internal void AddRange(IEnumerable<ConfidenceRecord> values)
+        public void AddRange(IEnumerable<ConfidenceRecord> values)
         {
             _items.AddRange(values.Where(x => !_items.Contains(x)));
         }

@@ -6,6 +6,128 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [1.4.0] - 2026-09-05
+
+### 🚀 System App Uninstallation & Real Deletion Engine
+- **Automatic Ownership & Permission Granting (`WindowsTools.TakeOwnershipAndGrantPermissions`)**:
+  - Automatically takes ownership from `NT SERVICE\TrustedInstaller` / `SYSTEM` for the Administrators group (`takeown /a /r /d y /skipsl`) and grants recursive Full Control ACLs with inheritance (`icacls ... /grant:r *S-1-5-32-544:(OI)(CI)F /t /c /q`).
+  - Strips read-only, hidden, and system file attributes (`attrib -r -s -h`) and ensures traverse rights on `C:\Program Files\WindowsApps`.
+  - Enables true physical deletion of protected Store App package folders and system remnants without permission errors.
+- **Elimination of Fake Deletions & Accurate Residual Accounting (`FileSystemJunk` & `JunkManager`)**:
+  - `FileSystemJunk.Delete()` now strictly raises exceptions on failure instead of silently swallowing them or falsely reporting success when files or folders remain on disk.
+  - Fixed false-success reporting in `JunkManager.ExecuteElevatedBatchCleanup`: items that still exist on disk after cleanup are recorded in `result.FailedItems` with detailed failure reasons ("Access denied or folder is locked by system") and never added to `result.SuccessfullyDeleted`.
+  - Relocates locked in-use DLLs (such as Explorer shell extensions) to `%TEMP%\AnyUninstaller_PendingDelete` so parent application directories can be deleted cleanly.
+  - Explicitly excluded `C:\Windows\SystemApps` subdirectories from junk scanning to prevent accidental damage to Windows Search or core shell components.
+- **Windows Store & Inbox App All-Users De-Provisioning (`StoreAppHelper` & `BulkUninstallEntry`)**:
+  - Upgraded uninstallation engine with multi-stage uninstallation using `RemovalOptions.RemoveForAllUsers` and WinRT de-provisioning (`DeprovisionPackageForAllUsersAsync`), eliminating error `0x80070032` (*"cannot be uninstalled on a per-user basis"*) and `0x80073CFA`.
+  - Added resilient PowerShell/DISM fallback for stubborn system and inbox packages (removing all-users package, per-user package, and provisioned package definitions).
+  - Enhanced package discovery in `QueryApps()` to scan across all users with deduplication.
+  - Validates Store App exit code 0 against actual package existence across all users; triggers elevated fallback if still provisioned or present in another user profile.
+- **Microsoft OneDrive & Cortana Uninstallation Overhaul (`PredefinedFactory`)**:
+  - **OneDrive**: Unregisters shell extension `FileSyncShell64.dll`, safely relocates locked DLLs to `%TEMP%`, takes ownership of leftover directories, and deletes files cleanly.
+  - **Cortana**: Removed phantom entry linked to immutable `SystemApps` folder (`InstallLocation = null`); targets modern Cortana AppX package (`Microsoft.549981C3F1010`), de-provisions it for all users, and respects policy disable state (`AllowCortana == 0`).
+- **Refined Protection Check (`IsProtected`)**:
+  - Replaced overly broad signature check (`SignatureKind == PackageSignatureKind.System`) with strict protection of essential core OS infrastructure (Settings, ShellExperienceHost, StartMenuExperienceHost, Taskbar Search, LockApp, SecHealthUI).
+  - Unlocked Cortana, Microsoft Photos, Camera, Xbox, Phone Link, Weather, and all user-facing Store apps so users can run standard, quiet, or bulk uninstalls without being blocked by false protection flags.
+  - Enhanced `UninstallerExecutionService` to respect user-initiated uninstalls and queue selected apps as `Waiting` instead of skipping them as `Protected`.
+
+### 🔒 In-Use Folder Process Detection, Automatic Unlock & Process Restart
+- **In-Use Folder & File Lock Detection (`ProcessLockHelper`)**:
+  - Implemented dual-engine process locking detection using the native Windows **Restart Manager API** (`rstrtmgr.dll`) and running process module analysis (`Process.GetProcesses()`).
+  - Identifies which applications or background services are holding open file handles or running executables/DLLs inside folders scheduled for deletion.
+  - Strict system process protection ensures critical OS services (System, csrss, lsass, svchost, etc.) and Any Uninstaller itself are never terminated.
+  - Provides robust process termination supporting process trees (`proc.Kill(entireProcessTree: true)`) and elevated `taskkill /F /T /PID` fallback if administrative privileges are required.
+- **Automatic Process Restart & Windows Explorer Revival (`RestartProcesses` & `RestartExplorer`)**:
+  - Automatically restarts terminated applications once file deletion completes, preventing killed background apps, file managers, or shell tools from staying closed.
+  - Specially safeguards Windows Explorer (`explorer.exe`): monitors native shell desktop (`GetShellWindow()`), taskbar tray window (`FindWindow("Shell_TrayWnd")`), and active responding explorer processes in the current interactive user session.
+  - Multi-tier revival engine (`RestartExplorer`): executes 4 distinct launch tiers (ShellExecute with Windows working directory, direct Win32 process creation, `cmd.exe /c start`, and PowerShell `Start-Process` decoupled from elevated parent context) with hung/zombie process clearing (`force: true`), ensuring the shell taskbar and desktop always revive.
+  - Automatic restart on deletion: `DeleteJunkBatchAsync` and `DeleteSingleJunkAsync` automatically verify shell health and revive Explorer even if no explicit process restart was queued.
+  - Window close protection: closing `JunkRemoveWindow` or `TempCleanerWindow` automatically checks and revives Explorer if down.
+- **Interactive Process Lock Dialog (`ProcessLockDialog`)**:
+  - Displays detected locking applications with application name, process name, PID, locked resource, executable location, and a new **"Action on Delete"** column showing restart status (e.g., *"Will restart Explorer"*, *"Will restart"*, or *"Close only (Uninstall target)"*).
+  - Offers **"Close, Delete & Restart"** (with clean SVG badge, no emojis) to cleanly close locking processes, delete the locked items, and automatically restart them.
+  - Offers **"Skip Locked Items"** to deselect in-use folders and delete only unlocked items.
+- **Comprehensive Integration Across Manual Uninstall & Residual Cleaning**:
+  - **Pre-Delete Check**: Automatically checks selected directories/files for locks before starting deletion in `JunkRemovalViewModel`.
+  - **Post-Delete Fallback & Retry**: Detects items that failed with in-use/locked errors during cleanup and prompts to terminate locking processes, delete, and restart.
+  - **On-Demand Unlock Context Menu**: Right-click context menu option in `JunkRemoveWindow` DataGrid ("Check for Locking Applications / Unlock...") closes locks, deletes the item, and automatically restarts the applications.
+  - **Manual Uninstall Pre-Scan Check**: When clicking "Uninstall manually" on a running application, prompts before scanning and automatically restarts Explorer if involved.
+
+### 🎨 Main Window Empty State Display, Vector Icons & Theme Polish
+- **Interactive Empty State Display (`MainWindow.axaml` & `MainWindowViewModel`)**:
+  - When searching or filtering yields 0 results (`HasNoFilteredResults`), the main table area displays a modern empty state card rather than a blank dark void.
+  - Features an emblem badge with an SVG vector search icon, dynamic context headlines ("No matching applications found", "No applications match active filters", "No applications found"), and descriptive explanations quoting the user's active query.
+  - Provides instant recovery action buttons: **"Clear Search"** (visible when search text exists), **"Reset Filters"**, and **"Refresh Applications"**.
+  - Automatically collapses the TreeMap and splitter when 0 items match (`IsTreeMapVisibleAndHasItems`), dedicating 100% of the viewport to the empty state card and preventing an empty dark void.
+  - Real-time status bar updates dynamically display the active search status (e.g. `No applications found matching "film"` or `Showing X of Y applications`).
+- **Clean Vector Iconography & Zero Emojis**:
+  - Replaced all remaining emojis in the top toolbar ("Target", "Clean Junk", "Settings"), sidebar filters, preset badges, and DataGrid columns (Quiet uninstall vector bolt) with modern SVG `PathIcon` elements and clean typography.
+- **Light / White Mode Success Theme & High-Contrast Green Color Palette**:
+  - Resolved dark-mode visual artifact in Light / White theme where completion screens (`JunkRemoveWindow` and `TempCleanerWindow`) rendered near-black glowing emblems (`#162b1a` to `#0d1b10`), dark rings, and black chip backgrounds on a white window.
+  - Introduced dynamic theme brush system (`SuccessEmblemBgBrush`, `SuccessEmblemBorderBrush`, `SuccessEmblemIconBrush`, `SuccessPulseRing1Brush`, `SuccessPulseRing2Brush`, `SuccessBadgeBgBrush`, `SuccessBadgeBorderBrush`, `SuccessBadgeTextBrush`, `SuccessBadgeNumBrush`, `SuccessBtnBgBrush`, `SuccessBtnBorderBrush`, `DangerBadge...`).
+  - In Light Mode, completion emblems dynamically transition to soft, refreshing emerald/mint gradients (`#e8f9ed` -> `#d4f5dc` -> `#e6f9ed`) with emerald borders (`#2da44e`) and rich high-contrast forest green checkmarks and text (`#1a7f37`), while preserving deep glowing green tones in Dark, Midnight, and OLED themes.
+  - Refactored `TargetWindow`, `TempCleanerWindow`, `UninstallProgressWindow`, and `MainWindow` status bar to use responsive dynamic brushes instead of hardcoded dark greens.
+- **Streamlined Post-Cleanup Completion Screen**:
+  - Removed the redundant manual "Restart Explorer" button from `JunkRemoveWindow` and `TempCleanerWindow` completion screens to declutter the UI, relying on automatic shell monitoring and background revival on window close.
+
+---
+## [1.3.7] - 2026-09-04
+
+### Invalid & Broken Uninstaller Improvements & Manual Uninstall Overhaul
+- **Smart Uninstaller Routing (`ApplicationEntryViewModel`)**:
+  - `HasRealUninstaller` now strictly requires `IsValid == true` in addition to non-orphaned status and recognized uninstaller types. Invalid and broken uninstaller entries (missing, corrupted, or deleted uninstaller executables) are properly recognized as having no real uninstaller executable.
+  - Standard and Quiet uninstall actions automatically redirect invalid/broken applications directly to the Manual Uninstall flow instead of failing to launch non-existent executables.
+  - In context menus, standard "Uninstall" and "Uninstall quietly" options are hidden for broken/invalid entries, presenting "Uninstall manually" as the primary action.
+- **Guaranteed Residual Leftovers Detection (`JunkCleaningService`)**:
+  - `ScanJunkAsync` now proactively captures the uninstaller's registry key (`target.RegistryPath`) as a high-confidence `RegistryKeyJunk` (`ConfidenceRecords.IsUninstallerRegistryKey` & `ExplicitConnection`), ensuring broken or phantom registry entries are always cleanly presented for deletion.
+  - Candidate directories (`InstallLocation`, `UninstallerLocation`, and executable directories) are automatically validated with `IsSafeApplicationDirectory` to safely catch residual app folders without touching Windows or system directories.
+  - Startup entries (`target.StartupEntries`) are preserved as selectable `StartupJunkNode` items.
+  - Stale uninstaller entries with 0 residual items automatically refresh the application catalog to prevent phantom entries.
+
+### Fix False Positive Residual Junk & Self-Directory Protection
+- **Prevention of Internal Helper Directory Leakage (`ApplicationUninstallerEntry`)**:
+  - Fixed a critical false positive where Any Uninstaller's own application folder (e.g. extracted on Desktop) was erroneously detected as residual junk belonging to Skype with "Good" confidence.
+  - **Root Cause**: When scanning Windows Store apps (UWP/MSIX) like Skype, Any Uninstaller configures `UninstallString` to invoke its internal `StoreAppHelper.exe`. Assigning this string inadvertently populated `UninstallerFullFilename` and `UninstallerLocation` with `StoreAppHelper.exe` and its containing directory (Any Uninstaller's own folder).
+  - Added `IsSelfOrHelper` and `IsSelfOrHelperDirectory` guards across `ApplicationUninstallerEntry` setters (`UninstallString`, `UninstallerFullFilename`, `UninstallerLocation`): prevents internal helper tools (`StoreAppHelper.exe`, `SteamHelper.exe`, `UninstallerAutomatizer.exe`, etc.) and Any Uninstaller directories (`AppLocation`, `AssemblyLocation`, `AppContext.BaseDirectory`, `ProcessPath`) from ever being recorded as an external application's uninstaller path or location.
+  - Updated `StoreAppFactory` and `GenerateSteamHelperStrings` to explicitly ensure `UninstallerFullFilename` and `UninstallerLocation` remain `null`. Store apps are uninstalled via the Windows package manager, not directory-based uninstaller binaries.
+- **Watertight Residual Scanner Protections (`JunkCleaningService` & `JunkManager`)**:
+  - Excluded Windows Store apps from raw `candidateDirs` scanning in `JunkCleaningService`. Windows Store apps are managed by the Windows AppX service; their package folders inside `WindowsApps` are handled by `InstallLocationScanner` with `IsStoreApp` (-10) safety protection.
+  - Strengthened `IsSafeApplicationDirectory` to reject any path matching or inside Any Uninstaller's application directory or helper folders, and protected user profile, desktop, documents, and downloads root directories.
+  - Routed all merged residual junk results through `JunkManager.CleanUpResults`, guaranteeing deduplication, prohibited folder exclusion, and `JunkDoesNotPointToSelf` checks are universally enforced before results are presented in the UI.
+
+---
+## [1.3.6] - 2026-09-04
+
+### 🛡️ Safe Orphaned & Uninstaller-Unavailable Item Handling
+- **Enforce Manual Uninstall for Orphaned Items**:
+  - Orphaned items (`IsOrphaned`) and applications lacking a real uninstaller (`SimpleDelete`, `Unknown`, or missing uninstaller command) now strictly offer only **Manual Uninstall**.
+  - Standard "Uninstall" and "Quiet Uninstall" are automatically hidden in DataGrid and TreeMap context menus when an item has no real uninstaller executable.
+  - Initiating uninstallation via the toolbar or keyboard shortcuts (`Ctrl+U`, `Ctrl+Q`) on orphaned or no-uninstaller items automatically routes directly to the safe **Manual Uninstall** flow (`JunkRemoveWindow`).
+- **Full Item Listing with Zero Auto-Deletion**:
+  - Displays all scanned files, folders, shortcuts, and registry keys in the manual review checklist with checkboxes.
+  - Never automatically deletes files or directories without explicit user inspection and confirmation.
+  - Ensured existing application install locations are always captured in the residual scan.
+- **UniversalUninstaller Bug Fixes**:
+  - Fixed an `InvalidCastException` in `UniversalUninstaller/TargetList.cs` where passing `rootDirectory` (`DirectoryInfo`) instead of `root` (`TreeEntry`) caused the file list to appear completely blank.
+  - Disabled silent directory deletion in `UniversalUninstaller` quiet mode (`/Q`), ensuring the review selection window is always displayed and files are not auto-deleted.
+
+---
+## [1.3.5] - 2026-09-02
+
+### 🛠️ Manual Uninstallation & Advanced Leftover Cleaning
+- **Comprehensive Manual Uninstall Flow (`Uninstall manually`)**:
+  - Implemented `RunManualUninstallFlowAsync` to provide complete manual uninstallation and leftover cleanup for any selected application(s).
+  - Bypasses broken or missing uninstaller executables and scans for all associated files, folders, and registry entries via `JunkCleaningService`.
+  - Displays real-time scan progress in the bottom status bar.
+  - Automatically opens the `JunkRemoveWindow` (`JunkRemovalViewModel`) dialog allowing users to inspect, select, and delete residual artifacts.
+  - Refreshes the application list automatically once junk removal is finalized.
+- **Universal Manual Removal Capability**:
+  - Updated `CanManualUninstall` in `ApplicationEntryViewModel` so manual removal is enabled for all application entries, specifically targeting orphaned, corrupted, Store, or registry-only entries.
+  - Added **"Uninstall manually"** with keyboard shortcut `Ctrl+M` to the top `_Uninstall` menu bar in addition to the item context menu.
+- **Robust Uninstaller & Executable Launcher**:
+  - Replaced legacy command-line invocation in `OnRunUninstallerClick` and `OnRunQuietUninstallerClick` with `ProcessTools.SeparateArgsFromCommand` (`KlocTools`) for reliable path resolution and argument separation.
+
+---
 ## [1.3.4] - 2026-09-01
 
 ### 🧹 Dedicated 'Delete Temporary Files' Cleaner Tool

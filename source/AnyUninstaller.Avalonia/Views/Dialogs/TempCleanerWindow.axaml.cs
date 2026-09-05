@@ -19,6 +19,13 @@ namespace AnyUninstaller.Avalonia.Views.Dialogs
 
         private void OnCloseClick(object? sender, RoutedEventArgs e)
         {
+            System.Threading.Tasks.Task.Run(() =>
+            {
+                if (!UninstallTools.Junk.ProcessLockHelper.IsShellRunning())
+                {
+                    UninstallTools.Junk.ProcessLockHelper.RestartExplorer(force: true);
+                }
+            });
             Close();
         }
     }

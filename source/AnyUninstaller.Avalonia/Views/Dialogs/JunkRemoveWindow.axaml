@@ -10,19 +10,45 @@
         Background="{DynamicResource AppBgBrush}"
         WindowStartupLocation="CenterOwner">
 
-    <DockPanel LastChildFill="True" Margin="16">
+    <Window.Styles>
+        <Style Selector="Border.cleared-emblem">
+            <Setter Property="RenderTransform" Value="scale(1)"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.6" Easing="CubicEaseOut"/>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.4"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Border.cleared-pulse-ring">
+            <Style.Animations>
+                <Animation Duration="0:0:2.4" IterationCount="Infinite" Easing="SineEaseInOut">
+                    <KeyFrame Cue="0%">
+                        <Setter Property="Opacity" Value="0.6"/>
+                    </KeyFrame>
+                    <KeyFrame Cue="50%">
+                        <Setter Property="Opacity" Value="0.12"/>
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Opacity" Value="0.6"/>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+    </Window.Styles>
+
+    <Grid Margin="16">
+        <!-- Main Active Content (DataGrid, Toolbar) -->
+        <DockPanel LastChildFill="True" IsVisible="{Binding IsActiveView}">
         <!-- Top Title & Toolbar Card -->
         <Border DockPanel.Dock="Top" Classes="card" Padding="12" Margin="0,0,0,12">
             <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto">
-                <TextBlock Grid.Column="0" Text="🧹 Residual Junk Items" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource PrimaryAccentBrush}" VerticalAlignment="Center" Margin="0,0,16,0"/>
+                <TextBlock Grid.Column="0" Text="Residual Junk Items" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource PrimaryAccentBrush}" VerticalAlignment="Center" Margin="0,0,16,0"/>
                 
                 <!-- Confident Only Button (Default Recommended) -->
                 <Button Grid.Column="1" Classes="toolbar" Command="{Binding SelectConfidentOnlyCommand}"
                         ToolTip.Tip="Select only high-confidence items (Good &amp; Very Good)" Margin="0,0,8,0">
-                    <StackPanel Orientation="Horizontal" Spacing="6">
-                        <TextBlock Text="🎯" FontSize="11"/>
-                        <TextBlock Text="Confident Only"/>
-                    </StackPanel>
+                    <TextBlock Text="Confident Only" FontWeight="SemiBold"/>
                 </Button>
 
                 <!-- Merged Select All / None Toggle Button -->
@@ -46,13 +72,16 @@
 
         <!-- Bottom Controls -->
         <Border DockPanel.Dock="Bottom" Padding="0,12,0,0">
-            <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto">
                 <ProgressBar Grid.Column="0" IsIndeterminate="True" IsVisible="{Binding IsBusy}" Width="150" Height="10" VerticalAlignment="Center" Margin="0,0,16,0" Foreground="#f85149"/>
                 <TextBlock Grid.Column="1" Text="{Binding SelectionSummaryText}" VerticalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12"/>
-                <Button Grid.Column="2" Content="{Binding DeleteButtonText}" Command="{Binding DeleteSelectedJunkCommand}"
+                <Button Grid.Column="2" Classes="toolbar" Command="{Binding ShowCompletionSummaryCommand}"
+                        Content="Summary"
+                        IsVisible="{Binding LastDeletedCount}" Margin="0,0,8,0" ToolTip.Tip="View cleanup completion summary"/>
+                <Button Grid.Column="3" Content="{Binding DeleteButtonText}" Command="{Binding DeleteSelectedJunkCommand}"
                         IsEnabled="{Binding CanDelete}"
                         Classes="action-uninstall" Margin="0,0,8,0"/>
-                <Button Grid.Column="3" Content="Close" Classes="toolbar" Click="OnCloseClick" Width="90"/>
+                <Button Grid.Column="4" Content="Close" Classes="toolbar" Click="OnCloseClick" Width="90"/>
             </Grid>
         </Border>
 
@@ -66,6 +95,14 @@
                       CanUserReorderColumns="True"
                       ScrollViewer.VerticalScrollBarVisibility="Visible"
                       ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="🔒 Check for Locking Applications / Unlock..." Click="OnCheckLockingClick"/>
+                        <Separator/>
+                        <MenuItem Header="📂 Open Location in File Explorer" Click="OnOpenLocationClick"/>
+                        <MenuItem Header="📋 Copy Path" Click="OnCopyPathClick"/>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
                 <DataGrid.Columns>
                     <DataGridCheckBoxColumn Header="✓" Binding="{Binding IsChecked}" Width="42"/>
                     
@@ -133,4 +170,98 @@
             </DataGrid>
         </Border>
     </DockPanel>
+
+    <!-- Animated Cleared Completion Screen (Shown when IsCompleted = true) -->
+    <Border Classes="card" IsVisible="{Binding IsCompleted}" Padding="36,28" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid RowDefinitions="*,Auto">
+            <StackPanel Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="16" MaxWidth="640">
+                <!-- Glowing Emblem with Checkmark & Pulse -->
+                <Grid Width="130" Height="130" HorizontalAlignment="Center">
+                    <!-- Outer Pulse Ring -->
+                    <Border Classes="cleared-pulse-ring" Width="130" Height="130" CornerRadius="65"
+                            BorderBrush="{DynamicResource SuccessPulseRing1Brush}" BorderThickness="2" Opacity="0.45"/>
+                    
+                    <!-- Second Ambient Ring -->
+                    <Border Width="110" Height="110" CornerRadius="55"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            BorderBrush="{DynamicResource SuccessPulseRing2Brush}" BorderThickness="1.5" Opacity="0.35"/>
+
+                    <!-- Inner Glowing Badge -->
+                    <Border Classes="cleared-emblem" Width="92" Height="92" CornerRadius="46"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            BorderBrush="{DynamicResource SuccessEmblemBorderBrush}" BorderThickness="2.5"
+                            Background="{DynamicResource SuccessEmblemBgBrush}">
+                        <TextBlock Text="✓" FontSize="46" FontWeight="Bold" Foreground="{DynamicResource SuccessEmblemIconBrush}"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-2,0,0"/>
+                    </Border>
+                </Grid>
+
+                <!-- Headline -->
+                <TextBlock Text="{Binding CompletionHeadlineText}"
+                           FontSize="22" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"
+                           HorizontalAlignment="Center" TextAlignment="Center"/>
+
+                <!-- Metric Highlight Badge -->
+                <Border Background="{DynamicResource CardHoverBrush}" CornerRadius="16" Padding="18,8" HorizontalAlignment="Center">
+                    <TextBlock Text="{Binding CompletionHighlightText}" FontSize="14.5" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryAccentBrush}"/>
+                </Border>
+
+                <!-- Detailed Explanation Text -->
+                <TextBlock Text="{Binding CompletionDetailsText}"
+                           FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}"
+                           TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" LineHeight="20"/>
+
+                <!-- Status Breakdown Badges -->
+                <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center" Margin="0,4,0,0">
+                    <!-- Deleted Badge -->
+                    <Border Classes="chip" Padding="12,5" Background="{DynamicResource SuccessBadgeBgBrush}" BorderBrush="{DynamicResource SuccessBadgeBorderBrush}" BorderThickness="1">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="Cleaned:" FontSize="11.5" Foreground="{DynamicResource SuccessBadgeTextBrush}" FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding LastDeletedCount}" FontSize="11.5" Foreground="{DynamicResource SuccessBadgeNumBrush}" FontWeight="Bold"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Undeleted / In-Use Badge (Visible if > 0) -->
+                    <Border Classes="chip" Padding="12,5" Background="{DynamicResource DangerBadgeBgBrush}" BorderBrush="{DynamicResource DangerBadgeBorderBrush}" BorderThickness="1"
+                            IsVisible="{Binding RemainingUndeletedCount}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="In Use / Locked:" FontSize="11.5" Foreground="{DynamicResource DangerBadgeTextBrush}" FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding RemainingUndeletedCount}" FontSize="11.5" Foreground="{DynamicResource DangerBadgeNumBrush}" FontWeight="Bold"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Unselected Badge (Visible if > 0) -->
+                    <Border Classes="chip" Padding="12,5" Background="{DynamicResource CardInnerBgBrush}" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                            IsVisible="{Binding RemainingUnselectedCount}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="Unselected:" FontSize="11.5" Foreground="{DynamicResource TextSecondaryBrush}" FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding RemainingUnselectedCount}" FontSize="11.5" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="Bold"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Action Buttons: 1. Show Undeleted & Unselected Items, 2. Close Window -->
+            <Border Grid.Row="1" Margin="0,20,0,0" HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Spacing="14">
+                    <!-- Option to show undeleted or unselected items -->
+                    <Button Classes="toolbar" Command="{Binding ShowRemainingItemsCommand}"
+                            IsEnabled="{Binding HasRemainingItems}"
+                            ToolTip.Tip="Review remaining items in the list"
+                            Padding="20,9" MinHeight="40" CornerRadius="8">
+                        <TextBlock Text="{Binding ShowRemainingButtonText}" FontWeight="SemiBold" FontSize="13" VerticalAlignment="Center"/>
+                    </Button>
+
+                    <!-- Close Window Button -->
+                    <Button Classes="action-uninstall" Click="OnCloseClick"
+                            ToolTip.Tip="Finish and close window"
+                            Padding="28,9" MinHeight="40" CornerRadius="8"
+                            Background="{DynamicResource SuccessBtnBgBrush}" BorderBrush="{DynamicResource SuccessBtnBorderBrush}">
+                        <TextBlock Text="Close Window" FontWeight="Bold" FontSize="13" VerticalAlignment="Center" Foreground="White"/>
+                    </Button>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</Grid>
 </Window>

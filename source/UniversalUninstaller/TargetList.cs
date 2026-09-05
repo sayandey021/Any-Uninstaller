@@ -88,8 +88,29 @@ namespace UniversalUninstaller
 
         private IEnumerable ChildrenGetter(object model)
         {
-            return (((TreeEntry)model).FileSystemInfo as DirectoryInfo)?.GetFileSystemInfos()
-                .Select(x => new TreeEntry(x));
+            DirectoryInfo di = null;
+            if (model is TreeEntry treeEntry)
+            {
+                di = treeEntry.FileSystemInfo as DirectoryInfo;
+            }
+            else if (model is DirectoryInfo dirInfo)
+            {
+                di = dirInfo;
+            }
+
+            if (di != null && di.Exists)
+            {
+                try
+                {
+                    return di.GetFileSystemInfos().Select(x => new TreeEntry(x));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            }
+
+            return Enumerable.Empty<TreeEntry>();
         }
 
         private bool BooleanCheckStatePutter(object rowObject, bool value)
@@ -116,17 +137,27 @@ namespace UniversalUninstaller
 
         public void Populate(DirectoryInfo rootDirectory)
         {
+            if (rootDirectory == null || !rootDirectory.Exists)
+                return;
+
             treeListView1.ClearObjects();
             var root = new TreeEntry(rootDirectory);
             treeListView1.AddObject(root);
             treeListView1.Expand(root);
 
             // If there is no executable in the root, expand the subdirectories to show more info
-            var subs = treeListView1.GetChildren(rootDirectory).Cast<TreeEntry>().ToList();
-            if (subs.All(x => x.IsDirectory))
+            try
             {
-                foreach (var dir in subs)
-                    treeListView1.Expand(dir);
+                var subs = treeListView1.GetChildren(root).Cast<TreeEntry>().ToList();
+                if (subs.All(x => x.IsDirectory))
+                {
+                    foreach (var dir in subs)
+                        treeListView1.Expand(dir);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
             }
 
             treeListView1.CheckAll();

@@ -64,15 +64,15 @@ using System.Runtime.InteropServices;
 //      Revision
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
-// [assembly: AssemblyVersion("1.3")]
+// [assembly: AssemblyVersion("1.4")]
 
-[assembly: AssemblyVersion("1.3")]
+[assembly: AssemblyVersion("1.4")]
 
 // This is also assigned to 'AssemblyInformationalVersion' which is the product version
 // Standard Way: [major].[minor].[bugfix].[build]
 // .NET Convention: Third digit is the auto-incremented build version. Fourth digit is revision, which is service pack no
 
-[assembly: AssemblyFileVersion("1.3.4.0")]
+[assembly: AssemblyFileVersion("1.4.2.0")]
 /*
  * AssemblyVersion should only be changed for major changes or breaking changes since any change to the
  * AssemblyVersion would force every .NET application referencing the assembly to re-compile against the

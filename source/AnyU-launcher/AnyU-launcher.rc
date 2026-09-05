@@ -84,7 +84,7 @@ BEGIN
             VALUE "LegalCopyright", "Copyright (C) 2023"
             VALUE "OriginalFilename", "AnyUninstaller.exe"
             VALUE "ProductName", "AnyUninstaller launcher"
-            VALUE "ProductVersion", "1.3.4.0"
+            VALUE "ProductVersion", "1.4.2.0"
         END
     END
     BLOCK "VarFileInfo"

@@ -1,4 +1,4 @@
-﻿/*
+/*
     Copyright (c) 2017 Marcin Szeniak (https://github.com/Klocman/)
     Apache License Version 2.0
 */
@@ -18,7 +18,7 @@ namespace UninstallTools.Junk.Containers
 
         public static readonly ConfidenceRecord ConfidenceStartupMatched = new(6, Localisation.Confidence_Startup_StartupMatched);
 
-        internal StartupEntryBase Entry { get; }
+        public StartupEntryBase Entry { get; }
 
         public override void Backup(string backupDirectory)
         {

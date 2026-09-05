@@ -168,9 +168,14 @@ namespace AnyUninstaller.Avalonia.ViewModels
 
         // ContextMenu & Action Capability Checks
         public bool IsMsi => Entry.UninstallerKind == UninstallerType.Msiexec || Entry.BundleProviderKey != Guid.Empty;
-        public bool CanStandardUninstall => !IsProtected && (IsValid || !string.IsNullOrWhiteSpace(UninstallString));
-        public bool CanQuietUninstall => !IsProtected && QuietUninstallPossible;
-        public bool CanManualUninstall => !string.IsNullOrWhiteSpace(UninstallString) || !string.IsNullOrWhiteSpace(InstallLocation) || !string.IsNullOrWhiteSpace(UninstallerLocation);
+        public bool HasRealUninstaller => IsValid &&
+                                          !IsOrphaned &&
+                                          Entry.UninstallerKind != UninstallerType.SimpleDelete &&
+                                          Entry.UninstallerKind != UninstallerType.Unknown &&
+                                          (!string.IsNullOrWhiteSpace(UninstallString) || IsMsi);
+        public bool CanStandardUninstall => !IsProtected && HasRealUninstaller;
+        public bool CanQuietUninstall => !IsProtected && HasRealUninstaller && QuietUninstallPossible;
+        public bool CanManualUninstall => Entry != null;
         public bool CanModify => IsMsi || !string.IsNullOrWhiteSpace(Entry.ModifyPath);
         public bool HasUninstallString => !string.IsNullOrWhiteSpace(UninstallString);
         public bool HasQuietUninstallString => !string.IsNullOrWhiteSpace(QuietUninstallString);

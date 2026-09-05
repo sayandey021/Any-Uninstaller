@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,10 +14,11 @@ namespace AnyUninstaller.Avalonia.Services
         public BulkUninstallTask CreateBulkTask(
             IEnumerable<ApplicationUninstallerEntry> targets,
             bool quiet,
-            bool simulate = false)
+            bool simulate = false,
+            bool ignoreProtection = true)
         {
             var config = new BulkUninstallConfiguration(
-                ignoreProtection: false,
+                ignoreProtection: ignoreProtection,
                 preferQuiet: quiet,
                 simulate: simulate,
                 autoKillStuckQuiet: AppSettingsService.Instance.AutoKillStuckProcesses,
@@ -29,7 +30,7 @@ namespace AnyUninstaller.Avalonia.Services
                 var status = UninstallStatus.Waiting;
                 if (!e.IsValid)
                     status = UninstallStatus.Invalid;
-                else if (e.IsProtected)
+                else if (e.IsProtected && !config.IgnoreProtection)
                     status = UninstallStatus.Protected;
 
                 bool silentPossible = quiet && e.QuietUninstallPossible;

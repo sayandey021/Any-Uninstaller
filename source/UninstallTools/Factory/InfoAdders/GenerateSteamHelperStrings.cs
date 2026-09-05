@@ -18,7 +18,11 @@ namespace UninstallTools.Factory.InfoAdders
             if (!int.TryParse(appId, out _)) return;
 
             if(!target.UninstallPossible || UninstallToolsGlobalConfig.QuietAutomatization)
+            {
                 target.UninstallString = $"\"{SteamFactory.SteamHelperPath}\" uninstall {appId}";
+                target.UninstallerFullFilename = null;
+                target.UninstallerLocation = null;
+            }
 
             if (UninstallToolsGlobalConfig.QuietAutomatization)
                 target.QuietUninstallString = $"\"{SteamFactory.SteamHelperPath}\" uninstall /silent {appId}";

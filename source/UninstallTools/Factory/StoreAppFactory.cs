@@ -81,7 +81,9 @@ namespace UninstallTools.Factory
                     InstallLocation = data["InstalledLocation"],
                     InstallDate = Directory.GetCreationTime(data["InstalledLocation"]),
                     IsProtected = isProtected,
-                    SystemComponent = isProtected
+                    SystemComponent = isProtected,
+                    UninstallerFullFilename = null,
+                    UninstallerLocation = null
                 };
 
                 if (File.Exists(data["Logo"]))

@@ -1,6 +1,6 @@
 <Project>
 	<PropertyGroup>
-		<Version>1.3.4</Version>
+		<Version>1.4.2</Version>
 
 		<Authors>Sayan Dey</Authors>
 		<Copyright></Copyright>
@@ -28,7 +28,7 @@
 		<FileAlignment>512</FileAlignment>
 		
 		<UseAppHost>true</UseAppHost>
-		<SelfContained>false</SelfContained>
+		<SelfContained Condition="'$(SelfContained)' == ''">false</SelfContained>
 	</PropertyGroup>
 	
 	<Import Project="HelperTools\HelperTools.projitems" Label="Shared" />

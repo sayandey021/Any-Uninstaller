@@ -1,4 +1,4 @@
-﻿/*
+/*
     Copyright (c) 2017 Marcin Szeniak (https://github.com/Klocman/)
     Apache License Version 2.0
 */
@@ -36,6 +36,23 @@ namespace Klocman.Tools
         public static Version WindowsXp64 => new(5, 2);
         public static Version WindowsXp => new(5, 1);
         public static Version Windows2000 => new(5, 0);
+
+        /// <summary>
+        /// Check if the current process is running with elevated Administrator privileges.
+        /// </summary>
+        public static bool IsAdministrator()
+        {
+            try
+            {
+                using var id = WindowsIdentity.GetCurrent();
+                var principal = new WindowsPrincipal(id);
+                return principal.IsInRole(WindowsBuiltInRole.Administrator);
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
         /// <summary>
         /// Check if .NET Framework v4 is available. Returns null if not installed, or highest installed version.
@@ -485,6 +502,119 @@ namespace Klocman.Tools
                 throw new IOException(e.Message, e);
             }
         }
+
+        #region Shell & File System Notifications / Operations
+
+        [DllImport("shell32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern void SHChangeNotify(int wEventId, uint uFlags, IntPtr dwItem1, IntPtr dwItem2);
+
+        private const int SHCNE_ASSOCCHANGED = 0x08000000;
+        private const uint SHCNF_IDLIST = 0x0000;
+        private const uint SHCNF_FLUSH = 0x1000;
+
+        /// <summary>
+        /// Notifies Windows Explorer and the Shell that file associations, namespace tree items (e.g. OneDrive/Cloud roots),
+        /// or icons have changed, instantly updating Explorer without restarting explorer.exe.
+        /// </summary>
+        public static void NotifyShellAssociationsChanged()
+        {
+            try
+            {
+                SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST | SHCNF_FLUSH, IntPtr.Zero, IntPtr.Zero);
+            }
+            catch { }
+        }
+
+        [Flags]
+        public enum MoveFileFlags : uint
+        {
+            MOVEFILE_REPLACE_EXISTING = 0x00000001,
+            MOVEFILE_COPY_ALLOWED = 0x00000002,
+            MOVEFILE_DELAY_UNTIL_REBOOT = 0x00000004,
+            MOVEFILE_WRITE_THROUGH = 0x00000008
+        }
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern bool MoveFileEx(string lpExistingFileName, string? lpNewFileName, MoveFileFlags dwFlags);
+
+        /// <summary>
+        /// Registers a locked file or directory to be deleted on the next system reboot via PendingFileRenameOperations.
+        /// This allows removal of files locked by Windows Explorer (such as in-use shell extension DLLs) without restarting Explorer.
+        /// </summary>
+        public static bool ScheduleDeleteOnReboot(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path)) return false;
+            try
+            {
+                return MoveFileEx(path, null, MoveFileFlags.MOVEFILE_DELAY_UNTIL_REBOOT);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Takes ownership of a file or directory for the Administrators group,
+        /// grants full control ACL permissions, and strips read-only/system attributes.
+        /// If the path is within WindowsApps, ensures Administrators have traverse rights.
+        /// </summary>
+        public static bool TakeOwnershipAndGrantPermissions(string path, bool isDirectory)
+        {
+            if (string.IsNullOrWhiteSpace(path)) return false;
+            try
+            {
+                var escaped = path.Replace("\"", "\\\"");
+
+                // If path is inside WindowsApps, ensure Administrators can traverse WindowsApps root
+                try
+                {
+                    var programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+                    var windowsApps = Path.Combine(programFiles, "WindowsApps");
+                    if (path.StartsWith(windowsApps, StringComparison.OrdinalIgnoreCase))
+                    {
+                        var psiTraverse = new ProcessStartInfo("cmd.exe", $"/c takeown /f \"{windowsApps}\" /a >nul 2>&1 & icacls \"{windowsApps}\" /grant *S-1-5-32-544:(RX) >nul 2>&1")
+                        {
+                            UseShellExecute = false,
+                            CreateNoWindow = true
+                        };
+                        using var pTrav = Process.Start(psiTraverse);
+                        pTrav?.WaitForExit(10000);
+                    }
+                }
+                catch { }
+
+                string cmd;
+                if (isDirectory)
+                {
+                    cmd = $"/c takeown /f \"{escaped}\" /a /r /d y /skipsl >nul 2>&1 & " +
+                          $"icacls \"{escaped}\" /grant:r *S-1-5-32-544:(OI)(CI)F /t /c /q >nul 2>&1 & " +
+                          $"attrib -r -s -h \"{escaped}\\*.*\" /s /d >nul 2>&1 & " +
+                          $"attrib -r -s -h \"{escaped}\" >nul 2>&1";
+                }
+                else
+                {
+                    cmd = $"/c takeown /f \"{escaped}\" /a >nul 2>&1 & " +
+                          $"icacls \"{escaped}\" /grant:r *S-1-5-32-544:F /c /q >nul 2>&1 & " +
+                          $"attrib -r -s -h \"{escaped}\" >nul 2>&1";
+                }
+
+                var psi = new ProcessStartInfo("cmd.exe", cmd)
+                {
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+                using var p = Process.Start(psi);
+                p?.WaitForExit(30000);
+                return p?.ExitCode == 0;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        #endregion
 
         public static string ResolveShortcut(string filename)
         {

@@ -1,4 +1,4 @@
-﻿/*
+/*
     Copyright (c) 2017 Marcin Szeniak (https://github.com/Klocman/)
     Apache License Version 2.0
 */
@@ -281,6 +281,65 @@ namespace UninstallTools
         [LocalisedName(typeof(Localisation), nameof(Localisation.HasStartupEntries))]
         public bool HasStartups => StartupEntries != null && StartupEntries.Any();
 
+        private static readonly HashSet<string> InternalHelperNames = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "StoreAppHelper.exe",
+            "SteamHelper.exe",
+            "UninstallerAutomatizer.exe",
+            "UpdateHelper.exe",
+            "AnyUninstaller.exe",
+            "AnyUninstaller.Avalonia.exe",
+            "AnyU-console.exe"
+        };
+
+        public static bool IsSelfOrHelper(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path)) return false;
+
+            var clean = path.Trim().Trim('"', '\'');
+            var fileName = Path.GetFileName(clean);
+            if (!string.IsNullOrEmpty(fileName) && InternalHelperNames.Contains(fileName))
+                return true;
+
+            return IsSelfOrHelperDirectory(clean);
+        }
+
+        public static bool IsSelfOrHelperDirectory(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path)) return false;
+
+            var cleanPath = path.Trim().Trim('"', '\'');
+
+            var selfBases = new List<string?>
+            {
+                UninstallToolsGlobalConfig.AppLocation,
+                UninstallToolsGlobalConfig.AssemblyLocation,
+                AppContext.BaseDirectory,
+                AppDomain.CurrentDomain.BaseDirectory
+            };
+
+            try
+            {
+                var processPath = Environment.ProcessPath;
+                if (!string.IsNullOrWhiteSpace(processPath))
+                {
+                    selfBases.Add(Path.GetDirectoryName(processPath));
+                    selfBases.Add(processPath);
+                }
+            }
+            catch { }
+
+            foreach (var b in selfBases)
+            {
+                if (string.IsNullOrWhiteSpace(b)) continue;
+                if (PathTools.SubPathIsInsideBasePath(b, cleanPath, true, true) ||
+                    PathTools.SubPathIsInsideBasePath(cleanPath, b, true, true))
+                    return true;
+            }
+
+            return false;
+        }
+
         [ComparisonTarget]
         [LocalisedName(typeof(Localisation), nameof(Localisation.SystemComponent))]
         public bool SystemComponent { get; set; }
@@ -292,10 +351,24 @@ namespace UninstallTools
             get { return _uninstallerFullFilename; }
             set
             {
+                if (IsSelfOrHelper(value))
+                {
+                    _uninstallerFullFilename = null;
+                    UninstallerLocation = null;
+                    return;
+                }
+
                 _uninstallerFullFilename = value;
 
-                UninstallerLocation = ApplicationEntryTools.ExtractDirectoryName(UninstallerFullFilename)
-                                      ?? UninstallerLocation ?? string.Empty;
+                var extractedDir = ApplicationEntryTools.ExtractDirectoryName(UninstallerFullFilename);
+                if (!string.IsNullOrEmpty(extractedDir) && !IsSelfOrHelperDirectory(extractedDir))
+                {
+                    UninstallerLocation = extractedDir;
+                }
+                else
+                {
+                    UninstallerLocation = null;
+                }
             }
         }
 
@@ -306,8 +379,22 @@ namespace UninstallTools
         //[LocalisedName(typeof(Localisation), nameof(Localisation.IsInstalled))]
         //public bool IsInstalled { get; internal set; }
 
+        private string _uninstallerLocation;
+
         [LocalisedName(typeof(Localisation), nameof(Localisation.UninstallerLocation))]
-        public string UninstallerLocation { get; set; }
+        public string UninstallerLocation
+        {
+            get { return _uninstallerLocation; }
+            set
+            {
+                if (IsSelfOrHelperDirectory(value))
+                {
+                    _uninstallerLocation = null;
+                    return;
+                }
+                _uninstallerLocation = value;
+            }
+        }
 
         [ComparisonTarget]
         [LocalisedName(typeof(Localisation), nameof(Localisation.UninstallString))]
@@ -318,8 +405,16 @@ namespace UninstallTools
             {
                 _uninstallString = value;
 
-                UninstallerFullFilename = ApplicationEntryTools.ExtractFullFilename(value)
-                    ?? UninstallerFullFilename ?? string.Empty;
+                var extracted = ApplicationEntryTools.ExtractFullFilename(value);
+                if (!string.IsNullOrEmpty(extracted) && !IsSelfOrHelper(extracted))
+                {
+                    UninstallerFullFilename = extracted;
+                }
+                else
+                {
+                    _uninstallerFullFilename = null;
+                    UninstallerLocation = null;
+                }
             }
         }
 

@@ -7,7 +7,7 @@ namespace AnyUninstaller.Avalonia.ViewModels
     {
         public string AppName => "Any Uninstaller";
         public string Version => "1.3.4";
-        public string VersionDisplay => "v1.3.4";
+        public string VersionDisplay => "v1.4.2";
         public string Description => "Clean, fast, and effortless batch application uninstaller.";
         public string DeveloperTitle => "Developed by";
         public string DeveloperName => "Sayan Dey";

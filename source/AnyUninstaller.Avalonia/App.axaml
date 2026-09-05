@@ -20,6 +20,30 @@
         <SolidColorBrush x:Key="RowHoverBrush" Color="#21262d"/>
         <SolidColorBrush x:Key="RowSelectedBrush" Color="#1d4ed8"/>
         <SolidColorBrush x:Key="ScrollThumbBrush" Color="#484f58"/>
+        
+        <!-- Success & Completion State Brushes -->
+        <LinearGradientBrush x:Key="SuccessEmblemBgBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+            <GradientStop Offset="0" Color="#162b1a"/>
+            <GradientStop Offset="0.5" Color="#1a3d24"/>
+            <GradientStop Offset="1" Color="#0d1b10"/>
+        </LinearGradientBrush>
+        <SolidColorBrush x:Key="SuccessEmblemBorderBrush" Color="#3fb950"/>
+        <SolidColorBrush x:Key="SuccessEmblemIconBrush" Color="#3fb950"/>
+        <SolidColorBrush x:Key="SuccessPulseRing1Brush" Color="#3fb950"/>
+        <SolidColorBrush x:Key="SuccessPulseRing2Brush" Color="#238636"/>
+        <SolidColorBrush x:Key="SuccessBadgeBgBrush" Color="#162b1a"/>
+        <SolidColorBrush x:Key="SuccessBadgeBorderBrush" Color="#238636"/>
+        <SolidColorBrush x:Key="SuccessBadgeTextBrush" Color="#3fb950"/>
+        <SolidColorBrush x:Key="SuccessBadgeNumBrush" Color="#ffffff"/>
+        <SolidColorBrush x:Key="SuccessBtnBgBrush" Color="#238636"/>
+        <SolidColorBrush x:Key="SuccessBtnBorderBrush" Color="#2ea043"/>
+        
+        <!-- Danger / In-Use State Brushes -->
+        <SolidColorBrush x:Key="DangerBadgeBgBrush" Color="#2e1a1a"/>
+        <SolidColorBrush x:Key="DangerBadgeBorderBrush" Color="#da3633"/>
+        <SolidColorBrush x:Key="DangerBadgeTextBrush" Color="#f85149"/>
+        <SolidColorBrush x:Key="DangerBadgeNumBrush" Color="#ffffff"/>
+
         <CornerRadius x:Key="CardCornerRadius">12</CornerRadius>
         <CornerRadius x:Key="CardInnerCornerRadius">8</CornerRadius>
         <GridLength x:Key="ToggleSwitchPreContentMargin">0</GridLength>

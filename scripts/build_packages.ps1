@@ -62,7 +62,7 @@ New-Item -ItemType Directory -Force -Path $portableDir | Out-Null
 New-Item -ItemType Directory -Force -Path $msixDir | Out-Null
 
 # Generate Assets
-Write-Host "[2/5] Generating Store and Tile image assets..." -ForegroundColor Yellow
+Write-Host "[2/5] Generating Store, Taskbar and Start Menu icon assets..." -ForegroundColor Yellow
 Add-Type -AssemblyName System.Drawing
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
@@ -71,7 +71,7 @@ $assetsDir = Join-Path $distDir "msix_assets"
 New-Item -ItemType Directory -Force -Path $assetsDir | Out-Null
 
 $srcImage = [System.Drawing.Image]::FromFile($sourceLogo)
-function Resize-Image($targetPath, $width, $height, $bgHex) {
+function Resize-Image($targetPath, $width, $height, $bgHex, $customPad = 0) {
     $bmp = New-Object System.Drawing.Bitmap $width, $height
     $g = [System.Drawing.Graphics]::FromImage($bmp)
     $g.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
@@ -87,11 +87,9 @@ function Resize-Image($targetPath, $width, $height, $bgHex) {
         $g.Clear([System.Drawing.Color]::Transparent)
     }
 
-    # Minimal padding to avoid clipping while maximizing icon size on taskbar/store
-    $padW = [int]($width * 0.02)
-    $padH = [int]($height * 0.02)
-    $destW = $width - ($padW * 2)
-    $destH = $height - ($padH * 2)
+    $pad = if ($customPad -ne $null) { $customPad } else { 0 }
+    $destW = [Math]::Max(1, $width - ($pad * 2))
+    $destH = [Math]::Max(1, $height - ($pad * 2))
 
     $scale = [Math]::Min($destW / $srcImage.Width, $destH / $srcImage.Height)
     $drawW = [int]($srcImage.Width * $scale)
@@ -105,11 +103,56 @@ function Resize-Image($targetPath, $width, $height, $bgHex) {
     $bmp.Dispose()
 }
 
-Resize-Image (Join-Path $assetsDir "StoreLogo.png") 50 50 $null
-Resize-Image (Join-Path $assetsDir "Square44x44Logo.png") 44 44 $null
-Resize-Image (Join-Path $assetsDir "Square150x150Logo.png") 150 150 $null
-Resize-Image (Join-Path $assetsDir "Wide310x150Logo.png") 310 150 $null
-Resize-Image (Join-Path $assetsDir "SplashScreen.png") 620 300 "#151D24"
+# 1. Base Manifest Images
+Resize-Image (Join-Path $assetsDir "StoreLogo.png") 50 50 $null 0
+Resize-Image (Join-Path $assetsDir "Square44x44Logo.png") 44 44 $null 0
+Resize-Image (Join-Path $assetsDir "Square150x150Logo.png") 150 150 $null 0
+Resize-Image (Join-Path $assetsDir "Wide310x150Logo.png") 310 150 $null 0
+Resize-Image (Join-Path $assetsDir "SplashScreen.png") 620 300 "#151D24" 10
+
+# 2. Square44x44Logo Scale Variants
+Resize-Image (Join-Path $assetsDir "Square44x44Logo.scale-100.png") 44 44 $null 0
+Resize-Image (Join-Path $assetsDir "Square44x44Logo.scale-125.png") 55 55 $null 0
+Resize-Image (Join-Path $assetsDir "Square44x44Logo.scale-150.png") 66 66 $null 0
+Resize-Image (Join-Path $assetsDir "Square44x44Logo.scale-200.png") 88 88 $null 0
+Resize-Image (Join-Path $assetsDir "Square44x44Logo.scale-400.png") 176 176 $null 0
+
+# 3. Square44x44Logo TargetSize & Unplated Variants (For Start Menu, Taskbar, Alt+Tab)
+$targetSizes = @(16, 20, 24, 30, 32, 36, 40, 44, 48, 64, 72, 80, 96, 256)
+foreach ($ts in $targetSizes) {
+    Resize-Image (Join-Path $assetsDir "Square44x44Logo.targetsize-$ts.png") $ts $ts $null 0
+    Resize-Image (Join-Path $assetsDir "Square44x44Logo.targetsize-${ts}_altform-unplated.png") $ts $ts $null 0
+    Resize-Image (Join-Path $assetsDir "Square44x44Logo.targetsize-${ts}_altform-lightunplated.png") $ts $ts $null 0
+}
+
+# 4. Square150x150Logo Scale Variants
+Resize-Image (Join-Path $assetsDir "Square150x150Logo.scale-100.png") 150 150 $null 0
+Resize-Image (Join-Path $assetsDir "Square150x150Logo.scale-125.png") 188 188 $null 0
+Resize-Image (Join-Path $assetsDir "Square150x150Logo.scale-150.png") 225 225 $null 0
+Resize-Image (Join-Path $assetsDir "Square150x150Logo.scale-200.png") 300 300 $null 0
+Resize-Image (Join-Path $assetsDir "Square150x150Logo.scale-400.png") 600 600 $null 0
+
+# 5. StoreLogo Scale Variants
+Resize-Image (Join-Path $assetsDir "StoreLogo.scale-100.png") 50 50 $null 0
+Resize-Image (Join-Path $assetsDir "StoreLogo.scale-125.png") 63 63 $null 0
+Resize-Image (Join-Path $assetsDir "StoreLogo.scale-150.png") 75 75 $null 0
+Resize-Image (Join-Path $assetsDir "StoreLogo.scale-200.png") 100 100 $null 0
+Resize-Image (Join-Path $assetsDir "StoreLogo.scale-400.png") 200 200 $null 0
+
+# 6. Wide310x150Logo Scale Variants
+Resize-Image (Join-Path $assetsDir "Wide310x150Logo.scale-100.png") 310 150 $null 0
+Resize-Image (Join-Path $assetsDir "Wide310x150Logo.scale-125.png") 388 188 $null 0
+Resize-Image (Join-Path $assetsDir "Wide310x150Logo.scale-150.png") 465 225 $null 0
+Resize-Image (Join-Path $assetsDir "Wide310x150Logo.scale-200.png") 620 300 $null 0
+Resize-Image (Join-Path $assetsDir "Wide310x150Logo.scale-400.png") 1240 600 $null 0
+
+# 7. SplashScreen Scale Variants
+Resize-Image (Join-Path $assetsDir "SplashScreen.scale-100.png") 620 300 "#151D24" 10
+Resize-Image (Join-Path $assetsDir "SplashScreen.scale-125.png") 775 375 "#151D24" 12
+Resize-Image (Join-Path $assetsDir "SplashScreen.scale-150.png") 930 450 "#151D24" 14
+Resize-Image (Join-Path $assetsDir "SplashScreen.scale-200.png") 1240 600 "#151D24" 18
+Resize-Image (Join-Path $assetsDir "SplashScreen.scale-400.png") 2480 1200 "#151D24" 30
+
 $srcImage.Dispose()
 
 # Step 1: Build the App (Self-contained so it works on any machine without .NET installed)
@@ -127,7 +170,20 @@ Write-Host "[4/5] Building Standalone EXE distribution (dist\exe)..." -Foregroun
 & dotnet publish $projectPath -c $Configuration -r win-x64 --self-contained true -p:PublishSingleFile=true -o $exeDir
 if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed for standalone exe" }
 Copy-Item -Path "$exeDir\AnyUninstaller.Avalonia.exe" -Destination "$exeDir\AnyUninstaller.exe" -Force
-Write-Host " -> Standalone EXE complete in dist\exe" -ForegroundColor Green
+
+# Publish helper tools as single-file self-contained executables so they run on any Windows 10/11 PC without .NET 8
+$helperProjects = @(
+    "source\StoreAppHelper\StoreAppHelper.csproj",
+    "source\SteamHelper\SteamHelper.csproj",
+    "source\OculusHelper\OculusHelper.csproj",
+    "source\UniversalUninstaller\UniversalUninstaller.csproj",
+    "source\UninstallerAutomatizer\UninstallerAutomatizer.csproj"
+)
+foreach ($hp in $helperProjects) {
+    $fullHp = Join-Path $rootDir $hp
+    & dotnet publish $fullHp -c $Configuration -r win-x64 --self-contained true -p:PublishSingleFile=true -o $exeDir
+}
+Write-Host " -> Standalone EXE & self-contained helpers complete in dist\exe" -ForegroundColor Green
 
 # Step 3: Build Portable Package & Zip
 Write-Host "[5/5] Building Portable distribution (dist\portable)..." -ForegroundColor Yellow
@@ -186,6 +242,20 @@ $outputMsix = Join-Path $msixDir "Saayan.AnyUninstaller_${quadVer}_x64.msix"
 if (-not $makeAppx) {
     Write-Warning "makeappx.exe not found in Windows Kits. Please ensure Windows 10/11 SDK is installed."
 } else {
+    # Compile resources.pri with MakePri to officially register scale & unplated targetsize assets
+    $makePri = Join-Path (Split-Path -Parent $makeAppx) "makepri.exe"
+    if (-not (Test-Path $makePri)) {
+        $foundPri = Get-ChildItem -Path "C:\Program Files (x86)\Windows Kits\10\bin" -Recurse -Filter "makepri.exe" -ErrorAction SilentlyContinue | Select-Object -First 1
+        if ($foundPri) { $makePri = $foundPri.FullName }
+    }
+    if ($makePri -and (Test-Path $makePri)) {
+        Write-Host "Compiling package resources with MakePri..." -ForegroundColor Yellow
+        $priConfig = Join-Path $msixStaging "priconfig.xml"
+        & $makePri createconfig /cf $priConfig /dq en-US /pv 10.0.0 /o | Out-Null
+        & $makePri new /pr $msixStaging /cf $priConfig /of (Join-Path $msixStaging "resources.pri") /o | Out-Null
+        Remove-Item -Path $priConfig -Force -ErrorAction SilentlyContinue
+    }
+
     Write-Host "Using MakeAppx: $makeAppx"
     & $makeAppx pack /o /h SHA256 /d $msixStaging /p $outputMsix
     if ($LASTEXITCODE -eq 0) {

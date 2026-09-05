@@ -395,10 +395,27 @@ namespace UninstallTools.Uninstaller
                     if (_skipLevel == SkipCurrentLevel.None)
                     {
                         var exitVar = uninstaller.ExitCode;
-                        if (exitVar != 0)
+                        if (exitVar == 0)
                         {
-                            if (UninstallerEntry.UninstallerKind == UninstallerType.Msiexec &&
-                                exitVar == 1602)
+                            if (UninstallerEntry.UninstallerKind == UninstallerType.StoreApp)
+                            {
+                                var sep = UninstallerEntry.Comment?.IndexOf('_') ?? -1;
+                                var packageName = sep > 0 ? UninstallerEntry.Comment.Substring(0, sep) : UninstallerEntry.Comment;
+                                if (!string.IsNullOrEmpty(packageName) && !IsStorePackageGone(packageName))
+                                {
+                                    TryElevatedStoreAppRemoval(UninstallerEntry.Comment);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (UninstallerEntry.UninstallerKind == UninstallerType.StoreApp &&
+                                TryElevatedStoreAppRemoval(UninstallerEntry.Comment))
+                            {
+                                // Successfully removed via elevated/PowerShell StoreApp removal fallback
+                            }
+                            else if (UninstallerEntry.UninstallerKind == UninstallerType.Msiexec &&
+                                     exitVar == 1602)
                             {
                                 // 1602 ERROR_INSTALL_USEREXIT - The user has cancelled the installation.
                                 _skipLevel = SkipCurrentLevel.Skip;
@@ -456,8 +473,16 @@ namespace UninstallTools.Uninstaller
             }
             catch (Exception ex)
             {
-                error = ex;
-                Trace.WriteLine(@$"Exception when uninstalling {UninstallerEntry.DisplayName}: {ex}");
+                if (UninstallerEntry.UninstallerKind == UninstallerType.StoreApp &&
+                    TryElevatedStoreAppRemoval(UninstallerEntry.Comment))
+                {
+                    error = null;
+                }
+                else
+                {
+                    error = ex;
+                    Trace.WriteLine(@$"Exception when uninstalling {UninstallerEntry.DisplayName}: {ex}");
+                }
             }
             finally
             {
@@ -499,6 +524,86 @@ namespace UninstallTools.Uninstaller
                 {
                     Finished = true;
                 }
+            }
+        }
+
+        private static bool TryElevatedStoreAppRemoval(string fullName)
+        {
+            if (string.IsNullOrWhiteSpace(fullName)) return false;
+
+            try
+            {
+                var sep = fullName.IndexOf('_');
+                var packageName = sep > 0 ? fullName.Substring(0, sep) : fullName;
+
+                var script = 
+                    $"$n = '{packageName}'; $fn = '{fullName}'; " +
+                    "Get-AppxProvisionedPackage -Online | Where-Object { $_.DisplayName -like \"*$n*\" -or $_.PackageName -like \"*$n*\" } | ForEach-Object { " +
+                    "    Remove-AppxProvisionedPackage -Online -PackageName $_.PackageName -AllUsers -ErrorAction SilentlyContinue; " +
+                    "    dism.exe /Online /NoRestart /Remove-ProvisionedAppxPackage /PackageName:$($_.PackageName) 2>$null " +
+                    "}; " +
+                    "Get-AppxPackage -AllUsers -Name \"*$n*\" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue; " +
+                    "Get-AppxPackage -Name \"*$n*\" | Remove-AppxPackage -ErrorAction SilentlyContinue; " +
+                    "if ($fn) { Remove-AppxPackage -Package $fn -AllUsers -ErrorAction SilentlyContinue; Remove-AppxPackage -Package $fn -ErrorAction SilentlyContinue }; " +
+                    "if (@(Get-AppxPackage -Name \"*$n*\").Count -eq 0) { exit 0 } else { exit 1 }";
+
+                bool isElevated = WindowsTools.IsAdministrator();
+                var psi = new ProcessStartInfo("powershell.exe", $"-NoProfile -NonInteractive -ExecutionPolicy Bypass -Command \"{script}\"")
+                {
+                    UseShellExecute = !isElevated,
+                    Verb = isElevated ? "" : "runas",
+                    CreateNoWindow = isElevated,
+                    WindowStyle = isElevated ? ProcessWindowStyle.Hidden : ProcessWindowStyle.Normal
+                };
+
+                using var proc = Process.Start(psi);
+                proc?.WaitForExit(60000);
+                if (proc?.ExitCode == 0) return true;
+
+                return IsStorePackageGone(packageName);
+            }
+            catch
+            {
+                // If elevated process launch was blocked (e.g. UAC denied or MSIX container), try user-level removal
+                try
+                {
+                    var sep = fullName.IndexOf('_');
+                    var packageName = sep > 0 ? fullName.Substring(0, sep) : fullName;
+                    var script = $"Remove-AppxPackage -Package '{fullName}' -ErrorAction SilentlyContinue; Get-AppxPackage -Name '*{packageName}*' | Remove-AppxPackage -ErrorAction SilentlyContinue";
+                    var psi = new ProcessStartInfo("powershell.exe", $"-NoProfile -NonInteractive -ExecutionPolicy Bypass -Command \"{script}\"")
+                    {
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    };
+                    using var proc = Process.Start(psi);
+                    proc?.WaitForExit(30000);
+                    return IsStorePackageGone(packageName);
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        }
+
+        private static bool IsStorePackageGone(string packageName)
+        {
+            try
+            {
+                var psi = new ProcessStartInfo("powershell.exe", $"-NoProfile -NonInteractive -Command \"@(Get-AppxPackage -Name '*{packageName}*').Count\"")
+                {
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    RedirectStandardOutput = true
+                };
+                using var p = Process.Start(psi);
+                var outStr = p?.StandardOutput.ReadToEnd()?.Trim();
+                p?.WaitForExit(5000);
+                return int.TryParse(outStr, out var count) && count == 0;
+            }
+            catch
+            {
+                return false;
             }
         }
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -59,28 +59,13 @@ namespace UniversalUninstaller
                 return 11;
             }
 
-            if (!_quietMode)
-            {
-                var uninstallWindow = new UninstallSelection(dir);
-                Application.Run(uninstallWindow);
-                if (uninstallWindow.WasCancelled)
-                    return 1;
-                if (uninstallWindow.DeleteFailed)
-                    return 161;
-            }
-            else
-            {
-                try
-                {
-                    DeleteItems(new[] {dir});
-                }
-                catch (Exception exception)
-                {
-                    Console.WriteLine(exception);
-                    Klocman.LogWriter.WriteMessageToLog(exception.ToString());
-                    return 161;
-                }
-            }
+            // Always show manual selection window so user can review all items; do not auto-delete
+            var uninstallWindow = new UninstallSelection(dir);
+            Application.Run(uninstallWindow);
+            if (uninstallWindow.WasCancelled)
+                return 1;
+            if (uninstallWindow.DeleteFailed)
+                return 161;
 
             return 0;
         }

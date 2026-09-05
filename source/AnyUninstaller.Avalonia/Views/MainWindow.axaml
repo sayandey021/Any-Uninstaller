@@ -44,6 +44,7 @@
             <MenuItem Header="_Uninstall">
                 <MenuItem Header="_Uninstall selected" Click="OnUninstallClick" IsEnabled="{Binding HasSelectedApplications}" InputGesture="Ctrl+U"/>
                 <MenuItem Header="_Quietly uninstall selected" Click="OnQuietUninstallClick" IsEnabled="{Binding HasSelectedApplications}" InputGesture="Ctrl+Q"/>
+                <MenuItem Header="_Uninstall manually" Click="OnUninstallManuallyClick" IsEnabled="{Binding HasSelectedApplications}" InputGesture="Ctrl+M"/>
                 <MenuItem Header="_Target an application..." Click="OnTargetApplicationClick" IsEnabled="{Binding IsNotLoading}" InputGesture="Ctrl+T"/>
                 <Separator/>
                 <MenuItem Header="_Select all" Command="{Binding SelectAllCommand}" IsEnabled="{Binding CanSelect}" InputGesture="Ctrl+A"/>
@@ -99,15 +100,12 @@
                     </StackPanel>
                 </Button>
                 <Button Grid.Column="5" Classes="toolbar" Click="OnTargetApplicationClick" IsEnabled="{Binding IsNotLoading}" ToolTip.Tip="Target an application using a window, shortcut, or directory (Ctrl+T)">
-                    <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <TextBlock Text="🎯" FontSize="13" VerticalAlignment="Center"/>
-                        <TextBlock Text="Target" FontSize="12.5" VerticalAlignment="Center"/>
-                    </StackPanel>
+                    <TextBlock Text="Target" FontSize="12.5" VerticalAlignment="Center" FontWeight="Medium"/>
                 </Button>
 
                 <!-- Search Box with Instant Clear Button -->
                 <TextBox Grid.Column="6" Margin="12,0" Classes="search-capsule"
-                         Watermark="🔍 Search by name, publisher, path, version, type..."
+                         Watermark="Search by name, publisher, path, version, type..."
                          Text="{Binding Sidebar.SearchText, Mode=TwoWay}" VerticalAlignment="Center">
                     <TextBox.InnerRightContent>
                         <Button Classes="preset-pill" Command="{Binding Sidebar.ClearSearchCommand}"
@@ -120,16 +118,10 @@
 
                 <!-- Junk Cleaner & Settings -->
                 <Button Grid.Column="7" Classes="toolbar" Click="OnCleanJunkClick" IsEnabled="{Binding HasSelectedApplications}" ToolTip.Tip="Search for residual files and registry junk">
-                    <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <TextBlock Text="🧹" FontSize="13" VerticalAlignment="Center"/>
-                        <TextBlock Text="Clean Junk" FontSize="12.5" VerticalAlignment="Center"/>
-                    </StackPanel>
+                    <TextBlock Text="Clean Junk" FontSize="12.5" VerticalAlignment="Center" FontWeight="Medium"/>
                 </Button>
                 <Button Grid.Column="8" Classes="toolbar" Click="OnSettingsClick" ToolTip.Tip="Configure preferences and scanner settings">
-                    <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <TextBlock Text="⚙️" FontSize="13" VerticalAlignment="Center"/>
-                        <TextBlock Text="Settings" FontSize="12.5" VerticalAlignment="Center"/>
-                    </StackPanel>
+                    <TextBlock Text="Settings" FontSize="12.5" VerticalAlignment="Center" FontWeight="Medium"/>
                 </Button>
             </Grid>
         </Border>
@@ -161,7 +153,7 @@
 
                 <Border Classes="chip">
                     <TextBlock Text="{Binding StatusBar.TotalSize, Converter={StaticResource FileSizeConverter}, StringFormat='Total Size: {0}'}"
-                               VerticalAlignment="Center" FontWeight="SemiBold" FontSize="12" Foreground="#3fb950"/>
+                               VerticalAlignment="Center" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource SuccessBadgeTextBrush}"/>
                 </Border>
             </Grid>
         </Border>
@@ -175,13 +167,13 @@
                     <!-- 1. Fixed Header & Reset Action -->
                     <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,4,10">
                         <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                            <TextBlock Text="🎛️ FILTERS" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource PrimaryAccentBrush}" LetterSpacing="0.8"/>
+                            <TextBlock Text="FILTERS" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource PrimaryAccentBrush}" LetterSpacing="0.8"/>
                             <Border Classes="filter-badge" IsVisible="{Binding Sidebar.IsFiltered}">
                                 <TextBlock Text="Active" FontSize="9.5" FontWeight="Bold" Foreground="#38bdf8"/>
                             </Border>
                         </StackPanel>
                         <Button Grid.Column="1" Classes="preset-pill" Command="{Binding Sidebar.ResetFiltersCommand}" ToolTip.Tip="Reset all filters to default standard view">
-                            <TextBlock Text="↺ Reset" FontSize="10.5"/>
+                            <TextBlock Text="Reset" FontSize="10.5"/>
                         </Button>
                     </Grid>
 
@@ -202,25 +194,25 @@
                                         <TextBlock Text="All Apps"/>
                                     </Button>
                                     <Button Classes="preset-pill" Command="{Binding Sidebar.PresetIssuesOnlyCommand}" ToolTip.Tip="Show only invalid &amp; orphaned items needing cleanup">
-                                        <TextBlock Text="⚠️ Issues"/>
+                                        <TextBlock Text="Issues"/>
                                     </Button>
                                     <Button Classes="preset-pill" Command="{Binding Sidebar.PresetQuietOnlyCommand}" ToolTip.Tip="Show only apps with quiet/unattended uninstall support">
-                                        <TextBlock Text="⚡ Quiet"/>
+                                        <TextBlock Text="Quiet"/>
                                     </Button>
                                     <Button Classes="preset-pill" Command="{Binding Sidebar.PresetStartupOnlyCommand}" ToolTip.Tip="Show only apps configured to run at Windows startup">
-                                        <TextBlock Text="🚀 Startup"/>
+                                        <TextBlock Text="Startup"/>
                                     </Button>
                                     <Button Classes="preset-pill" Command="{Binding Sidebar.PresetLargeOnlyCommand}" ToolTip.Tip="Show only large applications (>1 GB) for disk cleanup">
-                                        <TextBlock Text="💾 >1 GB"/>
+                                        <TextBlock Text=">1 GB"/>
                                     </Button>
                                     <Button Classes="preset-pill" Command="{Binding Sidebar.PresetRecentOnlyCommand}" ToolTip.Tip="Show only applications installed within the last 30 days">
-                                        <TextBlock Text="📅 Recent"/>
+                                        <TextBlock Text="Recent"/>
                                     </Button>
                                     <Button Classes="preset-pill" Command="{Binding Sidebar.PresetUnsignedOnlyCommand}" ToolTip.Tip="Show unsigned applications without a digital certificate">
-                                        <TextBlock Text="🔒 Unsigned"/>
+                                        <TextBlock Text="Unsigned"/>
                                     </Button>
                                     <Button Classes="preset-pill" Command="{Binding Sidebar.PresetGamesOnlyCommand}" ToolTip.Tip="Show Steam and game installations">
-                                        <TextBlock Text="🎮 Games"/>
+                                        <TextBlock Text="Games"/>
                                     </Button>
                                 </WrapPanel>
                             </StackPanel>
@@ -386,14 +378,14 @@
                                 </Grid>
 
                                 <Grid ColumnDefinitions="*,Auto">
-                                    <CheckBox Grid.Column="0" IsChecked="{Binding Sidebar.ShowSigned}" Content="🔒 Digitally Signed" FontSize="12"/>
+                                    <CheckBox Grid.Column="0" IsChecked="{Binding Sidebar.ShowSigned}" Content="Digitally Signed" FontSize="12"/>
                                     <Border Grid.Column="1" Classes="filter-badge">
                                         <TextBlock Text="{Binding Sidebar.CountSigned}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
                                     </Border>
                                 </Grid>
 
                                 <Grid ColumnDefinitions="*,Auto">
-                                    <CheckBox Grid.Column="0" IsChecked="{Binding Sidebar.ShowUnsigned}" Content="⚠️ Unsigned / Unknown" FontSize="12"/>
+                                    <CheckBox Grid.Column="0" IsChecked="{Binding Sidebar.ShowUnsigned}" Content="Unsigned / Unknown" FontSize="12"/>
                                     <Border Grid.Column="1" Classes="filter-badge">
                                         <TextBlock Text="{Binding Sidebar.CountUnsigned}" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"/>
                                     </Border>
@@ -447,133 +439,99 @@
             <Grid Grid.Column="1" RowDefinitions="*,Auto,Auto">
                 <!-- Virtualized Main Uninstaller List Card -->
                 <Border Grid.Row="0" Classes="card" Margin="0,0,0,4">
-                    <DataGrid x:Name="ApplicationsDataGrid"
-                              ItemsSource="{Binding FilteredUninstallers}"
-                              SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
-                              AutoGenerateColumns="False"
-                              CanUserReorderColumns="True"
-                              CanUserResizeColumns="True"
-                              CanUserSortColumns="True"
-                              GridLinesVisibility="All"
-                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                              ScrollViewer.VerticalScrollBarVisibility="Auto"
-                              IsReadOnly="True"
-                              SelectionMode="Extended">
-                        <DataGrid.ContextMenu>
-                            <ContextMenu Opening="OnContextMenuOpening">
-                                <MenuItem Header="Uninstall" Click="OnUninstallClick"
-                                          IsEnabled="{Binding SelectedItem.CanStandardUninstall}">
-                                    <MenuItem.Icon>
-                                        <TextBlock Text="📦" FontSize="13" VerticalAlignment="Center"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <MenuItem Header="Uninstall quietly" Click="OnQuietUninstallClick"
-                                          IsEnabled="{Binding SelectedItem.CanQuietUninstall}">
-                                    <MenuItem.Icon>
-                                        <TextBlock Text="⚡" FontSize="13" VerticalAlignment="Center"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <MenuItem Header="Uninstall manually" Click="OnUninstallManuallyClick"
-                                          IsEnabled="{Binding SelectedItem.CanManualUninstall}">
-                                    <MenuItem.Icon>
-                                        <TextBlock Text="🛠️" FontSize="13" VerticalAlignment="Center"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <MenuItem Header="Uninstall using MsiExec..."
-                                          IsEnabled="{Binding SelectedItem.IsMsi}">
-                                    <MenuItem.Icon>
-                                        <TextBlock Text="⚙️" FontSize="13" VerticalAlignment="Center"/>
-                                    </MenuItem.Icon>
-                                    <MenuItem Header="Standard Uninstall" Click="OnMsiUninstallClick"
-                                              IsEnabled="{Binding SelectedItem.IsMsi}"/>
-                                    <MenuItem Header="Quiet Uninstall" Click="OnMsiQuietUninstallClick"
-                                              IsEnabled="{Binding SelectedItem.CanQuietUninstall}"/>
-                                    <MenuItem Header="Modify / Repair" Click="OnMsiModifyClick"
-                                              IsEnabled="{Binding SelectedItem.CanModify}"/>
-                                </MenuItem>
+                    <Grid>
+                        <DataGrid x:Name="ApplicationsDataGrid"
+                                  ItemsSource="{Binding FilteredUninstallers}"
+                                  SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                                  AutoGenerateColumns="False"
+                                  CanUserReorderColumns="True"
+                                  CanUserResizeColumns="True"
+                                  CanUserSortColumns="True"
+                                  GridLinesVisibility="All"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                  IsReadOnly="True"
+                                  SelectionMode="Extended"
+                                  IsVisible="{Binding HasFilteredResults}">
+                            <DataGrid.ContextMenu>
+                                <ContextMenu Opening="OnContextMenuOpening">
+                                    <MenuItem Header="Uninstall" Click="OnUninstallClick"
+                                              IsEnabled="{Binding SelectedItem.CanStandardUninstall}"
+                                              IsVisible="{Binding SelectedItem.HasRealUninstaller}"/>
+                                    <MenuItem Header="Uninstall quietly" Click="OnQuietUninstallClick"
+                                              IsEnabled="{Binding SelectedItem.CanQuietUninstall}"
+                                              IsVisible="{Binding SelectedItem.HasRealUninstaller}"/>
+                                    <MenuItem Header="Uninstall manually" Click="OnUninstallManuallyClick"
+                                              IsEnabled="{Binding SelectedItem.CanManualUninstall}"/>
+                                    <MenuItem Header="Uninstall using MsiExec..."
+                                              IsEnabled="{Binding SelectedItem.IsMsi}"
+                                              IsVisible="{Binding SelectedItem.IsMsi}">
+                                        <MenuItem Header="Standard Uninstall" Click="OnMsiUninstallClick"
+                                                  IsEnabled="{Binding SelectedItem.IsMsi}"/>
+                                        <MenuItem Header="Quiet Uninstall" Click="OnMsiQuietUninstallClick"
+                                                  IsEnabled="{Binding SelectedItem.CanQuietUninstall}"/>
+                                        <MenuItem Header="Modify / Repair" Click="OnMsiModifyClick"
+                                                  IsEnabled="{Binding SelectedItem.CanModify}"/>
+                                    </MenuItem>
 
-                                <Separator/>
-
-                                <MenuItem Header="Run..." IsEnabled="{Binding SelectedItem, Converter={x:Static ObjectConverters.IsNotNull}}">
-                                    <MenuItem.Icon>
-                                        <TextBlock Text="▶️" FontSize="13" VerticalAlignment="Center"/>
-                                    </MenuItem.Icon>
-                                    <MenuItem Header="Run Uninstaller" Click="OnRunUninstallerClick"
-                                              IsEnabled="{Binding SelectedItem.HasUninstallString}"/>
-                                    <MenuItem Header="Run Quiet Uninstaller" Click="OnRunQuietUninstallerClick"
-                                              IsEnabled="{Binding SelectedItem.HasQuietUninstallString}"/>
-                                    <MenuItem Header="Run Application Executable" Click="OnRunAppExecutableClick"
-                                              IsEnabled="{Binding SelectedItem.CanRunExecutable}"/>
-                                </MenuItem>
-
-                                <Separator/>
-
-                                <MenuItem Header="Copy to Clipboard..." IsEnabled="{Binding SelectedItem, Converter={x:Static ObjectConverters.IsNotNull}}">
-                                    <MenuItem.Icon>
-                                        <TextBlock Text="📋" FontSize="13" VerticalAlignment="Center"/>
-                                    </MenuItem.Icon>
-                                    <MenuItem Header="Application Name" Click="OnCopyNameClick"
-                                              IsEnabled="{Binding SelectedItem, Converter={x:Static ObjectConverters.IsNotNull}}"/>
-                                    <MenuItem Header="GUID / Product Code" Click="OnCopyGuidClick"
-                                              IsEnabled="{Binding SelectedItem.HasBundleProviderKey}"/>
-                                    <MenuItem Header="Full Registry Key Path" Click="OnCopyRegistryPathClick"
-                                              IsEnabled="{Binding SelectedItem.HasRegistryPath}"/>
-                                    <MenuItem Header="Install Location Path" Click="OnCopyInstallLocationClick"
-                                              IsEnabled="{Binding SelectedItem.HasInstallLocation}"/>
-                                    <MenuItem Header="Uninstall Command String" Click="OnCopyUninstallStringClick"
-                                              IsEnabled="{Binding SelectedItem.HasUninstallString}"/>
                                     <Separator/>
-                                    <MenuItem Header="All Information Summary" Click="OnCopyAllInfoClick"
-                                              IsEnabled="{Binding SelectedItem, Converter={x:Static ObjectConverters.IsNotNull}}"/>
-                                </MenuItem>
 
-                                <MenuItem Header="Delete registry entry" Click="OnDeleteRegistryEntryClick"
-                                          IsEnabled="{Binding SelectedItem.HasRegistryEntry}">
-                                    <MenuItem.Icon>
-                                        <TextBlock Text="🗑️" FontSize="13" VerticalAlignment="Center"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
+                                    <MenuItem Header="Run..." IsEnabled="{Binding SelectedItem, Converter={x:Static ObjectConverters.IsNotNull}}">
+                                        <MenuItem Header="Run Uninstaller" Click="OnRunUninstallerClick"
+                                                  IsEnabled="{Binding SelectedItem.HasUninstallString}"/>
+                                        <MenuItem Header="Run Quiet Uninstaller" Click="OnRunQuietUninstallerClick"
+                                                  IsEnabled="{Binding SelectedItem.HasQuietUninstallString}"/>
+                                        <MenuItem Header="Run Application Executable" Click="OnRunAppExecutableClick"
+                                                  IsEnabled="{Binding SelectedItem.CanRunExecutable}"/>
+                                    </MenuItem>
 
-                                <Separator/>
+                                    <Separator/>
 
-                                <MenuItem Header="Open in explorer..." IsEnabled="{Binding SelectedItem, Converter={x:Static ObjectConverters.IsNotNull}}">
-                                    <MenuItem.Icon>
-                                        <TextBlock Text="↗️" FontSize="13" VerticalAlignment="Center"/>
-                                    </MenuItem.Icon>
-                                    <MenuItem Header="Install Location" Click="OnOpenInstallLocationClick"
+                                    <MenuItem Header="Copy to Clipboard..." IsEnabled="{Binding SelectedItem, Converter={x:Static ObjectConverters.IsNotNull}}">
+                                        <MenuItem Header="Application Name" Click="OnCopyNameClick"
+                                                  IsEnabled="{Binding SelectedItem, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                                        <MenuItem Header="GUID / Product Code" Click="OnCopyGuidClick"
+                                                  IsEnabled="{Binding SelectedItem.HasBundleProviderKey}"/>
+                                        <MenuItem Header="Full Registry Key Path" Click="OnCopyRegistryPathClick"
+                                                  IsEnabled="{Binding SelectedItem.HasRegistryPath}"/>
+                                        <MenuItem Header="Install Location Path" Click="OnCopyInstallLocationClick"
+                                                  IsEnabled="{Binding SelectedItem.HasInstallLocation}"/>
+                                        <MenuItem Header="Uninstall Command String" Click="OnCopyUninstallStringClick"
+                                                  IsEnabled="{Binding SelectedItem.HasUninstallString}"/>
+                                        <Separator/>
+                                        <MenuItem Header="All Information Summary" Click="OnCopyAllInfoClick"
+                                                  IsEnabled="{Binding SelectedItem, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                                    </MenuItem>
+
+                                    <MenuItem Header="Delete registry entry" Click="OnDeleteRegistryEntryClick"
+                                              IsEnabled="{Binding SelectedItem.HasRegistryEntry}"/>
+
+                                    <Separator/>
+
+                                    <MenuItem Header="Open in explorer..." IsEnabled="{Binding SelectedItem, Converter={x:Static ObjectConverters.IsNotNull}}">
+                                        <MenuItem Header="Install Location" Click="OnOpenInstallLocationClick"
                                               IsEnabled="{Binding SelectedItem.HasInstallLocation}"/>
-                                    <MenuItem Header="Uninstaller Location" Click="OnOpenUninstallerLocationClick"
+                                        <MenuItem Header="Uninstaller Location" Click="OnOpenUninstallerLocationClick"
                                               IsEnabled="{Binding SelectedItem.HasUninstallerLocation}"/>
-                                    <MenuItem Header="Registry Key in Regedit" Click="OnOpenInRegeditClick"
+                                        <MenuItem Header="Registry Key in Regedit" Click="OnOpenInRegeditClick"
                                               IsEnabled="{Binding SelectedItem.HasRegistryPath}"/>
-                                </MenuItem>
+                                    </MenuItem>
 
-                                <MenuItem Header="Open Web Page" Click="OnOpenWebPageClick"
-                                          IsEnabled="{Binding SelectedItem.HasAboutUrl}">
-                                    <MenuItem.Icon>
-                                        <TextBlock Text="🌐" FontSize="13" VerticalAlignment="Center"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
+                                    <MenuItem Header="Open Web Page" Click="OnOpenWebPageClick"
+                                              IsEnabled="{Binding SelectedItem.HasAboutUrl}"/>
 
-                                <MenuItem Header="Search online" IsEnabled="{Binding SelectedItem, Converter={x:Static ObjectConverters.IsNotNull}}">
-                                    <MenuItem.Icon>
-                                        <TextBlock Text="🔍" FontSize="13" VerticalAlignment="Center"/>
-                                    </MenuItem.Icon>
-                                    <MenuItem Header="Search on Google" Click="OnSearchGoogleClick"/>
-                                    <MenuItem Header="Search on Bing" Click="OnSearchBingClick"/>
-                                    <MenuItem Header="Search on DuckDuckGo" Click="OnSearchDuckDuckGoClick"/>
-                                </MenuItem>
+                                    <MenuItem Header="Search online" IsEnabled="{Binding SelectedItem, Converter={x:Static ObjectConverters.IsNotNull}}">
+                                        <MenuItem Header="Search on Google" Click="OnSearchGoogleClick"/>
+                                        <MenuItem Header="Search on Bing" Click="OnSearchBingClick"/>
+                                        <MenuItem Header="Search on DuckDuckGo" Click="OnSearchDuckDuckGoClick"/>
+                                    </MenuItem>
 
-                                <Separator/>
+                                    <Separator/>
 
-                                <MenuItem Header="Properties" FontWeight="Bold" Click="OnPropertiesClick"
-                                          IsEnabled="{Binding SelectedItem, Converter={x:Static ObjectConverters.IsNotNull}}">
-                                    <MenuItem.Icon>
-                                        <TextBlock Text="ℹ️" FontSize="13" VerticalAlignment="Center"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                            </ContextMenu>
-                        </DataGrid.ContextMenu>
+                                    <MenuItem Header="Properties" FontWeight="Bold" Click="OnPropertiesClick"
+                                              IsEnabled="{Binding SelectedItem, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                                </ContextMenu>
+                            </DataGrid.ContextMenu>
                         <DataGrid.Columns>
                             <!-- Checkbox Column -->
                             <DataGridTemplateColumn Header="✓" Width="32" MinWidth="28" CanUserSort="False"
@@ -685,10 +643,12 @@
                                                     IsVisible="{Binding ShowColumnQuiet}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate DataType="vm:ApplicationEntryViewModel">
-                                        <TextBlock Text="⚡" IsVisible="{Binding QuietUninstallPossible}"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                   Foreground="#a5b4fc"
-                                                   ToolTip.Tip="Quiet uninstallation supported"/>
+                                        <PathIcon Data="M11 21h-1l1-7H7.5c-.58 0-.57-.32-.38-.66.19-.34.05-.08.07-.12C8.48 10.94 10.42 7.54 13 3h1l-1 7h3.5c.49 0 .56.33.47.51l-.07.15C12.96 17.55 11 21 11 21z"
+                                                  Width="13" Height="13"
+                                                  Foreground="#818cf8"
+                                                  IsVisible="{Binding QuietUninstallPossible}"
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                  ToolTip.Tip="Quiet uninstallation supported"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -706,24 +666,89 @@
                             </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
+
+                    <!-- Empty State Display (Shown when search or filters yield 0 results) -->
+                    <Border IsVisible="{Binding HasNoFilteredResults}"
+                            Background="Transparent"
+                            Padding="36,28"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16" MaxWidth="520">
+                            <!-- Modern Icon Emblem -->
+                            <Grid Width="76" Height="76" HorizontalAlignment="Center">
+                                <Border Width="76" Height="76" CornerRadius="38"
+                                        Background="{DynamicResource CardInnerBgBrush}"
+                                        BorderBrush="{DynamicResource CardBorderBrush}"
+                                        BorderThickness="1.5"
+                                        Opacity="0.85"/>
+                                <PathIcon Data="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                                          Width="32" Height="32"
+                                          Foreground="{DynamicResource TextSecondaryBrush}"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Grid>
+
+                            <!-- Headline -->
+                            <TextBlock Text="{Binding EmptyStateHeadline}"
+                                       FontSize="18" FontWeight="Bold"
+                                       Foreground="{DynamicResource TextPrimaryBrush}"
+                                       HorizontalAlignment="Center" TextAlignment="Center"/>
+
+                            <!-- Explanatory Subtitle -->
+                            <TextBlock Text="{Binding EmptyStateMessage}"
+                                       FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}"
+                                       TextWrapping="Wrap" TextAlignment="Center"
+                                       HorizontalAlignment="Center" LineHeight="20"/>
+
+                            <!-- Action Buttons -->
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="12" Margin="0,6,0,0">
+                                <Button Classes="toolbar" Command="{Binding ClearSearchCommand}"
+                                        IsVisible="{Binding HasSearchText}"
+                                        Padding="18,8" MinHeight="36" CornerRadius="8"
+                                        ToolTip.Tip="Clear the active search query">
+                                    <TextBlock Text="Clear Search" FontWeight="SemiBold" FontSize="12.5"/>
+                                </Button>
+
+                                <Button Classes="toolbar" Command="{Binding ResetAllFiltersCommand}"
+                                        IsVisible="{Binding !HasNoInstalledApplications}"
+                                        Padding="18,8" MinHeight="36" CornerRadius="8"
+                                        ToolTip.Tip="Reset all filters to default settings">
+                                    <TextBlock Text="Reset Filters" FontWeight="SemiBold" FontSize="12.5"/>
+                                </Button>
+
+                                <Button Classes="toolbar" Command="{Binding LoadApplicationsCommand}"
+                                        IsVisible="{Binding HasNoInstalledApplications}"
+                                        Padding="18,8" MinHeight="36" CornerRadius="8"
+                                        ToolTip.Tip="Rescan system for installed applications">
+                                    <TextBlock Text="Refresh Applications" FontWeight="SemiBold" FontSize="12.5"/>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                    </Grid>
                 </Border>
 
                 <!-- Horizontal Splitter between DataGrid and TreeMap -->
                 <GridSplitter Grid.Row="1" Height="4" ResizeDirection="Rows" Background="Transparent"
-                              IsVisible="{Binding IsTreeMapVisible}"/>
+                              IsVisible="{Binding IsTreeMapVisibleAndHasItems}"/>
 
                 <!-- Bottom Visual Hardware-Accelerated TreeMap Card -->
                 <Border Grid.Row="2" Classes="card" Margin="0,4,0,0" Padding="6"
                         Height="180" MinHeight="100" MaxHeight="600"
-                        IsVisible="{Binding IsTreeMapVisible}">
+                        IsVisible="{Binding IsTreeMapVisibleAndHasItems}">
                     <controls:AvaloniaTreeMap x:Name="TreeMapControl"
                                               ItemsSource="{Binding FilteredUninstallers}"
                                               SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                                               ItemClicked="OnTreeMapItemClicked">
                         <controls:AvaloniaTreeMap.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="Uninstall" Click="OnUninstallClick"/>
-                                <MenuItem Header="Quiet Uninstall" Click="OnQuietUninstallClick"/>
+                                <MenuItem Header="Uninstall" Click="OnUninstallClick"
+                                          IsEnabled="{Binding SelectedItem.CanStandardUninstall}"
+                                          IsVisible="{Binding SelectedItem.HasRealUninstaller}"/>
+                                <MenuItem Header="Quiet Uninstall" Click="OnQuietUninstallClick"
+                                          IsEnabled="{Binding SelectedItem.CanQuietUninstall}"
+                                          IsVisible="{Binding SelectedItem.HasRealUninstaller}"/>
+                                <MenuItem Header="Uninstall manually" Click="OnUninstallManuallyClick"
+                                          IsEnabled="{Binding SelectedItem.CanManualUninstall}"/>
                                 <Separator/>
                                 <MenuItem Header="Open Install Location" Command="{Binding OpenInstallLocationCommand}"/>
                             </ContextMenu>

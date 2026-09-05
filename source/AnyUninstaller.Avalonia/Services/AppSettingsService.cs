@@ -387,6 +387,23 @@ namespace AnyUninstaller.Avalonia.Services
             Color rowSelected;
             Color scrollThumb;
 
+            IBrush successEmblemBg;
+            Color successEmblemBorder;
+            Color successEmblemIcon;
+            Color successPulseRing1;
+            Color successPulseRing2;
+            Color successBadgeBg;
+            Color successBadgeBorder;
+            Color successBadgeText;
+            Color successBadgeNum;
+            Color successBtnBg;
+            Color successBtnBorder;
+
+            Color dangerBadgeBg;
+            Color dangerBadgeBorder;
+            Color dangerBadgeText;
+            Color dangerBadgeNum;
+
             switch (effectiveTheme)
             {
                 case 1: // Light Mode
@@ -406,6 +423,33 @@ namespace AnyUninstaller.Avalonia.Services
                     rowHover = Color.Parse("#0969da18");
                     rowSelected = Color.Parse("#0969da30");
                     scrollThumb = Color.Parse("#8c959f");
+
+                    successEmblemBg = new LinearGradientBrush
+                    {
+                        StartPoint = new RelativePoint(0, 0, RelativeUnit.Relative),
+                        EndPoint = new RelativePoint(1, 1, RelativeUnit.Relative),
+                        GradientStops = new GradientStops
+                        {
+                            new GradientStop(Color.Parse("#e8f9ed"), 0),
+                            new GradientStop(Color.Parse("#d4f5dc"), 0.5),
+                            new GradientStop(Color.Parse("#e6f9ed"), 1)
+                        }
+                    };
+                    successEmblemBorder = Color.Parse("#2da44e");
+                    successEmblemIcon = Color.Parse("#1a7f37");
+                    successPulseRing1 = Color.Parse("#2da44e");
+                    successPulseRing2 = Color.Parse("#4ac26b");
+                    successBadgeBg = Color.Parse("#dafbe1");
+                    successBadgeBorder = Color.Parse("#4ac26b");
+                    successBadgeText = Color.Parse("#1a7f37");
+                    successBadgeNum = Color.Parse("#1a7f37");
+                    successBtnBg = Color.Parse("#1f883d");
+                    successBtnBorder = Color.Parse("#1a7f37");
+
+                    dangerBadgeBg = Color.Parse("#ffebe9");
+                    dangerBadgeBorder = Color.Parse("#ff8182");
+                    dangerBadgeText = Color.Parse("#cf222e");
+                    dangerBadgeNum = Color.Parse("#cf222e");
                     break;
 
                 case 3: // Midnight Blue
@@ -425,6 +469,33 @@ namespace AnyUninstaller.Avalonia.Services
                     rowHover = Color.Parse("#38bdf820");
                     rowSelected = Color.Parse("#38bdf840");
                     scrollThumb = Color.Parse("#475569");
+
+                    successEmblemBg = new LinearGradientBrush
+                    {
+                        StartPoint = new RelativePoint(0, 0, RelativeUnit.Relative),
+                        EndPoint = new RelativePoint(1, 1, RelativeUnit.Relative),
+                        GradientStops = new GradientStops
+                        {
+                            new GradientStop(Color.Parse("#162b1a"), 0),
+                            new GradientStop(Color.Parse("#1a3d24"), 0.5),
+                            new GradientStop(Color.Parse("#0d1b10"), 1)
+                        }
+                    };
+                    successEmblemBorder = Color.Parse("#3fb950");
+                    successEmblemIcon = Color.Parse("#3fb950");
+                    successPulseRing1 = Color.Parse("#3fb950");
+                    successPulseRing2 = Color.Parse("#238636");
+                    successBadgeBg = Color.Parse("#162b1a");
+                    successBadgeBorder = Color.Parse("#238636");
+                    successBadgeText = Color.Parse("#3fb950");
+                    successBadgeNum = Color.Parse("#ffffff");
+                    successBtnBg = Color.Parse("#238636");
+                    successBtnBorder = Color.Parse("#2ea043");
+
+                    dangerBadgeBg = Color.Parse("#2e1a1a");
+                    dangerBadgeBorder = Color.Parse("#da3633");
+                    dangerBadgeText = Color.Parse("#f85149");
+                    dangerBadgeNum = Color.Parse("#ffffff");
                     break;
 
                 case 4: // OLED Black
@@ -444,6 +515,33 @@ namespace AnyUninstaller.Avalonia.Services
                     rowHover = Color.Parse("#00f2fe20");
                     rowSelected = Color.Parse("#00f2fe40");
                     scrollThumb = Color.Parse("#444444");
+
+                    successEmblemBg = new LinearGradientBrush
+                    {
+                        StartPoint = new RelativePoint(0, 0, RelativeUnit.Relative),
+                        EndPoint = new RelativePoint(1, 1, RelativeUnit.Relative),
+                        GradientStops = new GradientStops
+                        {
+                            new GradientStop(Color.Parse("#162b1a"), 0),
+                            new GradientStop(Color.Parse("#1a3d24"), 0.5),
+                            new GradientStop(Color.Parse("#0d1b10"), 1)
+                        }
+                    };
+                    successEmblemBorder = Color.Parse("#3fb950");
+                    successEmblemIcon = Color.Parse("#3fb950");
+                    successPulseRing1 = Color.Parse("#3fb950");
+                    successPulseRing2 = Color.Parse("#238636");
+                    successBadgeBg = Color.Parse("#162b1a");
+                    successBadgeBorder = Color.Parse("#238636");
+                    successBadgeText = Color.Parse("#3fb950");
+                    successBadgeNum = Color.Parse("#ffffff");
+                    successBtnBg = Color.Parse("#238636");
+                    successBtnBorder = Color.Parse("#2ea043");
+
+                    dangerBadgeBg = Color.Parse("#2e1a1a");
+                    dangerBadgeBorder = Color.Parse("#da3633");
+                    dangerBadgeText = Color.Parse("#f85149");
+                    dangerBadgeNum = Color.Parse("#ffffff");
                     break;
 
                 case 2: // Dark Mode (Default)
@@ -464,6 +562,33 @@ namespace AnyUninstaller.Avalonia.Services
                     rowHover = Color.Parse("#1f293788");
                     rowSelected = Color.Parse("#1d4ed844");
                     scrollThumb = Color.Parse("#555d68");
+
+                    successEmblemBg = new LinearGradientBrush
+                    {
+                        StartPoint = new RelativePoint(0, 0, RelativeUnit.Relative),
+                        EndPoint = new RelativePoint(1, 1, RelativeUnit.Relative),
+                        GradientStops = new GradientStops
+                        {
+                            new GradientStop(Color.Parse("#162b1a"), 0),
+                            new GradientStop(Color.Parse("#1a3d24"), 0.5),
+                            new GradientStop(Color.Parse("#0d1b10"), 1)
+                        }
+                    };
+                    successEmblemBorder = Color.Parse("#3fb950");
+                    successEmblemIcon = Color.Parse("#3fb950");
+                    successPulseRing1 = Color.Parse("#3fb950");
+                    successPulseRing2 = Color.Parse("#238636");
+                    successBadgeBg = Color.Parse("#162b1a");
+                    successBadgeBorder = Color.Parse("#238636");
+                    successBadgeText = Color.Parse("#3fb950");
+                    successBadgeNum = Color.Parse("#ffffff");
+                    successBtnBg = Color.Parse("#238636");
+                    successBtnBorder = Color.Parse("#2ea043");
+
+                    dangerBadgeBg = Color.Parse("#2e1a1a");
+                    dangerBadgeBorder = Color.Parse("#da3633");
+                    dangerBadgeText = Color.Parse("#f85149");
+                    dangerBadgeNum = Color.Parse("#ffffff");
                     break;
             }
 
@@ -482,6 +607,24 @@ namespace AnyUninstaller.Avalonia.Services
             Application.Current.Resources["RowHoverBrush"] = new SolidColorBrush(rowHover);
             Application.Current.Resources["RowSelectedBrush"] = new SolidColorBrush(rowSelected);
             Application.Current.Resources["ScrollThumbBrush"] = new SolidColorBrush(scrollThumb);
+
+            Application.Current.Resources["SuccessEmblemBgBrush"] = successEmblemBg;
+            Application.Current.Resources["SuccessEmblemBorderBrush"] = new SolidColorBrush(successEmblemBorder);
+            Application.Current.Resources["SuccessEmblemIconBrush"] = new SolidColorBrush(successEmblemIcon);
+            Application.Current.Resources["SuccessPulseRing1Brush"] = new SolidColorBrush(successPulseRing1);
+            Application.Current.Resources["SuccessPulseRing2Brush"] = new SolidColorBrush(successPulseRing2);
+            Application.Current.Resources["SuccessBadgeBgBrush"] = new SolidColorBrush(successBadgeBg);
+            Application.Current.Resources["SuccessBadgeBorderBrush"] = new SolidColorBrush(successBadgeBorder);
+            Application.Current.Resources["SuccessBadgeTextBrush"] = new SolidColorBrush(successBadgeText);
+            Application.Current.Resources["SuccessBadgeNumBrush"] = new SolidColorBrush(successBadgeNum);
+            Application.Current.Resources["SuccessBtnBgBrush"] = new SolidColorBrush(successBtnBg);
+            Application.Current.Resources["SuccessBtnBorderBrush"] = new SolidColorBrush(successBtnBorder);
+
+            Application.Current.Resources["DangerBadgeBgBrush"] = new SolidColorBrush(dangerBadgeBg);
+            Application.Current.Resources["DangerBadgeBorderBrush"] = new SolidColorBrush(dangerBadgeBorder);
+            Application.Current.Resources["DangerBadgeTextBrush"] = new SolidColorBrush(dangerBadgeText);
+            Application.Current.Resources["DangerBadgeNumBrush"] = new SolidColorBrush(dangerBadgeNum);
+
             Application.Current.Resources["CardCornerRadius"] = RoundedCorners ? new CornerRadius(12) : new CornerRadius(0);
             Application.Current.Resources["CardInnerCornerRadius"] = RoundedCorners ? new CornerRadius(8) : new CornerRadius(0);
 

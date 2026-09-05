@@ -41,6 +41,50 @@ namespace AnyUninstaller.Avalonia.ViewModels
         public bool CanSelect => !StatusBar.IsBusy && FilteredUninstallers.Count > 0;
         public bool HasSelectedApplications => !StatusBar.IsBusy && ((FilteredUninstallers.Count > 0 && FilteredUninstallers.Any(x => x.IsChecked)) || SelectedItem != null);
 
+        // Empty state & result visibility
+        public bool HasNoFilteredResults => !StatusBar.IsBusy && FilteredUninstallers.Count == 0;
+        public bool HasFilteredResults => !HasNoFilteredResults;
+        public bool IsTreeMapVisibleAndHasItems => IsTreeMapVisible && !HasNoFilteredResults;
+        public bool HasSearchText => !string.IsNullOrWhiteSpace(Sidebar.SearchText);
+        public bool HasNoInstalledApplications => !StatusBar.IsBusy && _allEntries.Count == 0;
+
+        public string EmptyStateHeadline
+        {
+            get
+            {
+                if (HasSearchText) return "No matching applications found";
+                if (_allEntries.Count == 0) return "No applications found";
+                return "No applications match active filters";
+            }
+        }
+
+        public string EmptyStateMessage
+        {
+            get
+            {
+                if (HasSearchText)
+                    return $"No applications found matching \"{Sidebar.SearchText.Trim()}\". Check for spelling errors or try clearing your search.";
+
+                if (_allEntries.Count == 0)
+                    return "No installed applications were detected on this system. Click refresh to scan again.";
+
+                return "No applications match your active filter settings. Try resetting filters to display all applications.";
+            }
+        }
+
+        [RelayCommand]
+        public void ClearSearch()
+        {
+            Sidebar.ClearSearch();
+        }
+
+        [RelayCommand]
+        public void ResetAllFilters()
+        {
+            Sidebar.ClearSearch();
+            Sidebar.ResetFilters();
+        }
+
         [ObservableProperty]
         private FilterSidebarViewModel _sidebar = new();
 
@@ -97,6 +141,7 @@ namespace AnyUninstaller.Avalonia.ViewModels
         {
             AppSettingsService.Instance.ShowTreemap = value;
             AppSettingsService.Instance.Save();
+            OnPropertyChanged(nameof(IsTreeMapVisibleAndHasItems));
         }
 
         partial void OnIsToolbarVisibleChanged(bool value)
@@ -145,6 +190,10 @@ namespace AnyUninstaller.Avalonia.ViewModels
                     OnPropertyChanged(nameof(IsNotLoading));
                     OnPropertyChanged(nameof(CanSelect));
                     OnPropertyChanged(nameof(HasSelectedApplications));
+                    OnPropertyChanged(nameof(HasNoFilteredResults));
+                    OnPropertyChanged(nameof(HasFilteredResults));
+                    OnPropertyChanged(nameof(IsTreeMapVisibleAndHasItems));
+                    OnPropertyChanged(nameof(HasNoInstalledApplications));
                 }
             };
             _ = LoadApplicationsAsync();
@@ -189,8 +238,6 @@ namespace AnyUninstaller.Avalonia.ViewModels
 
                 _allEntries = vms;
                 ApplyFiltering();
-
-                StatusBar.StatusMessage = $"Scan completed. Found {_allEntries.Count} applications.";
             }
             catch (OperationCanceledException)
             {
@@ -346,6 +393,31 @@ namespace AnyUninstaller.Avalonia.ViewModels
 
             StatusBar.TotalItemsCount = list.Count;
             StatusBar.TotalSize = totalSize;
+
+            if (list.Count == 0 && !string.IsNullOrWhiteSpace(searchText))
+            {
+                StatusBar.StatusMessage = $"No applications found matching \"{searchText}\"";
+            }
+            else if (list.Count == 0 && _allEntries.Count > 0)
+            {
+                StatusBar.StatusMessage = "No applications found matching active filters";
+            }
+            else if (_allEntries.Count > 0 && list.Count < _allEntries.Count)
+            {
+                StatusBar.StatusMessage = $"Showing {list.Count} of {_allEntries.Count} applications";
+            }
+            else if (_allEntries.Count > 0)
+            {
+                StatusBar.StatusMessage = $"Scan completed. Found {_allEntries.Count} applications.";
+            }
+
+            OnPropertyChanged(nameof(HasNoFilteredResults));
+            OnPropertyChanged(nameof(HasFilteredResults));
+            OnPropertyChanged(nameof(IsTreeMapVisibleAndHasItems));
+            OnPropertyChanged(nameof(HasSearchText));
+            OnPropertyChanged(nameof(HasNoInstalledApplications));
+            OnPropertyChanged(nameof(EmptyStateHeadline));
+            OnPropertyChanged(nameof(EmptyStateMessage));
 
             UpdateSelectionStats();
         }

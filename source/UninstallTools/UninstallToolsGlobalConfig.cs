@@ -254,7 +254,7 @@ namespace UninstallTools
         /// <summary>
         ///     Directiories containing programs, both built in "Program Files" and user-defined ones. Fast.
         /// </summary>
-        internal static IEnumerable<string> GetAllProgramFiles()
+        public static IEnumerable<string> GetAllProgramFiles()
         {
             if (CustomProgramFiles == null || CustomProgramFiles.Length == 0)
                 return StockProgramFiles;

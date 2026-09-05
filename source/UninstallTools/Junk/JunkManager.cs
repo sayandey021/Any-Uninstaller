@@ -19,7 +19,7 @@ namespace UninstallTools.Junk
 {
     public static class JunkManager
     {
-        private static IEnumerable<IJunkResult> CleanUpResults(IEnumerable<IJunkResult> input)
+        public static IEnumerable<IJunkResult> CleanUpResults(IEnumerable<IJunkResult> input)
         {
             var prohibitedLocations = GetProhibitedLocations();
 
@@ -35,14 +35,19 @@ namespace UninstallTools.Junk
         {
             if (x is FileSystemJunk fileSystemJunk)
             {
-                return fileSystemJunk.Path == null || 
-                       !fileSystemJunk.Path.FullName.StartsWith(UninstallToolsGlobalConfig.AppLocation, StringComparison.OrdinalIgnoreCase);
+                if (fileSystemJunk.Path == null)
+                    return true;
+
+                return !ApplicationUninstallerEntry.IsSelfOrHelperDirectory(fileSystemJunk.Path.FullName) &&
+                       !ApplicationUninstallerEntry.IsSelfOrHelper(fileSystemJunk.Path.FullName);
             }
 
             if (x is StartupJunkNode startupJunk)
             {
-                return startupJunk.Entry?.CommandFilePath == null || 
-                       !startupJunk.Entry.CommandFilePath.StartsWith(UninstallToolsGlobalConfig.AppLocation, StringComparison.OrdinalIgnoreCase);
+                if (startupJunk.Entry?.CommandFilePath == null)
+                    return true;
+
+                return !ApplicationUninstallerEntry.IsSelfOrHelper(startupJunk.Entry.CommandFilePath);
             }
 
             return true;
@@ -77,7 +82,20 @@ namespace UninstallTools.Junk
             if (arg is not FileSystemJunk fileSystemJunk)
                 return true;
 
-            return !prohibitedDirs.Contains(fileSystemJunk.Path.FullName.ToLowerInvariant());
+            var path = fileSystemJunk.Path.FullName.ToLowerInvariant();
+            if (prohibitedDirs.Contains(path))
+                return false;
+
+            // Protect C:\Windows\SystemApps subfolders from being flagged as deletable junk
+            var winDir = WindowsTools.GetEnvironmentPath(Klocman.Native.CSIDL.CSIDL_WINDOWS);
+            if (!string.IsNullOrEmpty(winDir))
+            {
+                var systemApps = Path.Combine(winDir, "SystemApps").ToLowerInvariant();
+                if (path.StartsWith(systemApps, StringComparison.OrdinalIgnoreCase))
+                    return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -235,6 +253,9 @@ namespace UninstallTools.Junk
                 ExecuteElevatedBatchCleanup(pendingElevation, result);
             }
 
+            // Notify Windows Explorer and Shell of updates without restarting explorer.exe
+            WindowsTools.NotifyShellAssociationsChanged();
+
             return result;
         }
 
@@ -274,10 +295,22 @@ namespace UninstallTools.Junk
                     sb.AppendLine("@echo off");
                     sb.AppendLine("chcp 65001 >nul");
 
+                    // 0. Traverse permission for WindowsApps if any target resides inside it
+                    var programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+                    var windowsApps = Path.Combine(programFiles, "WindowsApps");
+                    if (dirs.Any(d => d.StartsWith(windowsApps, StringComparison.OrdinalIgnoreCase)) ||
+                        files.Any(f => f.StartsWith(windowsApps, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        sb.AppendLine($"takeown /f \"{windowsApps}\" /a >nul 2>&1");
+                        sb.AppendLine($"icacls \"{windowsApps}\" /grant *S-1-5-32-544:(RX) >nul 2>&1");
+                    }
+
                     // 1. Files
                     foreach (var f in files.Distinct(StringComparer.OrdinalIgnoreCase))
                     {
                         var escaped = f.Replace("\"", "\\\"");
+                        sb.AppendLine($"takeown /f \"{escaped}\" /a >nul 2>&1");
+                        sb.AppendLine($"icacls \"{escaped}\" /grant:r *S-1-5-32-544:F /c /q >nul 2>&1");
                         sb.AppendLine($"attrib -r -s -h \"{escaped}\" >nul 2>&1");
                         sb.AppendLine($"del /f /q \"{escaped}\" >nul 2>&1");
                     }
@@ -286,8 +319,10 @@ namespace UninstallTools.Junk
                     foreach (var d in dirs.Distinct(StringComparer.OrdinalIgnoreCase).OrderByDescending(x => x.Length))
                     {
                         var escaped = d.Replace("\"", "\\\"");
-                        sb.AppendLine($"takeown /f \"{escaped}\" /r /d y >nul 2>&1");
-                        sb.AppendLine($"icacls \"{escaped}\" /grant *S-1-5-32-544:F /t /c /q >nul 2>&1");
+                        sb.AppendLine($"takeown /f \"{escaped}\" /a /r /d y /skipsl >nul 2>&1");
+                        sb.AppendLine($"icacls \"{escaped}\" /grant:r *S-1-5-32-544:(OI)(CI)F /t /c /q >nul 2>&1");
+                        sb.AppendLine($"attrib -r -s -h \"{escaped}\\*.*\" /s /d >nul 2>&1");
+                        sb.AppendLine($"attrib -r -s -h \"{escaped}\" >nul 2>&1");
                         sb.AppendLine($"rd /s /q \"{escaped}\" >nul 2>&1");
                     }
 
@@ -308,18 +343,19 @@ namespace UninstallTools.Junk
 
                     File.WriteAllText(tempBatchPath, sb.ToString(), new UTF8Encoding(false));
 
+                    bool isElevated = WindowsTools.IsAdministrator();
                     var startInfo = new ProcessStartInfo
                     {
                         FileName = "cmd.exe",
                         Arguments = $"/c \"{tempBatchPath}\"",
                         UseShellExecute = true,
-                        Verb = "runas",
+                        Verb = isElevated ? "" : "runas",
                         WindowStyle = ProcessWindowStyle.Hidden,
                         CreateNoWindow = true
                     };
 
                     using var proc = Process.Start(startInfo);
-                    proc?.WaitForExit(30000);
+                    proc?.WaitForExit(60000);
                 }
                 catch (System.ComponentModel.Win32Exception)
                 {
@@ -361,16 +397,26 @@ namespace UninstallTools.Junk
                     if (fs.Path is DirectoryInfo dir)
                     {
                         if (!Directory.Exists(dir.FullName))
+                        {
                             result.SuccessfullyDeleted.Add(fs);
+                        }
                         else
-                            result.FailedItems[fs] = "Directory could not be removed (In use or locked).";
+                        {
+                            WindowsTools.ScheduleDeleteOnReboot(dir.FullName);
+                            result.FailedItems[fs] = "Access denied or folder is locked by system. (Scheduled to delete on restart)";
+                        }
                     }
                     else if (fs.Path is FileInfo file)
                     {
                         if (!File.Exists(file.FullName))
+                        {
                             result.SuccessfullyDeleted.Add(fs);
+                        }
                         else
-                            result.FailedItems[fs] = "File could not be removed (In use or locked).";
+                        {
+                            WindowsTools.ScheduleDeleteOnReboot(file.FullName);
+                            result.FailedItems[fs] = "File is in use or locked by system. (Scheduled to delete on restart)";
+                        }
                     }
                 }
                 else if (item is RegistryValueJunk rv)

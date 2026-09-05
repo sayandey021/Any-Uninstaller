@@ -6,6 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\AnyUninstaller\AnyUninstaller.csproj" />
+    <ProjectReference Include="..\AnyUninstaller.Avalonia\AnyUninstaller.Avalonia.csproj" />
     <ProjectReference Include="..\UninstallTools\UninstallTools.csproj" />
   </ItemGroup>
   <ItemGroup>

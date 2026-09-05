@@ -125,6 +125,65 @@ namespace AnyUninstaller.Avalonia.ViewModels
         [ObservableProperty]
         private int _selectedCategoryFilterIndex = 0; // 0: All, 1: UserTemp, 2: SystemTemp, 3: CrashDumps, 4: UpdateCache, 5: WebCache
 
+        [ObservableProperty]
+        private bool _isCompleted;
+
+        public bool IsActiveView => !IsCompleted;
+
+        partial void OnIsCompletedChanged(bool value)
+        {
+            OnPropertyChanged(nameof(IsActiveView));
+        }
+
+        [ObservableProperty]
+        private int _lastDeletedCount;
+
+        [ObservableProperty]
+        private string _lastFreedSizeFormatted = string.Empty;
+
+        [ObservableProperty]
+        private int _remainingUndeletedCount;
+
+        [ObservableProperty]
+        private int _remainingUnselectedCount;
+
+        public int RemainingTotalCount => _allTempItems.Count;
+        public bool HasRemainingItems => RemainingTotalCount > 0;
+        public string ShowRemainingButtonText => HasRemainingItems
+            ? $"Show Undeleted & Unselected Items ({RemainingTotalCount})"
+            : "No Remaining Items (0)";
+
+        public string CompletionHeadlineText => RemainingTotalCount == 0
+            ? "All Temporary Files Cleaned!"
+            : "Cleanup Completed!";
+
+        public string CompletionHighlightText => RemainingTotalCount == 0
+            ? $"Freed {LastFreedSizeFormatted} across {LastDeletedCount} file(s) • 100% Spotless"
+            : $"Freed {LastFreedSizeFormatted} across {LastDeletedCount} file(s)";
+
+        public string CompletionDetailsText
+        {
+            get
+            {
+                if (RemainingTotalCount == 0)
+                {
+                    return $"Spotless! Successfully freed {LastFreedSizeFormatted} across {LastDeletedCount} temporary file(s). All temporary cache locations are now completely clean.";
+                }
+                else if (RemainingUndeletedCount > 0 && RemainingUnselectedCount > 0)
+                {
+                    return $"Freed {LastFreedSizeFormatted} across {LastDeletedCount} file(s). {RemainingTotalCount} item(s) remain ({RemainingUndeletedCount} in-use/skipped, {RemainingUnselectedCount} unselected).";
+                }
+                else if (RemainingUndeletedCount > 0)
+                {
+                    return $"Freed {LastFreedSizeFormatted} across {LastDeletedCount} file(s). {RemainingUndeletedCount} item(s) could not be removed because they are currently locked or in use by Windows.";
+                }
+                else
+                {
+                    return $"Freed {LastFreedSizeFormatted} across {LastDeletedCount} file(s). {RemainingUnselectedCount} item(s) were left intact because they were not selected.";
+                }
+            }
+        }
+
         public string UserTempSizeFormatted => FormatSize(UserTempSize);
         public string SystemTempSizeFormatted => FormatSize(SystemTempSize);
         public string CrashDumpsSizeFormatted => FormatSize(CrashDumpsSize);
@@ -144,8 +203,8 @@ namespace AnyUninstaller.Avalonia.ViewModels
         public bool HasSearchText => !string.IsNullOrWhiteSpace(SearchText);
         public string SelectionSummaryText => $"Selected: {SelectedItemsCount} / {TotalItemsCount} item(s) ({SelectedSizeFormatted})";
         public string DeleteButtonText => SelectedItemsCount > 0 
-            ? $"🧹 Clean Selected Temp Files ({SelectedSizeFormatted})" 
-            : "🧹 Clean Selected Temp Files";
+            ? $"Clean Selected Temp Files ({SelectedSizeFormatted})" 
+            : "Clean Selected Temp Files";
 
         public bool CanDelete => SelectedItemsCount > 0 && !IsBusy;
         public bool CanScan => !IsBusy;
@@ -153,6 +212,18 @@ namespace AnyUninstaller.Avalonia.ViewModels
         public string ToggleSelectAllText => AreAllSelected ? "Select None" : "Select All";
         public string ToggleSelectAllIcon => AreAllSelected ? "✕" : "✓";
         public string ToggleSelectAllTooltip => AreAllSelected ? "Deselect all visible temp items" : "Select all visible temp items";
+
+        [RelayCommand]
+        public void ShowRemainingItems()
+        {
+            IsCompleted = false;
+        }
+
+        [RelayCommand]
+        public void ShowCompletionSummary()
+        {
+            IsCompleted = true;
+        }
 
         public TempCleanerViewModel()
         {
@@ -181,6 +252,7 @@ namespace AnyUninstaller.Avalonia.ViewModels
         {
             if (IsBusy) return;
 
+            IsCompleted = false;
             _operationCts?.Cancel();
             _operationCts = new CancellationTokenSource();
 
@@ -389,6 +461,19 @@ namespace AnyUninstaller.Avalonia.ViewModels
                 StatusMessage = result.SkippedFilesCount > 0
                     ? $"Cleanup finished: Deleted {result.DeletedFilesCount} files ({freedSizeStr}), {result.SkippedFilesCount} skipped (in use)."
                     : $"Cleanup finished: Successfully freed {freedSizeStr} ({result.DeletedFilesCount} files deleted)!";
+
+                LastDeletedCount = result.DeletedFilesCount;
+                LastFreedSizeFormatted = freedSizeStr;
+                RemainingUndeletedCount = _allTempItems.Count(x => x.HasError || x.Status.StartsWith("Skipped", StringComparison.OrdinalIgnoreCase) || x.Status == "Partially Cleaned");
+                RemainingUnselectedCount = Math.Max(0, _allTempItems.Count - RemainingUndeletedCount);
+
+                OnPropertyChanged(nameof(RemainingTotalCount));
+                OnPropertyChanged(nameof(HasRemainingItems));
+                OnPropertyChanged(nameof(ShowRemainingButtonText));
+                OnPropertyChanged(nameof(CompletionHeadlineText));
+                OnPropertyChanged(nameof(CompletionHighlightText));
+                OnPropertyChanged(nameof(CompletionDetailsText));
+                IsCompleted = true;
             }
             catch (OperationCanceledException)
             {
@@ -435,6 +520,14 @@ namespace AnyUninstaller.Avalonia.ViewModels
                 }
             }
             catch { }
+        }
+
+        [RelayCommand]
+        public async Task RestartExplorerAsync()
+        {
+            StatusMessage = "Restarting Windows Explorer...";
+            bool success = await Task.Run(() => UninstallTools.Junk.ProcessLockHelper.RestartExplorer(force: true));
+            StatusMessage = success ? "Windows Explorer restarted successfully." : "Windows Explorer restart requested.";
         }
     }
 }

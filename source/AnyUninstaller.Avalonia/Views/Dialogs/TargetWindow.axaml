@@ -57,10 +57,10 @@
                         <!-- Section Header -->
                         <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,8">
                             <TextBlock Text="TARGET ACTIVE WINDOW" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource PrimaryAccentBrush}" LetterSpacing="0.5" VerticalAlignment="Center"/>
-                            <Border Grid.Column="1" Background="#162b1a" BorderBrush="#238636" BorderThickness="1" CornerRadius="10" Padding="6,2" VerticalAlignment="Center">
+                            <Border Grid.Column="1" Background="{DynamicResource SuccessBadgeBgBrush}" BorderBrush="{DynamicResource SuccessBadgeBorderBrush}" BorderThickness="1" CornerRadius="10" Padding="6,2" VerticalAlignment="Center">
                                 <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
-                                    <Ellipse Width="5" Height="5" Fill="#3fb950" VerticalAlignment="Center"/>
-                                    <TextBlock x:Name="TargetStateText" Text="Ready" FontSize="9.5" FontWeight="SemiBold" Foreground="#3fb950" VerticalAlignment="Center"/>
+                                    <Ellipse Width="5" Height="5" Fill="{DynamicResource SuccessBadgeTextBrush}" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="TargetStateText" Text="Ready" FontSize="9.5" FontWeight="SemiBold" Foreground="{DynamicResource SuccessBadgeTextBrush}" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </Border>
                         </Grid>
@@ -80,7 +80,7 @@
                             </Border>
 
                             <!-- Live Target Details -->
-                            <Border Grid.Column="1" Background="#0d1117" BorderBrush="#21262d" BorderThickness="1" CornerRadius="8" Padding="10,8" Margin="10,0,0,0" VerticalAlignment="Center">
+                            <Border Grid.Column="1" Background="{DynamicResource CardInnerBgBrush}" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="10,8" Margin="10,0,0,0" VerticalAlignment="Center">
                                 <StackPanel Spacing="3">
                                     <TextBlock Text="Target Window:" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
                                     <TextBlock x:Name="TargetWindowTitleText" Text="Click &amp; drag ⌖ over window" FontSize="11.5" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
@@ -107,7 +107,7 @@
                             <!-- Install Folder Button -->
                             <Button Classes="toolbar" Height="42" Margin="0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="10,6" Click="OnSelectDirectoryClick">
                                 <Grid ColumnDefinitions="Auto,*">
-                                    <Border Width="28" Height="28" Background="#162438" BorderBrush="#1f4b7a" BorderThickness="1" CornerRadius="6" VerticalAlignment="Center">
+                                    <Border Width="28" Height="28" Background="{DynamicResource CardInnerBgBrush}" BorderBrush="{DynamicResource CardInnerBorderBrush}" BorderThickness="1" CornerRadius="6" VerticalAlignment="Center">
                                         <TextBlock Text="📁" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                     <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
@@ -120,7 +120,7 @@
                             <!-- Executable / Shortcut Button -->
                             <Button Classes="toolbar" Height="42" Margin="0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="10,6" Click="OnSelectFileClick">
                                 <Grid ColumnDefinitions="Auto,*">
-                                    <Border Width="28" Height="28" Background="#1f1d2e" BorderBrush="#43376e" BorderThickness="1" CornerRadius="6" VerticalAlignment="Center">
+                                    <Border Width="28" Height="28" Background="{DynamicResource CardInnerBgBrush}" BorderBrush="{DynamicResource CardInnerBorderBrush}" BorderThickness="1" CornerRadius="6" VerticalAlignment="Center">
                                         <TextBlock Text="⚡" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                     <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">

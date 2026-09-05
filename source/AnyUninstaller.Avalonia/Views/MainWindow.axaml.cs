@@ -18,6 +18,7 @@ using AnyUninstaller.Avalonia.Views.Dialogs;
 using Klocman.Tools;
 using UninstallTools.Factory;
 using UninstallTools.Factory.InfoAdders;
+using UninstallTools.Junk;
 using UninstallTools.Uninstaller;
 
 namespace AnyUninstaller.Avalonia.Views
@@ -245,29 +246,113 @@ namespace AnyUninstaller.Avalonia.Views
             await RunUninstallFlowAsync(quiet: true);
         }
 
-        private void OnUninstallManuallyClick(object? sender, RoutedEventArgs e)
+        private async void OnUninstallManuallyClick(object? sender, RoutedEventArgs e)
         {
-            var item = ViewModel?.SelectedItem ?? ViewModel?.GetSelectedOrCurrent().FirstOrDefault();
-            if (item == null) return;
+            await RunManualUninstallFlowAsync();
+        }
+
+        private async Task RunManualUninstallFlowAsync()
+        {
+            if (ViewModel == null) return;
+
+            var targets = ViewModel.GetSelectedOrCurrent();
+            if (targets.Count == 0)
+            {
+                ViewModel.StatusBar.StatusMessage = "Please select at least one application to uninstall manually.";
+                return;
+            }
+
+            var entryTargets = targets.Select(x => x.Entry).ToList();
+
+            // Check if any of the target applications are actively running before scanning
+            var targetPaths = entryTargets
+                .SelectMany(t => new[] { t.InstallLocation, t.UninstallerLocation })
+                .Where(p => !string.IsNullOrWhiteSpace(p) && (Directory.Exists(p) || File.Exists(p)))
+                .Select(p => p!)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            if (targetPaths.Count > 0)
+            {
+                var runningProcs = await Task.Run(() => ProcessLockHelper.FindLockingProcesses(targetPaths));
+                if (runningProcs.Count > 0)
+                {
+                    var lockDialog = new ProcessLockDialog(runningProcs);
+                    await lockDialog.ShowDialog(this);
+
+                    if (lockDialog.Result == ProcessLockDialogResult.Cancel)
+                    {
+                        ViewModel.StatusBar.StatusMessage = "Manual uninstall cancelled.";
+                        return;
+                    }
+                    else if (lockDialog.Result == ProcessLockDialogResult.EndProcessesAndDelete)
+                    {
+                        var pids = lockDialog.SelectedProcesses.Select(x => x.ProcessId).ToList();
+                        var toRestart = lockDialog.SelectedProcesses.Where(x => x.ShouldRestart).ToList();
+                        ViewModel.StatusBar.StatusMessage = "Closing running application processes...";
+                        await Task.Run(() =>
+                        {
+                            ProcessLockHelper.TerminateProcesses(pids);
+                            if (toRestart.Count > 0)
+                            {
+                                ProcessLockHelper.RestartProcesses(toRestart);
+                            }
+                        });
+                    }
+                }
+            }
+
+            ViewModel.StatusBar.IsBusy = true;
+            ViewModel.StatusBar.ProgressValue = 0;
+            ViewModel.StatusBar.ProgressMax = 100;
+            ViewModel.StatusBar.StatusMessage = entryTargets.Count == 1
+                ? $"Scanning for residual files and registry entries for {entryTargets[0].DisplayNameTrimmed}..."
+                : $"Scanning for residual files and registry entries for {entryTargets.Count} selected applications...";
 
             try
             {
-                if (!string.IsNullOrWhiteSpace(item.UninstallString))
+                var progress = new Progress<(int current, int total, string message)>(p =>
                 {
-                    Process.Start(new ProcessStartInfo("cmd.exe", $"/c start \"\" {item.UninstallString}") { CreateNoWindow = true, UseShellExecute = false });
+                    if (ViewModel != null)
+                    {
+                        ViewModel.StatusBar.ProgressValue = p.current;
+                        ViewModel.StatusBar.ProgressMax = Math.Max(p.total, 1);
+                        if (!string.IsNullOrWhiteSpace(p.message))
+                        {
+                            ViewModel.StatusBar.StatusMessage = p.message;
+                        }
+                    }
+                });
+
+                var allEntries = ViewModel.FilteredUninstallers.Select(x => x.Entry).ToList();
+                var junk = await JunkCleaningService.Instance.ScanJunkAsync(entryTargets, allEntries, progress);
+
+                if (junk.Count > 0)
+                {
+                    var junkVm = new JunkRemovalViewModel(junk);
+                    var junkWindow = new JunkRemoveWindow(junkVm);
+                    await junkWindow.ShowDialog(this);
+
+                    // Refresh application list after uninstallation/cleanup
+                    await ViewModel.LoadApplicationsCommand.ExecuteAsync(null);
                 }
-                else if (!string.IsNullOrWhiteSpace(item.UninstallerLocation) && Directory.Exists(item.UninstallerLocation))
+                else
                 {
-                    Process.Start(new ProcessStartInfo(item.UninstallerLocation) { UseShellExecute = true });
-                }
-                else if (!string.IsNullOrWhiteSpace(item.InstallLocation) && Directory.Exists(item.InstallLocation))
-                {
-                    Process.Start(new ProcessStartInfo(item.InstallLocation) { UseShellExecute = true });
+                    ViewModel.StatusBar.StatusMessage = entryTargets.Count == 1
+                        ? $"No residual files or registry keys found for {entryTargets[0].DisplayNameTrimmed}."
+                        : "No residual files or registry keys found for selected applications.";
+
+                    // Refresh application list in case the item was already deleted externally
+                    await ViewModel.LoadApplicationsCommand.ExecuteAsync(null);
                 }
             }
             catch (Exception ex)
             {
-                if (ViewModel != null) ViewModel.StatusBar.StatusMessage = $"Manual start error: {ex.Message}";
+                ViewModel.StatusBar.StatusMessage = $"Manual uninstall error: {ex.Message}";
+            }
+            finally
+            {
+                ViewModel.StatusBar.IsBusy = false;
             }
         }
 
@@ -298,7 +383,9 @@ namespace AnyUninstaller.Avalonia.Views
             if (item == null || string.IsNullOrWhiteSpace(item.UninstallString)) return;
             try
             {
-                Process.Start(new ProcessStartInfo("cmd.exe", $"/c start \"\" {item.UninstallString}") { CreateNoWindow = true, UseShellExecute = false });
+                var psi = ProcessTools.SeparateArgsFromCommand(item.UninstallString).ToProcessStartInfo();
+                psi.UseShellExecute = true;
+                Process.Start(psi);
             }
             catch (Exception ex)
             {
@@ -312,7 +399,9 @@ namespace AnyUninstaller.Avalonia.Views
             if (item == null || string.IsNullOrWhiteSpace(item.QuietUninstallString)) return;
             try
             {
-                Process.Start(new ProcessStartInfo("cmd.exe", $"/c start \"\" {item.QuietUninstallString}") { CreateNoWindow = true, UseShellExecute = false });
+                var psi = ProcessTools.SeparateArgsFromCommand(item.QuietUninstallString).ToProcessStartInfo();
+                psi.UseShellExecute = true;
+                Process.Start(psi);
             }
             catch (Exception ex)
             {
@@ -611,48 +700,22 @@ namespace AnyUninstaller.Avalonia.Views
             if (targets.Count == 0)
                 return;
 
-            var entryTargets = targets.Select(x => x.Entry).ToList();
-
-            // If all selected entries are invalid/broken (i.e. no valid uninstaller executable exists),
-            // directly perform a junk scan and registry cleanup without launching a non-existent process.
-            if (entryTargets.All(e => !e.IsValid))
+            // If all selected entries are orphaned, lack a real uninstaller, or are invalid/broken,
+            // directly perform the manual uninstall flow so all residual files/registry keys are shown
+            // in a checklist and nothing is auto-deleted.
+            if (targets.All(x => !x.HasRealUninstaller))
             {
-                ViewModel.StatusBar.IsBusy = true;
-                ViewModel.StatusBar.StatusMessage = "Scanning for residual junk and broken registry entries...";
-
-                try
-                {
-                    var allEntries = ViewModel.FilteredUninstallers.Select(x => x.Entry).ToList();
-                    var junk = await JunkCleaningService.Instance.ScanJunkAsync(entryTargets, allEntries);
-
-                    if (junk.Count > 0)
-                    {
-                        var junkVm = new JunkRemovalViewModel(junk);
-                        var junkWindow = new JunkRemoveWindow(junkVm);
-                        await junkWindow.ShowDialog(this);
-                    }
-                    else
-                    {
-                        ViewModel.StatusBar.StatusMessage = "No residual files or keys found for selected invalid items.";
-                    }
-
-                    // Refresh application list
-                    await ViewModel.LoadApplicationsCommand.ExecuteAsync(null);
-                }
-                catch (Exception ex)
-                {
-                    ViewModel.StatusBar.StatusMessage = $"Junk scan error: {ex.Message}";
-                }
-                finally
-                {
-                    ViewModel.StatusBar.IsBusy = false;
-                }
+                await RunManualUninstallFlowAsync();
                 return;
             }
 
+            var realUninstallerTargets = targets.Where(x => x.HasRealUninstaller).Select(x => x.Entry).ToList();
+            var manualTargets = targets.Where(x => !x.HasRealUninstaller).Select(x => x.Entry).ToList();
+            var allEntryTargets = targets.Select(x => x.Entry).ToList();
+
             try
             {
-                var task = UninstallerExecutionService.Instance.CreateBulkTask(entryTargets, quiet);
+                var task = UninstallerExecutionService.Instance.CreateBulkTask(realUninstallerTargets, quiet);
 
                 var progressVm = new UninstallProgressViewModel(task);
                 var progressWindow = new UninstallProgressWindow(progressVm);
@@ -664,11 +727,11 @@ namespace AnyUninstaller.Avalonia.Views
 
                     try
                     {
-                        // Trigger junk scan after uninstallation finishes if enabled
-                        if (AppSettingsService.Instance.AutoScanJunkAfterUninstall)
+                        // Trigger junk scan after uninstallation finishes if enabled or if there are manual targets
+                        if (AppSettingsService.Instance.AutoScanJunkAfterUninstall || manualTargets.Count > 0)
                         {
                             var allEntries = ViewModel.FilteredUninstallers.Select(x => x.Entry).ToList();
-                            var junk = await JunkCleaningService.Instance.ScanJunkAsync(entryTargets, allEntries);
+                            var junk = await JunkCleaningService.Instance.ScanJunkAsync(allEntryTargets, allEntries);
 
                             if (junk.Count > 0)
                             {
@@ -680,6 +743,9 @@ namespace AnyUninstaller.Avalonia.Views
 
                         // Refresh application list
                         await ViewModel.LoadApplicationsCommand.ExecuteAsync(null);
+
+                        // Notify Windows Explorer to refresh navigation pane and icons without restarting explorer.exe
+                        WindowsTools.NotifyShellAssociationsChanged();
                     }
                     catch (Exception ex)
                     {
